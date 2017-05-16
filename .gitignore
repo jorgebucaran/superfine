@@ -1,2 +1,6 @@
 turbodom.js
-turbodom.js.map
+*js.map
+*js.gz
+yarn.lock
+example*
+.vscode
