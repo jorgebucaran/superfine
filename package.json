@@ -1,0 +1,29 @@
+{
+  "name": "turbodom",
+  "description": "...",
+  "version": "0.0.0",
+  "main": "dist/turbodom.js",
+  "jsnext:main": "src/index.js",
+  "module": "src/index.js",
+  "license": "MIT",
+  "repository": "turbodom/turbodom",
+  "files": [
+    "src",
+    "dist"
+  ],
+  "author": "Jorge Bucaran",
+  "keywords": [
+    "virtual-dom"
+  ],
+  "scripts": {
+    "build": "rollup -cm -n turbodom -f umd -i index.js -o turbodom.js",
+    "format": "prettier --semi false --write index.js"
+  },
+  "babel": {
+    "presets": "es2015"
+  },
+  "devDependencies": {
+    "prettier": "~1.2.2",
+    "rollup": "^0.41.4"
+  }
+}
