@@ -1,4 +1,7 @@
-function h (tag, data) {
+h.patch = patch
+module.exports = h
+
+function h(tag, data) {
   var node
   var stack = []
   var children = []
@@ -29,7 +32,7 @@ function h (tag, data) {
     : tag(data, children)
 }
 
-function patch (parent, element, oldNode, node) {
+function patch(parent, element, oldNode, node) {
   if (oldNode == null) {
     element = parent.insertBefore(createElementFrom(node), element)
   } else if (node.tag && node.tag === oldNode.tag) {
@@ -204,6 +207,3 @@ function removeElement(parent, element, node) {
   }
   parent.removeChild(element)
 }
-
-h.patch = patch
-module.exports = h
