@@ -1,7 +1,7 @@
 {
   "name": "turbodom",
-  "description": "...",
-  "version": "0.0.0",
+  "description": "A 1kb JavaScript Virtual DOM engine.",
+  "version": "0.0.1",
   "main": "turbodom.js",
   "jsnext:main": "index.js",
   "module": "index.js",
@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "prettier": "~1.2.2",
-    "rollup": "^0.41.4"
+    "rollup": "^0.41.4",
+    "rollup-plugin-uglify": "^2.0.1"
   }
 }
