@@ -1,7 +1,7 @@
 {
   "name": "turbodom",
   "description": "1kb JavaScript Virtual DOM builder and patch algorithm.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "dist/turbodom.js",
   "jsnext:main": "index.js",
   "module": "index.js",
