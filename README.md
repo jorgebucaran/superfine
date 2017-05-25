@@ -1,6 +1,5 @@
 # Turbodom
 [![Travis CI](https://img.shields.io/travis/turbodom/turbodom/master.svg)](https://travis-ci.org/turbodom/turbodom)
-[![Codecov](https://img.shields.io/codecov/c/github/turbodom/turbodom/master.svg)](https://codecov.io/gh/turbodom/turbodom)
 [![npm](https://img.shields.io/npm/v/turbodom.svg?colorB=f9051f)](https://www.npmjs.org/package/turbodom)
 
 Turbodom is a 1kb Virtual DOM builder and patch algorithm.
