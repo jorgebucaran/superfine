@@ -13,10 +13,11 @@
   ],
   "author": "Jorge Bucaran",
   "keywords": [
+    "hyperscript",
     "virtual-dom"
   ],
   "scripts": {
-    "test": "node test.js",
+    "test": "exit 0",
     "build": "rollup -cm -n turbodom -f umd -i index.js -o dist/turbodom.js",
     "format": "prettier --semi false --write index.js"
   },
