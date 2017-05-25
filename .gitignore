@@ -1,7 +1,6 @@
-turbodom.js
-*js.map
-*js.gz
 yarn.lock
 example*
 .vscode
 yarn.lock
+dist
+.gz
