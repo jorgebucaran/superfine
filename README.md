@@ -25,6 +25,8 @@ Use Turbodom to build your own view library and state management architecture.
 [Try it online](https://codepen.io/turbodom/pen/BRbJpG?editors=0010)
 
 ```jsx
+import { h, patch } from "turbodom"
+
 let element, oldNode
 
 function render(newNode) {
