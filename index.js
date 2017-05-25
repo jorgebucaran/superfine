@@ -1,5 +1,7 @@
-h.patch = patch
-module.exports = h
+export default {
+  h: h,
+  patch: patch
+}
 
 function h(tag, data) {
   var node
@@ -202,8 +204,8 @@ function getKeyFrom(node) {
 }
 
 function removeElement(parent, element, node) {
-  if (node.data && node.data.onremove) {
-    node.data.onremove(element)
+  ;((node.data && node.data.onremove) || removeChild)(element, removeChild)
+  function removeChild() {
+    parent.removeChild(element)
   }
-  parent.removeChild(element)
 }

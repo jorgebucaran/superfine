@@ -1,22 +1,21 @@
 {
   "name": "turbodom",
-  "description": "A 1kb JavaScript Virtual DOM engine.",
-  "version": "0.0.1",
+  "description": "1kb JavaScript Virtual DOM builder and patch algorithm.",
+  "version": "0.0.2",
   "main": "turbodom.js",
   "jsnext:main": "index.js",
   "module": "index.js",
   "license": "MIT",
   "repository": "turbodom/turbodom",
   "files": [
-    "src",
-    "dist"
+    "index.js"
   ],
   "author": "Jorge Bucaran",
   "keywords": [
     "virtual-dom"
   ],
   "scripts": {
-    "build": "rollup -c -n turbodom -f umd -i index.js -o turbodom.js",
+    "build": "rollup -cm -n turbodom -f umd -i index.js -o turbodom.js",
     "format": "prettier --semi false --write index.js"
   },
   "babel": {
