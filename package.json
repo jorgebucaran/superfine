@@ -16,11 +16,9 @@
     "virtual-dom"
   ],
   "scripts": {
+    "test": "node test.js",
     "build": "rollup -cm -n turbodom -f umd -i index.js -o dist/turbodom.js",
     "format": "prettier --semi false --write index.js"
-  },
-  "babel": {
-    "presets": "es2015"
   },
   "devDependencies": {
     "prettier": "~1.2.2",
