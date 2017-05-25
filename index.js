@@ -1,7 +1,4 @@
-export default {
-  h: h,
-  patch: patch
-}
+export { h, patch }
 
 function h(tag, data) {
   var node
