@@ -9,13 +9,13 @@
 With npm/Yarn.
 
 <pre>
-npm i [turbodom](https://npmjs.com/package/turbodom)
+npm i [picodom](https://npmjs.com/package/picodom)
 </pre>
 
 From a CDN.
 
 ```html
-<script src="https://unpkg.com/turbodom"></script>
+<script src="https://unpkg.com/picodom"></script>
 ```
 
 ## Usage
@@ -23,11 +23,11 @@ From a CDN.
 With ES5/ES6 via a bundler.
 
 ```jsx
-import { h, patch } from "turbodom"
+import { h, patch } from "picodom"
 ```
 
 With a <samp>\<script\></samp> tag.
 
 ```js
-const { h, patch } = turbodom
+const { h, patch } = picodom
 ```
