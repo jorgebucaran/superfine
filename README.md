@@ -1,6 +1,6 @@
 # Picodom
 [![Travis CI](https://img.shields.io/travis/picodom/picodom/master.svg)](https://travis-ci.org/picodom/picodom)
-[![npm](https://img.shields.io/npm/v/picodom.svg?colorB=4d5aaf)](https://www.npmjs.org/package/picodom)
+[![npm](https://img.shields.io/npm/v/picodom.svg)](https://www.npmjs.org/package/picodom)
 
 Picodom is a 1kb Virtual DOM builder and patch algorithm.
 

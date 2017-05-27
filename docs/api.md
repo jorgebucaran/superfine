@@ -1,7 +1,7 @@
 # API
 
-- picodom.h
-- picodom.patch
+- [picodom.h](#h)
+- [picodom.patch](#patch)
 
 ## h
 
@@ -10,6 +10,7 @@ Type: (tag, data, children): vnode
 - tag: string | (props, children): vnode
 - data: {}
 - children: string | vnode[]
+- vnode: { tag, data, children }
 
 ## patch
 
