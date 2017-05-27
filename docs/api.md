@@ -1,7 +1,7 @@
 # API
 
-- turbodom.h
-- turbodom.patch
+- picodom.h
+- picodom.patch
 
 ## h
 

@@ -1,13 +1,13 @@
-# Turbodom
-[![Travis CI](https://img.shields.io/travis/turbodom/turbodom/master.svg)](https://travis-ci.org/turbodom/turbodom)
-[![npm](https://img.shields.io/npm/v/turbodom.svg?colorB=4d5aaf)](https://www.npmjs.org/package/turbodom)
+# Picodom
+[![Travis CI](https://img.shields.io/travis/picodom/picodom/master.svg)](https://travis-ci.org/picodom/picodom)
+[![npm](https://img.shields.io/npm/v/picodom.svg?colorB=4d5aaf)](https://www.npmjs.org/package/picodom)
 
-Turbodom is a 1kb Virtual DOM builder and patch algorithm.
+Picodom is a 1kb Virtual DOM builder and patch algorithm.
 
-[Try it online](https://codepen.io/turbodom/pen/QvogzJ?editors=0010)
+[Try it online](https://codepen.io/picodom/pen/QvogzJ?editors=0010)
 
 ```js
-import { h, patch } from "turbodom"
+import { h, patch } from "picodom"
 
 patch(
   document.body,
@@ -19,12 +19,12 @@ patch(
 )
 ```
 
-Use Turbodom to build your own view library and state management architecture.
+Use Picodom to build your own view library and state management architecture.
 
-[Try it online](https://codepen.io/turbodom/pen/BRbJpG?editors=0010)
+[Try it online](https://codepen.io/picodom/pen/BRbJpG?editors=0010)
 
 ```jsx
-import { h, patch } from "turbodom"
+import { h, patch } from "picodom"
 
 let element, oldNode
 
@@ -50,7 +50,7 @@ function view(state) {
   )
 }
 
-render(view("Hello Turbodom!"))
+render(view("Hello Picodom!"))
 ```
 
 ## Documentation
@@ -59,4 +59,4 @@ The documentation is located in the [/docs](/docs) directory.
 
 ## License
 
-Turbodom is MIT licensed. See [LICENSE](/LICENSE.md).
+Picodom is MIT licensed. See [LICENSE](/LICENSE.md).

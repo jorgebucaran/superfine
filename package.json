@@ -1,12 +1,12 @@
 {
-  "name": "turbodom",
+  "name": "picodom",
   "description": "1kb JavaScript Virtual DOM builder and patch algorithm.",
   "version": "0.0.5",
-  "main": "dist/turbodom.js",
+  "main": "dist/picodom.js",
   "jsnext:main": "index.js",
   "module": "index.js",
   "license": "MIT",
-  "repository": "turbodom/turbodom",
+  "repository": "picodom/picodom",
   "files": [
     "index.js",
     "dist"
@@ -18,7 +18,7 @@
   ],
   "scripts": {
     "test": "exit 0",
-    "build": "rollup -cm -n turbodom -f umd -i index.js -o dist/turbodom.js",
+    "build": "rollup -cm -n picodom -f umd -i index.js -o dist/picodom.js",
     "format": "prettier --semi false --write index.js"
   },
   "devDependencies": {
