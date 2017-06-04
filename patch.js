@@ -155,7 +155,7 @@ function updateElementData(element, oldData, data) {
       ? element[name]
       : oldData[name]
 
-    if (name === "onupdate") {
+    if (name === "onupdate" && value) {
       value(element)
     } else if (value !== oldValue) {
       setElementData(element, name, value, oldValue)
