@@ -1,6 +1,10 @@
-yarn.lock
-example*
-.vscode
-yarn.lock
+# Artifacts
 dist
+example*
 .gz
+
+# Dependencies
+node_modules
+
+# Editors
+.vscode
