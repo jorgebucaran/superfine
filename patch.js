@@ -89,10 +89,6 @@ export function patch(parent, element, oldNode, node) {
 function merge(a, b) {
   var obj = {}
 
-  if (typeof b !== "object" || Array.isArray(b)) {
-    return b
-  }
-
   for (var i in a) {
     obj[i] = a[i]
   }
