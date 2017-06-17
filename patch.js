@@ -1,8 +1,8 @@
 export function patch(parent, element, oldNode, node) {
   if (oldNode == null) {
-    element = parent.insertBefore(createElementFrom(node), element)
+    element = parent.insertBefore(createElement(node), element)
   } else if (node.tag && node.tag === oldNode.tag) {
-    updateElementData(element, oldNode.data, node.data)
+    updateElement(element, oldNode.data, node.data)
 
     var len = node.children.length
     var oldLen = oldNode.children.length
@@ -80,10 +80,16 @@ export function patch(parent, element, oldNode, node) {
     }
   } else if (node !== oldNode) {
     var i = element
-    parent.replaceChild((element = createElementFrom(node)), i)
+    parent.replaceChild((element = createElement(node)), i)
   }
 
   return element
+}
+
+function getKeyFrom(node) {
+  if (node && (node = node.data)) {
+    return node.key
+  }
 }
 
 function merge(a, b) {
@@ -99,7 +105,7 @@ function merge(a, b) {
   return obj
 }
 
-function createElementFrom(node, isSVG) {
+function createElement(node, isSVG) {
   if (typeof node === "string") {
     var element = document.createTextNode(node)
   } else {
@@ -108,7 +114,7 @@ function createElementFrom(node, isSVG) {
       : document.createElement(node.tag)
 
     for (var i = 0; i < node.children.length; ) {
-      element.appendChild(createElementFrom(node.children[i++], isSVG))
+      element.appendChild(createElement(node.children[i++], isSVG))
     }
 
     for (var i in node.data) {
@@ -144,7 +150,7 @@ function setElementData(element, name, value, oldValue) {
   }
 }
 
-function updateElementData(element, oldData, data) {
+function updateElement(element, oldData, data) {
   for (var name in merge(oldData, data)) {
     var value = data[name]
     var oldValue = name === "value" || name === "checked"
@@ -159,14 +165,11 @@ function updateElementData(element, oldData, data) {
   }
 }
 
-function getKeyFrom(node) {
-  if (node && (node = node.data)) {
-    return node.key
-  }
-}
-
 function removeElement(parent, element, node) {
-  ;((node.data && node.data.onremove) || removeChild)(element, removeChild)
+  ;((node.data && node.data.onremove) || removeChild)(
+    element,
+    removeChild
+  )
   function removeChild() {
     parent.removeChild(element)
   }
