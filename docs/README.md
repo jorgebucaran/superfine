@@ -2,7 +2,7 @@
 
 - [Installation](#installation)
 - [Usage](#usage)
-- [API](/api.md)
+- [API](/docs/api.md)
 
 ## Installation
 
