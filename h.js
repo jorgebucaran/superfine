@@ -5,9 +5,8 @@ export function h(tag, data, ...stack) {
   var children = stack.reduce((p,n)=>{
     if(n != null && n !== true && n !== false) {
           if(typeof n === 'number') n = n + '';
-          var endIndex = p.length-1;
+          var endIndex = p.length - 1;
           if(typeof p[endIndex] === 'string' && typeof n === 'string') {
-              console.log(p[endIndex])
               p[endIndex] = p[endIndex]+n;
           } else {
               p.push(n);
