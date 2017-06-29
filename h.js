@@ -1,24 +1,20 @@
-export function h(tag, data) {
-  var node
-  var stack = []
-  var children = []
+export function h(tag, data, ...stack) {
+  var node;
+  var stack = flatten(stack);
 
-  for (var i = arguments.length; i-- > 2; ) {
-    stack[stack.length] = arguments[i]
-  }
-
-  while (stack.length) {
-    if (Array.isArray((node = stack.pop()))) {
-      for (var i = node.length; i--; ) {
-        stack[stack.length] = node[i]
+  var children = stack.reduce((p,n)=>{
+    if(n != null && n !== true && n !== false) {
+          if(typeof n === 'number') n = n + '';
+          var endIndex = p.length-1;
+          if(typeof p[endIndex] === 'string' && typeof n === 'string') {
+              console.log(p[endIndex])
+              p[endIndex] = p[endIndex]+n;
+          } else {
+              p.push(n);
+          }
       }
-    } else if (node != null && node !== true && node !== false) {
-      if (typeof node === "number") {
-        node = node + ""
-      }
-      children[children.length] = node
-    }
-  }
+      return p;
+  },[])
 
   return typeof tag === "string"
     ? {
@@ -27,4 +23,10 @@ export function h(tag, data) {
         children: children
       }
     : tag(data, children)
+}
+
+function flatten(arr) {
+  return arr.reduce((flat, toFlatten) => {
+    return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
+  }, []);
 }
