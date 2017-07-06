@@ -19,11 +19,12 @@
   "scripts": {
     "test": "exit 0",
     "build": "rollup --config --format umd --input index.js --name picodom --output dist/picodom.js --sourcemap",
-    "format": "prettier --semi false --write *.js"
+    "format": "prettier --semi false --write *.js *.d.ts"
   },
   "devDependencies": {
     "prettier": "~1.4.2",
     "rollup": "^0.42.0",
     "rollup-plugin-uglify": "^2.0.1"
-  }
+  },
+  "typings": "picodom.d.ts"
 }
