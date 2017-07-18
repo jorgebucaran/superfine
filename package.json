@@ -1,29 +1,34 @@
 {
   "name": "picodom",
-  "description": "1kb JavaScript Virtual DOM builder and patch algorithm.",
+  "description": "1 KB JavaScript Virtual DOM builder and patch function.",
   "version": "0.0.7",
   "main": "dist/picodom.js",
   "jsnext:main": "index.js",
   "module": "index.js",
   "license": "MIT",
   "repository": "picodom/picodom",
-  "files": [
-    "index.js",
-    "dist"
-  ],
+  "files": ["src", "dist"],
   "author": "Jorge Bucaran",
   "keywords": [
-    "hyperscript",
-    "virtual-dom"
+    "picodom",
+    "hyperapp",
+    "react",
+    "jsx",
+    "virtual dom",
+    "vdom",
+    "hyperx",
+    "hyperscript"
   ],
   "scripts": {
     "test": "exit 0",
-    "build": "rollup -cm -n picodom -f umd -i index.js -o dist/picodom.js",
-    "format": "prettier --semi false --write index.js"
+    "build": "rollup -cm -n picodom -f umd -i src/index.js -o dist/picodom.js",
+    "format": "prettier --semi false --write 'src/**/*.js'",
+    "prepublish": "npm run build",
+    "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
   },
   "devDependencies": {
-    "prettier": "~1.2.2",
-    "rollup": "^0.41.4",
+    "prettier": "~1.5.3",
+    "rollup": "^0.45.2",
     "rollup-plugin-uglify": "^2.0.1"
   }
 }
