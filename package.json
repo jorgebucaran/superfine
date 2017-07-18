@@ -3,14 +3,11 @@
   "description": "1 KB JavaScript Virtual DOM builder and patch function.",
   "version": "0.0.7",
   "main": "dist/picodom.js",
-  "jsnext:main": "index.js",
-  "module": "index.js",
+  "jsnext:main": "src/index.js",
+  "module": "src/index.js",
   "license": "MIT",
   "repository": "picodom/picodom",
-  "files": [
-    "src",
-    "dist"
-  ],
+  "files": ["src", "dist"],
   "author": "Jorge Bucaran",
   "keywords": [
     "picodom",
