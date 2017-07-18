@@ -2,10 +2,12 @@
 dist
 example*
 .gz
+coverage
 
 # Dependencies
 node_modules
 package-lock.json
+yarn.lock
 
 # Editors
 .vscode

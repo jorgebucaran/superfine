@@ -2,28 +2,11 @@
 [![Travis CI](https://img.shields.io/travis/picodom/picodom/master.svg)](https://travis-ci.org/picodom/picodom)
 [![npm](https://img.shields.io/npm/v/picodom.svg)](https://www.npmjs.org/package/picodom)
 
-Picodom is a Virtual DOM builder and patch algorithm.
-
-[Try it online](https://codepen.io/picodom/pen/QvogzJ?editors=0010)
-
-```js
-import { h, patch } from "picodom"
-
-patch(
-  document.body,
-  null,
-  null,
-  h("button", {
-    onclick: () => alert("Hello World")
-  }, "Click Here")
-)
-```
-
-Use Picodom to build your own view library and state management architecture.
+Picodom is a 1 KB Virtual DOM builder and patch function.
 
 [Try it online](https://codepen.io/picodom/pen/BRbJpG?editors=0010)
 
-```jsx
+```js
 import { h, patch } from "picodom"
 
 let element, oldNode
@@ -42,20 +25,25 @@ function view(state) {
     <div>
       <h1>{state}</h1>
       <input
-        oninput={e => render(view(e.target.value))}
-        value={state}
+        autofocus
         type="text"
+        value={state}
+        oninput={e => render(view(e.target.value))}
       />
     </div>
   )
 }
 
-render(view("Hello Picodom!"))
+render(view("Hello!"))
 ```
 
-## Documentation
+Picodom supports keyed updates & lifecycle events — all with no dependencies. Mix it with your favorite state management library and roll your own custom view framework.
 
-The documentation is located in the [/docs](/docs) directory.
+## Links
+
+- [Documentation](/docs)
+- [Twitter](https://twitter.com/picodom)
+- [/r/picodom](https://www.reddit.com/r/picodom)
 
 ## License
 
