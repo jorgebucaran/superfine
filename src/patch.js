@@ -1,8 +1,10 @@
-export function patch(parent, element, oldNode, node) {
+export function patch(root, element, oldNode, node, isSVG, lastElement) {
   if (oldNode == null) {
-    element = parent.insertBefore(createElementFrom(node), element)
-  } else if (node.tag && node.tag === oldNode.tag) {
+    element = root.insertBefore(createElement(node, isSVG), element)
+  } else if (node.tag != null && node.tag === oldNode.tag) {
     updateElementData(element, oldNode.data, node.data)
+
+    isSVG = isSVG || node.tag === "svg"
 
     var len = node.children.length
     var oldLen = oldNode.children.length
@@ -15,7 +17,7 @@ export function patch(parent, element, oldNode, node) {
       oldElements[i] = oldElement
 
       var oldChild = oldNode.children[i]
-      var oldKey = getKeyFrom(oldChild)
+      var oldKey = getKey(oldChild)
 
       if (null != oldKey) {
         reusableChildren[oldKey] = [oldElement, oldChild]
@@ -30,31 +32,31 @@ export function patch(parent, element, oldNode, node) {
       var oldChild = oldNode.children[i]
       var newChild = node.children[j]
 
-      var oldKey = getKeyFrom(oldChild)
+      var oldKey = getKey(oldChild)
       if (newKeys[oldKey]) {
         i++
         continue
       }
 
-      var newKey = getKeyFrom(newChild)
+      var newKey = getKey(newChild)
 
       var reusableChild = reusableChildren[newKey] || []
 
       if (null == newKey) {
         if (null == oldKey) {
-          patch(element, oldElement, oldChild, newChild)
+          patch(element, oldElement, oldChild, newChild, isSVG)
           j++
         }
         i++
       } else {
         if (oldKey === newKey) {
-          patch(element, reusableChild[0], reusableChild[1], newChild)
+          patch(element, reusableChild[0], reusableChild[1], newChild, isSVG)
           i++
         } else if (reusableChild[0]) {
           element.insertBefore(reusableChild[0], oldElement)
-          patch(element, reusableChild[0], reusableChild[1], newChild)
+          patch(element, reusableChild[0], reusableChild[1], newChild, isSVG)
         } else {
-          patch(element, oldElement, null, newChild)
+          patch(element, oldElement, null, newChild, isSVG)
         }
 
         j++
@@ -64,9 +66,9 @@ export function patch(parent, element, oldNode, node) {
 
     while (i < oldLen) {
       var oldChild = oldNode.children[i]
-      var oldKey = getKeyFrom(oldChild)
+      var oldKey = getKey(oldChild)
       if (null == oldKey) {
-        removeElement(element, oldElements[i], oldChild)
+        removeElement(element, oldElements[i], oldChild.data)
       }
       i++
     }
@@ -75,12 +77,15 @@ export function patch(parent, element, oldNode, node) {
       var reusableChild = reusableChildren[i]
       var reusableNode = reusableChild[1]
       if (!newKeys[reusableNode.data.key]) {
-        removeElement(element, reusableChild[0], reusableNode)
+        removeElement(element, reusableChild[0], reusableNode.data)
       }
     }
-  } else if (node !== oldNode) {
-    var i = element
-    parent.replaceChild((element = createElementFrom(node)), i)
+  } else if (
+    (lastElement = element) != null &&
+    node !== oldNode &&
+    node !== element.nodeValue
+  ) {
+    root.replaceChild((element = createElement(node, isSVG)), lastElement)
   }
 
   return element
@@ -89,13 +94,10 @@ export function patch(parent, element, oldNode, node) {
 function merge(a, b) {
   var obj = {}
 
-  if (typeof b !== "object" || Array.isArray(b)) {
-    return b
-  }
-
   for (var i in a) {
     obj[i] = a[i]
   }
+
   for (var i in b) {
     obj[i] = b[i]
   }
@@ -103,7 +105,13 @@ function merge(a, b) {
   return obj
 }
 
-function createElementFrom(node, isSVG) {
+function getKey(node) {
+  if (node && (node = node.data)) {
+    return node.key
+  }
+}
+
+function createElement(node, isSVG) {
   if (typeof node === "string") {
     var element = document.createTextNode(node)
   } else {
@@ -112,12 +120,14 @@ function createElementFrom(node, isSVG) {
       : document.createElement(node.tag)
 
     for (var i = 0; i < node.children.length; ) {
-      element.appendChild(createElementFrom(node.children[i++], isSVG))
+      element.appendChild(createElement(node.children[i++], isSVG))
     }
 
     for (var i in node.data) {
       if (i === "oncreate") {
         node.data[i](element)
+      } else if (i === "oninsert") {
+        setTimeout(node.data[i], 0, element)
       } else {
         setElementData(element, i, node.data[i])
       }
@@ -128,7 +138,14 @@ function createElementFrom(node, isSVG) {
 }
 
 function setElementData(element, name, value, oldValue) {
-  if (name === "key") {
+  if (
+    name === "key" ||
+    name === "oncreate" ||
+    name === "oninsert" ||
+    name === "onupdate" ||
+    name === "onremove"
+  ) {
+    return name
   } else if (name === "style") {
     for (var i in merge(oldValue, (value = value || {}))) {
       element.style[i] = value[i] || ""
@@ -148,30 +165,29 @@ function setElementData(element, name, value, oldValue) {
   }
 }
 
-function updateElementData(element, oldData, data) {
+function updateElementData(element, oldData, data, cb) {
   for (var name in merge(oldData, data)) {
     var value = data[name]
-    var oldValue = name === "value" || name === "checked"
-      ? element[name]
-      : oldData[name]
+    var oldValue = oldData[name]
 
-    if (name === "onupdate" && value) {
-      value(element)
-    } else if (value !== oldValue) {
-      setElementData(element, name, value, oldValue)
+    if (
+      value !== oldValue &&
+      value !== element[name] &&
+      setElementData(element, name, value, oldValue) == null
+    ) {
+      cb = data.onupdate
     }
   }
-}
 
-function getKeyFrom(node) {
-  if (node && (node = node.data)) {
-    return node.key
+  if (cb != null) {
+    cb(element)
   }
 }
 
-function removeElement(parent, element, node) {
-  ;((node.data && node.data.onremove) || removeChild)(element, removeChild)
-  function removeChild() {
-    parent.removeChild(element)
+function removeElement(root, element, data) {
+  if (data && data.onremove) {
+    data.onremove(element)
+  } else {
+    root.removeChild(element)
   }
 }
