@@ -22,7 +22,7 @@
   "scripts": {
     "test": "jest --coverage --no-cache",
     "build": "rollup -cm -n picodom -f umd -i src/index.js -o dist/picodom.js",
-    "format": "prettier --semi false --write 'src/**/*.js'",
+    "format": "prettier --semi false --write 'src/**/*.js' 'picodom.d.ts'",
     "prepublish": "npm run build",
     "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
   },
@@ -35,5 +35,6 @@
     "prettier": "~1.5.3",
     "rollup": "^0.45.2",
     "rollup-plugin-uglify": "^2.0.1"
-  }
+  },
+  "typings": "picodom.d.ts"
 }
