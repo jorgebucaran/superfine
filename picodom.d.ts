@@ -5,7 +5,7 @@ export interface VNode<Data> {
 }
 
 export interface Component<Data> {
-  (data?: D, ...children: VElement<{}>[]): VNode<D>
+  (data?: Data, ...children: VElement<{}>[]): VNode<Data>
 }
 
 export type VElement<Data> = VNode<Data> | string
