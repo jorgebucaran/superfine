@@ -25,7 +25,7 @@ You can download the minified library from a [CDN](https://unpkg.com/picodom).
 Then access the exported global.
 
 ```js
-const { h, app } = picodom
+const { h, patch } = picodom
 ```
 
 Or with npm / Yarn.
@@ -37,7 +37,7 @@ npm i <a href="https://www.npmjs.com/package/picodom">picodom</a>
 Then setup a build pipeline using a bundler, e.g., Browserify, Rollup, Webpack, etc., and import it.
 
 ```jsx
-import { h, app } from "picodom"
+import { h, patch } from "picodom"
 ```
 
 ## Reference
