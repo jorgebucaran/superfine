@@ -1,37 +1,50 @@
-import { h, app } from "../src"
+import { h, patch } from "../src"
 
 window.requestAnimationFrame = setTimeout
 
-beforeEach(() => (document.body.innerHTML = ""))
+const root = document.body
+
+beforeEach(() => (root.innerHTML = ""))
 
 const TreeTest = trees => {
   return new Promise((resolve, reject) => {
-    const NextTree = (index, up) => {
-      if (trees.length === index) {
+    const NextTree = (expectedHtml, nextHtml) => {
+      if (!expectedHtml) {
         resolve()
       }
 
       try {
-        expect(document.body.innerHTML).toBe(
-          trees[index].html.replace(/\s{2,}/g, "")
-        )
+        expect(root.innerHTML).toBe(expectedHtml.replace(/\s{2,}/g, ""))
       } catch (error) {
         reject(error)
       }
 
-      setTimeout(NextTree, 0, up(), up)
+      setTimeout(NextTree, 0, nextHtml(), nextHtml)
     }
 
-    app({
-      state: 0,
-      view: index => trees[index].tree,
-      actions: {
-        up: index => index + 1
-      },
-      events: {
-        loaded: (index, { up }) => NextTree(index, up)
+    let index = -1
+    let oldNode = null
+    let newNode = null
+    let element = null
+
+    // Test iterator
+    const nextTest = () => {
+      index += 1
+      let testData = index < trees.length ? trees[index] : null
+
+      if (testData) {
+        oldNode = newNode
+        newNode = testData.tree
+        element = patch(root, element, oldNode, newNode)
+        return testData.html
       }
-    })
+      else {
+        return null
+      }
+    }
+
+    // Begin test
+    NextTree(nextTest(), nextTest)
   })
 }
 
