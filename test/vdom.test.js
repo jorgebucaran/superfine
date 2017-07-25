@@ -1,7 +1,5 @@
 import { h, patch } from "../src"
 
-window.requestAnimationFrame = setTimeout
-
 const root = document.body
 
 beforeEach(() => (root.innerHTML = ""))
