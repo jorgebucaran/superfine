@@ -434,3 +434,30 @@ test("update element data", () =>
       html: `<div id="foo" class="baz"></div>`
     }
   ]))
+
+test("svg elements", () =>
+  TreeTest([
+    {
+      tree: h("main", { id: "html1" }, [
+        h("svg", { id: "svg1" }, [
+          h("circle", { cx: 25, cy: 25, r: 15 })
+        ]),
+        h("div", { id: "html2" })
+      ]),
+      html: `
+        <main id="html1">
+          <svg id="svg1">
+            <circle cx="25" cy="25" r="15"></circle>
+          </svg>
+          <div id="html2"></div>
+        </main>`
+    }
+  ]).then(() => {
+    let div1 = document.getElementById("html1")
+    let svgElement = document.getElementById("svg1")
+    let div2 = document.getElementById("html2")
+
+    expect(div1.namespaceURI).toBe("http://www.w3.org/1999/xhtml")
+    expect(svgElement.namespaceURI).toBe("http://www.w3.org/2000/svg")
+    expect(div2.namespaceURI).toBe("http://www.w3.org/1999/xhtml")
+  }))
