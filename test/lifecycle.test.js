@@ -1,100 +1,85 @@
-import { h, app } from "../src"
+import { h, patch } from "../src"
 
 window.requestAnimationFrame = setTimeout
 
 const getElementByTagName = tag => document.getElementsByTagName(tag)[0]
+const root = document.body
 
-beforeEach(() => (document.body.innerHTML = ""))
+beforeEach(() => (root.innerHTML = ""))
 
 test("oncreate", done => {
-  app({
-    view: () =>
-      h("div", {
-        oncreate: element => {
-          setTimeout(() => {})
+  let node = h("div", {
+    oncreate: element => {
+      setTimeout(() => {})
 
-          expect(element).not.toBe(undefined)
-          expect(getElementByTagName("div")).toBe(undefined)
+      expect(element).not.toBe(undefined)
+      expect(getElementByTagName("div")).toBe(undefined)
 
-          setTimeout(() => {
-            expect(getElementByTagName("div")).toBe(element)
-            done()
-          })
-        }
+      setTimeout(() => {
+        expect(getElementByTagName("div")).toBe(element)
+        done()
       })
+    }
   })
+
+  patch(root, null, null, node);
 })
 
 test("oninsert", done => {
-  app({
-    view: () =>
-      h("div", {
-        oninsert: element => {
-          expect(getElementByTagName("div")).toBe(element)
-          done()
-        }
-      })
+  let node = h("div", {
+    oninsert: element => {
+      expect(getElementByTagName("div")).toBe(element)
+      done()
+    }
   })
+  
+  patch(root, null, null, node);
 })
 
 test("fire onupdate if node data changes", done => {
-  app({
-    state: "foo",
-    view: state =>
-      h("div", {
-        class: state,
-        onupdate: done
-      }),
-    actions: {
-      change: state => "bar"
-    },
-    events: {
-      loaded: (state, actions) => {
-        actions.change()
-      }
-    }
+  let generateNode = state => h("div", {
+    class: state,
+    onupdate: done
   })
+
+  let state = "foo"
+  let initialNode = generateNode(state)
+  let element = patch(root, null, null, initialNode);
+
+  state = "bar"
+  let updatedNode = generateNode(state);
+  element = patch(root, element, initialNode, updatedNode)
 })
 
 test("do not fire onupdate if data does not change", () => {
-  const noop = () => {}
-
   return new Promise((resolve, reject) => {
-    app({
-      state: "foo",
-      view: state =>
-        h("div", {
-          class: state,
-          oncreate: noop,
-          onupdate: reject,
-          oninsert: noop,
-          onremove: noop
-        }),
-      actions: {
-        change: state => "foo"
-      },
-      events: {
-        loaded: (state, actions) => {
-          actions.change()
-          setTimeout(resolve, 100)
-        }
-      }
+    let generateNode = state => h("div", {
+      class: state,
+      onupdate: reject
     })
+
+    let state = "foo"
+
+    let initialNode = generateNode(state)
+    let element = patch(root, null, null, initialNode)
+    
+    let newNode = generateNode(state)
+    element = patch(root, element, initialNode, newNode)
+
+    resolve()
   })
 })
 
 test("onremove", done => {
-  app({
-    state: true,
-    view: state =>
-      state
-        ? h("ul", {}, [h("li"), h("li", { onremove: done })])
-        : h("ul", {}, [h("li")]),
-    actions: {
-      toggle: state => !state
-    },
-    events: {
-      loaded: (state, actions) => actions.toggle()
-    }
-  })
+  let generateNode = state => state
+    ? h("ul", {}, [h("li"), h("li", { onremove: done })])
+    : h("ul", {}, [h("li")])
+  
+  let state = true
+  let initialNode = generateNode(state)
+  let element = patch(root, null, null, initialNode)
+
+  state = false
+  let updatedNode = generateNode(state)
+  element = patch(root, element, initialNode, updatedNode)
 })
