@@ -7,7 +7,31 @@ const root = document.body
 
 beforeEach(() => (root.innerHTML = ""))
 
-test("oncreate", done => {
+test("all lifecycle methods are optional", () => {
+  let generateNode = state => state
+    ? h("ul", { class: state }, [h("li"), h("li")])
+    : h("ul", { class: state }, [h("li")])
+
+  // oncreate & oninsert don't throw errors if not specified
+  let state = "foo"
+  let oldNode = null
+  let newNode = generateNode(state)
+  let element = patch(root, null, oldNode, newNode)
+
+  // onupdate doesn't throw error if not specified
+  state = "bar"
+  oldNode = newNode
+  newNode = generateNode(state)
+  element = patch(root, element, oldNode, newNode)
+
+  // onremove doesn't throw error if not specified
+  state = ""
+  oldNode = newNode
+  newNode = generateNode(state)
+  element = patch(root, element, oldNode, newNode)
+})
+
+test("oncreate is called", done => {
   let node = h("div", {
     oncreate: element => {
       setTimeout(() => {})
@@ -25,18 +49,18 @@ test("oncreate", done => {
   patch(root, null, null, node);
 })
 
-test("oninsert", done => {
+test("oninsert is called", done => {
   let node = h("div", {
     oninsert: element => {
       expect(getElementByTagName("div")).toBe(element)
       done()
     }
   })
-  
+
   patch(root, null, null, node);
 })
 
-test("fire onupdate if node data changes", done => {
+test("onupdate fires if node data changes", done => {
   let generateNode = state => h("div", {
     class: state,
     onupdate: done
@@ -51,7 +75,7 @@ test("fire onupdate if node data changes", done => {
   element = patch(root, element, initialNode, updatedNode)
 })
 
-test("do not fire onupdate if data does not change", () => {
+test("onupdate does not fire if data does not change", () => {
   return new Promise((resolve, reject) => {
     let generateNode = state => h("div", {
       class: state,
@@ -62,7 +86,7 @@ test("do not fire onupdate if data does not change", () => {
 
     let initialNode = generateNode(state)
     let element = patch(root, null, null, initialNode)
-    
+
     let newNode = generateNode(state)
     element = patch(root, element, initialNode, newNode)
 
@@ -70,11 +94,11 @@ test("do not fire onupdate if data does not change", () => {
   })
 })
 
-test("onremove", done => {
+test("onremove is called", done => {
   let generateNode = state => state
     ? h("ul", {}, [h("li"), h("li", { onremove: done })])
     : h("ul", {}, [h("li")])
-  
+
   let state = true
   let initialNode = generateNode(state)
   let element = patch(root, null, null, initialNode)
@@ -82,4 +106,23 @@ test("onremove", done => {
   state = false
   let updatedNode = generateNode(state)
   element = patch(root, element, initialNode, updatedNode)
+})
+
+test("onremove doesn't remove the node if specified", () => {
+  let testId = "test"
+  let generateNode = state => state
+    ? h("ul", {}, [h("li"), h("li", { id: testId, onremove: () => null })])
+    : h("ul", {}, [h("li")])
+
+  let state = true
+  let initialNode = generateNode(state)
+  let element = patch(root, null, null, initialNode)
+
+  expect(document.getElementById(testId)).not.toEqual(null)
+
+  state = false
+  let updatedNode = generateNode(state)
+  element = patch(root, element, initialNode, updatedNode)
+
+  expect(document.getElementById(testId)).not.toBe(null)
 })
