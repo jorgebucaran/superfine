@@ -8,43 +8,37 @@ beforeEach(() => (root.innerHTML = ""))
 
 const TreeTest = trees => {
   return new Promise((resolve, reject) => {
-    const NextTree = (expectedHtml, nextHtml) => {
-      if (!expectedHtml) {
+    const NextTree = (testIterator) => {
+      let { value: expectedHtml, done } = testIterator.next()
+      if (done) {
         resolve()
+        return
       }
 
       try {
         expect(root.innerHTML).toBe(expectedHtml.replace(/\s{2,}/g, ""))
       } catch (error) {
         reject(error)
+        return
       }
 
-      setTimeout(NextTree, 0, nextHtml(), nextHtml)
+      setTimeout(NextTree, 0, testIterator)
     }
 
-    let index = -1
-    let oldNode = null
-    let newNode = null
-    let element = null
+    function* createTestIterator() {
+      let oldNode = null
+      let newNode = null
+      let element = null
 
-    // Test iterator
-    const nextTest = () => {
-      index += 1
-      let testData = index < trees.length ? trees[index] : null
-
-      if (testData) {
+      for (let { tree, html } of trees) {
         oldNode = newNode
-        newNode = testData.tree
+        newNode = tree
         element = patch(root, element, oldNode, newNode)
-        return testData.html
-      }
-      else {
-        return null
+        yield html
       }
     }
 
-    // Begin test
-    NextTree(nextTest(), nextTest)
+    NextTree(createTestIterator())
   })
 }
 
