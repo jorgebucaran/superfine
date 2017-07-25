@@ -76,10 +76,15 @@ test("onupdate fires if node data changes", done => {
 })
 
 test("onupdate does not fire if data does not change", () => {
+  const noop = () => {}
+
   return new Promise((resolve, reject) => {
     let generateNode = state => h("div", {
       class: state,
-      onupdate: reject
+      oncreate: noop,
+      onupdate: reject,
+      oninsert: noop,
+      onremove: noop
     })
 
     let state = "foo"
