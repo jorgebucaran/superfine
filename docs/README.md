@@ -92,7 +92,7 @@ patch(
 
 #### Example
 
-[Try it online](https://codepen.io/picodom/pen/QvogzJ?editors=0010)
+[Try it online](https://codepen.io/picodom/pen/QvogzJ?editors=0011)
 
 ```jsx
 import { h, patch } from "picodom"
@@ -101,7 +101,7 @@ patch(
   document.body,
   null, // element
   null, // oldNode
-  <button onclick={() => alert("Hello World")}>
+  <button onclick={() => console.log("Hello.")}>
     Click Here
   </button>
 )
