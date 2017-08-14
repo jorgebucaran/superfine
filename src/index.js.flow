@@ -5,8 +5,21 @@ declare module "picodom" {
     children: Array<VirtualNode | string>
   };
 
-  declare type VirtualComponent = (data: { [string]: any } | null, children: Array<VirtualNode | string> | VirtualNode | string) => VirtualNode;
+  declare type VirtualComponent = (
+    data: { [string]: any } | null,
+    children: Array<VirtualNode | string> | VirtualNode | string
+  ) => VirtualNode;
 
-  declare export function h(tag: VirtualComponent | string, data?: any): VirtualNode;
-  declare export function patch(oldNode: VirtualNode | null, node: VirtualNode, element: HTMLElement | null, parent: HTMLElement, cb: function): HTMLElement;
+  declare export function h(
+    tag: VirtualComponent | string,
+    data?: any
+  ): VirtualNode;
+  
+  declare export function patch(
+    oldNode: VirtualNode | null,
+    node: VirtualNode,
+    element: HTMLElement | null,
+    parent: HTMLElement,
+    cb: function
+  ): HTMLElement;
 }
