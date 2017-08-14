@@ -35,7 +35,6 @@ render(view("Hello!"))
 
 Picodom supports keyed updates & lifecycle events — all with no dependencies. Mix it with your favorite state management library and roll your own custom view framework.
 
-
 ## Installation
 
 Download the minified library from a [CDN](https://unpkg.com/picodom).
