@@ -7,10 +7,7 @@
   "module": "src/index.js",
   "license": "MIT",
   "repository": "picodom/picodom",
-  "files": [
-    "src",
-    "dist"
-  ],
+  "files": ["src", "dist"],
   "author": "Jorge Bucaran",
   "keywords": [
     "picodom",
@@ -24,7 +21,9 @@
   ],
   "scripts": {
     "test": "jest --coverage --no-cache && bundlesize",
-    "build": "rollup -cm -n picodom -f umd -i src/index.js -o dist/picodom.js",
+    "build": "npm run bundle && npm run minify",
+    "bundle": "rollup -i src/index.js -o dist/picodom.js -f umd -mn picodom",
+    "minify": "uglifyjs dist/picodom.js -o dist/picodom.js --mangle --compress warnings=false --pure-funcs=Object.defineProperty -p relative --source-map dist/picodom.js.map",
     "format": "prettier --semi false --write 'src/**/*.js' 'picodom.d.ts'",
     "prepublish": "npm run build",
     "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
@@ -38,7 +37,7 @@
     "jest": "^20.0.4",
     "prettier": "~1.5.3",
     "rollup": "^0.45.2",
-    "rollup-plugin-uglify": "^2.0.1"
+    "uglify-js": "^2.7.5"
   },
   "typings": "picodom.d.ts",
   "bundlesize": [
