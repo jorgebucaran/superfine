@@ -1,26 +1,24 @@
-export interface VNode<Data> {
+export interface VirtualNode<Data> {
   tag: string
   data?: Data
-  children: VElement<{}>[]
+  children: VirtualNode<Data> | string
 }
 
-export interface Component<Data> {
-  (data?: Data, ...children: VElement<{}>[]): VNode<Data>
+export interface VirtualComponent<Data> {
+  (data?: Data, ...children: VirtualNode<Data> | string): VirtualNode<Data>
 }
-
-export type VElement<Data> = VNode<Data> | string
 
 export function h<Data>(
-  tag: Component<Data> | string,
+  tag: VirtualComponent<Data> | string,
   data?: Data,
-  ...children: VElement<{}>[]
-): VNode<Data>
+  ...children: VirtualNode<Data> | string
+): VirtualNode<Data>
 
 export function patch(
-  parent: Element,
+  oldNode: VirtualNode<{}> | null,
+  newNode: VirtualNode<{}>,
   element: Element | null,
-  oldNode: VNode<{}> | null,
-  node: VNode<{}>
+  parent: Element | Document.body
 ): Element
 
 export as namespace picodom
