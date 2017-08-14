@@ -7,7 +7,10 @@
   "module": "src/index.js",
   "license": "MIT",
   "repository": "picodom/picodom",
-  "files": ["src", "dist"],
+  "files": [
+    "src",
+    "dist"
+  ],
   "author": "Jorge Bucaran",
   "keywords": [
     "picodom",
@@ -22,7 +25,7 @@
   "scripts": {
     "test": "jest --coverage --no-cache",
     "build": "npm run bundle && npm run minify",
-    "bundle": "rollup -i src/index.js -o dist/picodom.js -f umd -mn picodom",
+    "bundle": "rollup -c rollup.config.js",
     "minify": "uglifyjs dist/picodom.js -o dist/picodom.js --mangle --compress warnings=false --pure-funcs=Object.defineProperty -p relative --source-map dist/picodom.js.map",
     "format": "prettier --semi false --write 'src/**/*.js' 'picodom.d.ts'",
     "prepublish": "npm run build",
@@ -32,11 +35,19 @@
     "presets": "es2015"
   },
   "devDependencies": {
+    "babel-core": "^6.25.0",
+    "babel-plugin-transform-flow-strip-types": "^6.22.0",
     "babel-preset-es2015": "^6.24.1",
+    "flow-bin": "^0.52.0",
+    "flow-copy-source": "^1.2.0",
     "jest": "^20.0.4",
     "prettier": "~1.5.3",
     "rollup": "^0.45.2",
+    "rollup-plugin-babel": "^3.0.1",
     "uglify-js": "^2.7.5"
   },
-  "typings": "picodom.d.ts"
+  "typings": "picodom.d.ts",
+  "dependencies": {
+    "babel-plugin-external-helpers": "^6.22.0"
+  }
 }

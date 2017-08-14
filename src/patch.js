@@ -1,15 +1,55 @@
+// @flow
+import type { VirtualNode } from "./h"
+
 var globalInvokeLaterStack = []
 
-export default function(oldNode, node, element, parent, cb) {
+/* start helper functions for flow */
+function invariant(v: any, name: string) {
+  if (v == null) {
+    throw Error(`Unexepcted null ${name}`)
+  } else {
+    return v
+  }
+}
+
+function getIndexableElement(element: Node | Element | HTMLElement): Object {
+  var e: Object = element
+  return e // best work around I found for flow errors "Indexiable signature not found in"
+}
+/* end helper functions for flow */
+
+export default function(
+  oldNode: VirtualNode | null,
+  node: VirtualNode,
+  element: Node | Text | Element | HTMLElement | null,
+  parent: Node | Text | Element | HTMLElement | null,
+  cb: Function
+): Node | Text | Element | HTMLElement {
+  if (parent == null) {
+    invariant(document.body, "document.body")
+    parent = document.body
+  }
   element = patch(parent || document.body, element, oldNode, node)
   while ((cb = globalInvokeLaterStack.pop())) cb()
+  invariant(element, "element")
   return element
 }
 
-function patch(parent, element, oldNode, node, isSVG, nextSibling) {
+function patch(
+  parent: Node | Text | Element | HTMLElement,
+  element: Node | Text | Element | HTMLElement | null,
+  oldNode: VirtualNode | string | null,
+  node: VirtualNode | string,
+  isSVG?: boolean,
+  nextSibling?: Node | Text | Element | HTMLElement
+): Node | Text | Element | HTMLElement | null {
   if (oldNode == null) {
     element = parent.insertBefore(createElement(node, isSVG), element)
-  } else if (node.tag != null && node.tag === oldNode.tag) {
+  } else if (
+    typeof node !== "string" && // needed to satisify flow node.tag != null won't work for flow...
+    typeof oldNode !== "string" &&
+    node.tag === oldNode.tag
+  ) {
     updateElement(element, oldNode.data, node.data)
 
     isSVG = isSVG || node.tag === "svg"
@@ -20,9 +60,10 @@ function patch(parent, element, oldNode, node, isSVG, nextSibling) {
     var oldElements = []
     var keyed = {}
 
+    invariant(element, "element")
     for (var i = 0; i < oldLen; i++) {
       var oldElement = (oldElements[i] = element.childNodes[i])
-      var oldChild = oldNode.children[i]
+      var oldChild: VirtualNode | string = oldNode.children[i]
       var oldKey = getKey(oldChild)
 
       if (null != oldKey) {
@@ -30,23 +71,23 @@ function patch(parent, element, oldNode, node, isSVG, nextSibling) {
       }
     }
 
-    var i = 0
-    var j = 0
+    var i: number = 0
+    var j: number = 0
 
     while (j < len) {
       var oldElement = oldElements[i]
       var oldChild = oldNode.children[i]
       var newChild = node.children[j]
 
-      var oldKey = getKey(oldChild)
-      if (keyed[oldKey]) {
+      var oldKey: string | null = getKey(oldChild)
+      if (oldKey != null && keyed[oldKey]) {
         i++
         continue
       }
 
       var newKey = getKey(newChild)
 
-      var keyedNode = oldKeyed[newKey] || []
+      var keyedNode = newKey != null ? oldKeyed[newKey] || [] : []
 
       if (null == newKey) {
         if (null == oldKey) {
@@ -73,20 +114,20 @@ function patch(parent, element, oldNode, node, isSVG, nextSibling) {
     while (i < oldLen) {
       var oldChild = oldNode.children[i]
       var oldKey = getKey(oldChild)
-      if (null == oldKey) {
+      if (null == oldKey && typeof oldChild !== "string") {
         removeElement(element, oldElements[i], oldChild.data)
       }
       i++
     }
 
-    for (var i in oldKeyed) {
-      var keyedNode = oldKeyed[i]
+    for (var x in oldKeyed) { // var i had type conflict with number above...
+      var keyedNode = oldKeyed[x]
       var reusableNode = keyedNode[1]
       if (!keyed[reusableNode.data.key]) {
         removeElement(element, keyedNode[0], reusableNode.data)
       }
     }
-  } else if (element && node !== element.nodeValue) {
+  } else if (element && node !== element.nodeValue && typeof oldNode !== "string") {
     element = parent.insertBefore(
       createElement(node, isSVG),
       (nextSibling = element)
@@ -97,10 +138,11 @@ function patch(parent, element, oldNode, node, isSVG, nextSibling) {
   return element
 }
 
-function getKey(node) {
-  if (node && (node = node.data)) {
-    return node.key
+function getKey(node: VirtualNode | string | null): string | null {
+  if (typeof node !== "string" && node && node.data) {
+    return node.data.key
   }
+  return null
 }
 
 function merge(a, b) {
@@ -117,26 +159,27 @@ function merge(a, b) {
   return obj
 }
 
-function createElement(node, isSVG) {
+function createElement(node: string | VirtualNode, isSVG?: boolean) {
   if (typeof node === "string") {
     var element = document.createTextNode(node)
   } else {
-    var element = (isSVG = isSVG || node.tag === "svg")
-      ? document.createElementNS("http://www.w3.org/2000/svg", node.tag)
-      : document.createElement(node.tag)
+    var n: VirtualNode = node // had to add type cast to get flow to work below...
+    var element = (isSVG = isSVG || n.tag === "svg")
+      ? document.createElementNS("http://www.w3.org/2000/svg", n.tag)
+      : document.createElement(n.tag)
 
-    if (node.data && node.data.oncreate) {
+    if (n.data && n.data.oncreate) {
       globalInvokeLaterStack.push(function() {
-        node.data.oncreate(element)
+        n.data.oncreate(element)
       })
     }
 
-    for (var i in node.data) {
-      setData(element, i, node.data[i])
+    for (var i in n.data) {
+      setData(element, i, n.data[i])
     }
 
-    for (var i = 0; i < node.children.length; ) {
-      element.appendChild(createElement(node.children[i++], isSVG))
+    for (var i = 0; i < n.children.length; ) {
+      element.appendChild(createElement(n.children[i++], isSVG))
     }
   }
 
@@ -144,9 +187,11 @@ function createElement(node, isSVG) {
 }
 
 function updateElement(element, oldData, data) {
+  invariant(element, "element")
+  var e = getIndexableElement(element)
   for (var i in merge(oldData, data)) {
     var value = data[i]
-    var oldValue = i === "value" || i === "checked" ? element[i] : oldData[i]
+    var oldValue = i === "value" || i === "checked" ? e[i] : oldData[i]
 
     if (value !== oldValue) {
       setData(element, i, value, oldValue)
@@ -169,21 +214,22 @@ function removeElement(parent, element, data) {
 }
 
 function setData(element, name, value, oldValue) {
+  var e = getIndexableElement(element)
   if (name === "key") {
   } else if (name === "style") {
     for (var i in merge(oldValue, (value = value || {}))) {
-      element.style[i] = value[i] || ""
+      e.style[i] = value[i] || ""
     }
   } else {
     try {
-      element[name] = value
+      e[name] = value
     } catch (_) {}
 
     if (typeof value !== "function") {
       if (value) {
-        element.setAttribute(name, value)
+        e.setAttribute(name, value)
       } else {
-        element.removeAttribute(name)
+        e.removeAttribute(name)
       }
     }
   }
