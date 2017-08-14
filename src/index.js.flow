@@ -14,7 +14,7 @@ declare module "picodom" {
     tag: VirtualComponent | string,
     data?: any
   ): VirtualNode;
-  
+
   declare export function patch(
     oldNode: VirtualNode | null,
     node: VirtualNode,
