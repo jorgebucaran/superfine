@@ -18,7 +18,8 @@ export function patch(
   oldNode: VirtualNode<{}> | null,
   newNode: VirtualNode<{}>,
   element: Element | null,
-  parent: Element | Document.body
+  parent: Element | null
 ): Element
+
 
 export as namespace picodom
