@@ -11,7 +11,7 @@ declare module "picodom" {
   ) => VirtualNode;
 
   declare export function h(
-    tag: VirtualComponent,
+    tag: string | VirtualComponent,
     data?: any
   ): VirtualNode;
 
