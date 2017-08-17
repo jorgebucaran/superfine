@@ -1,22 +1,7 @@
-// @flow
 var i
 var stack = []
 
-export type VirtualNode = {
-  tag: string,
-  data: { [string]: any },
-  children: Array<VirtualNode | string>
-};
-
-type VirtualComponent = (
-  data: { [string]: any } | null,
-  children: Array<VirtualNode | string> | VirtualNode | string
-) => VirtualNode;
-
-export function h(
-  tag: VirtualComponent,
-  data: any
-): VirtualNode {
+export function h(tag, data) {
   var node
   var children = []
 
