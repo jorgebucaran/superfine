@@ -54,3 +54,13 @@ h(Wrapper, data, [
   h("span", { "data-attr": "child1" }),
   h("span", { "data-attr": "child2" })
 ])
+
+let element: JSX.Element;
+// The following two lines should throw a compile error since { id: "foo" } or empty doesn't match the required type TestData//
+// element = <Wrapper />
+// element = <Wrapper id="foo">bar</Wrapper>;
+element = <Wrapper {...data}><Test/></Wrapper>
+element = <Wrapper {...data}>
+  <span id="child1">Child 1</span>
+  <span id="child2">Child 2</span>
+</Wrapper>
