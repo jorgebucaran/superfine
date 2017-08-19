@@ -21,6 +21,6 @@ declare module "picodom" {
     node: VirtualNode,
     element: Node | Text | Element| HTMLElement | null,
     parent: Node | Text | Element | HTMLElement | null,
-    cb: Function
+    cb?: Function
   ): Node | Text | Element | HTMLElement;
 }
