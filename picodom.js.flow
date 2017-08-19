@@ -7,12 +7,13 @@ declare module "picodom" {
 
   declare type VirtualComponent = (
     data: { [string]: any } | null,
-    children: Array<VirtualNode | string> | VirtualNode | string
+    ...children: Array<VirtualNode | string> | VirtualNode | string
   ) => VirtualNode;
-
+  
   declare export function h(
     tag: string | VirtualComponent,
-    data?: any
+    data?: { [string]: any },
+    ...children: any | Array<any>
   ): VirtualNode;
 
   declare export function patch(
