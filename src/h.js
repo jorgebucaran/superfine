@@ -1,5 +1,10 @@
 var i
 var stack = []
+var context = null
+
+export function setContext(x) {
+  context = x
+}
 
 export function h(tag, data) {
   var node
@@ -28,5 +33,5 @@ export function h(tag, data) {
         data: data || {},
         children: children
       }
-    : tag(data, children)
+    : tag(data, children, context)
 }

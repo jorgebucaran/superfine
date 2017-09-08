@@ -1,4 +1,4 @@
-import { h } from "../src"
+import { h, setContext } from "../src"
 
 test("empty vnode", () => {
   expect(h("div")).toEqual({
@@ -98,6 +98,30 @@ test("components", () => {
         tag: "div",
         data: { id: "bar" },
         children: []
+      }
+    ]
+  })
+})
+
+test("components with context", () => {
+  const Component = (data, children, context) => {
+    return context != null ?
+      h(context.foo, data, children) :
+      h("div", data, children)
+  }
+
+  expect(h((data, children, context) => context)).toEqual(null)
+
+  setContext({ foo: "p" })
+
+  expect(h("div", {}, [h(Component, {}, "baz")])).toEqual({
+    tag: "div",
+    data: {},
+    children: [
+      {
+        tag: "p",
+        data: {},
+        children: ["baz"]
       }
     ]
   })
