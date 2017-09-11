@@ -1,4 +1,4 @@
-import { h, patch, VirtualComponent } from "../../picodom"
+import { h, VirtualComponent } from "../../"
 
 // empty vnode
 h("div")
@@ -46,7 +46,7 @@ const Wrapper: VirtualComponent<TestData> = (data, children) =>
 // because the type of `h` defines the `data` param as optional
 h(Wrapper)
 // The following line should throw a compiler error since {id: "foo"} doesn't match the required type TestData
-// h(Wrapper, { id: "foo" });
+// h(Wrapper, { id: "foo" })
 h(Test)
 h(Test, { id: "foo" }, "bar")
 h(Test, { id: "foo" }, [h(Test, { id: "bar" })])
@@ -56,9 +56,9 @@ h(Wrapper, data, [
 ])
 
 let element: JSX.Element
-// The following two lines should throw a compile error since { id: "foo" } or empty doesn't match the required type TestData//
+// The following two lines should throw a compile error since { id: "foo" } or empty doesn't match the required type TestData
 // element = <Wrapper />
-// element = <Wrapper id="foo">bar</Wrapper>;
+// element = <Wrapper id="foo">bar</Wrapper>
 element = (
   <Wrapper {...data}>
     <Test />

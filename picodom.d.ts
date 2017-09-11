@@ -24,7 +24,7 @@ export function patch(
 
 declare global {
   namespace JSX {
-    interface Element<Data = any> extends VirtualNode<Data> {}
+    interface Element extends VirtualNode<any> {}
     interface IntrinsicElements {
       [elemName: string]: any
     }
