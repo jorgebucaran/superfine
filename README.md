@@ -3,7 +3,7 @@
 [![Codecov](https://img.shields.io/codecov/c/github/picodom/picodom/master.svg)](https://codecov.io/gh/picodom/picodom)
 [![npm](https://img.shields.io/npm/v/picodom.svg)](https://www.npmjs.org/package/picodom)
 
-Picodom is a 1 KB Virtual DOM builder and patch function.
+Picodom is a 1 KB VDOM builder and patch function.
 
 [Try it Online](https://codepen.io/picodom/pen/BRbJpG?editors=0010)
 

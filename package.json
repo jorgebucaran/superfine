@@ -1,7 +1,7 @@
 {
   "name": "picodom",
-  "description": "1 KB JavaScript Virtual DOM builder and patch function.",
-  "version": "0.1.0",
+  "description": "1 KB JavaScript VDOM builder and patch function.",
+  "version": "0.2.0",
   "main": "dist/picodom.js",
   "jsnext:main": "src/index.js",
   "module": "src/index.js",
