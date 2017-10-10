@@ -9,10 +9,10 @@ export default function(oldNode, node, element, parent, cb) {
 function patch(parent, element, oldNode, node, isSVG, nextSibling) {
   if (oldNode == null) {
     element = parent.insertBefore(createElement(node, isSVG), element)
-  } else if (node.tag != null && node.tag === oldNode.tag) {
+  } else if (node.type != null && node.type === oldNode.type) {
     updateElement(element, oldNode.props, node.props)
 
-    isSVG = isSVG || node.tag === "svg"
+    isSVG = isSVG || node.type === "svg"
 
     var len = node.children.length
     var oldLen = oldNode.children.length
@@ -121,9 +121,9 @@ function createElement(node, isSVG) {
   if (typeof node === "string") {
     var element = document.createTextNode(node)
   } else {
-    var element = (isSVG = isSVG || node.tag === "svg")
-      ? document.createElementNS("http://www.w3.org/2000/svg", node.tag)
-      : document.createElement(node.tag)
+    var element = (isSVG = isSVG || node.type === "svg")
+      ? document.createElementNS("http://www.w3.org/2000/svg", node.type)
+      : document.createElement(node.type)
 
     if (node.props && node.props.oncreate) {
       globalInvokeLaterStack.push(function() {

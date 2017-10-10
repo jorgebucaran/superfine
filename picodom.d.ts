@@ -1,5 +1,5 @@
 export interface VirtualNode<Data> {
-  tag: string
+  type: string
   props?: Props
   children: VirtualNode<Props> | string
 }
@@ -9,7 +9,7 @@ export interface VirtualComponent<Props> {
 }
 
 export function h<Props>(
-  tag: VirtualComponent<Props> | string,
+  type: VirtualComponent<Props> | string,
   props?: Props,
   ...children: VirtualNode<Props> | string
 ): VirtualNode<Props>
