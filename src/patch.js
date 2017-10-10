@@ -10,7 +10,7 @@ function patch(parent, element, oldNode, node, isSVG, nextSibling) {
   if (oldNode == null) {
     element = parent.insertBefore(createElement(node, isSVG), element)
   } else if (node.tag != null && node.tag === oldNode.tag) {
-    updateElement(element, oldNode.data, node.data)
+    updateElement(element, oldNode.props, node.props)
 
     isSVG = isSVG || node.tag === "svg"
 
@@ -74,7 +74,7 @@ function patch(parent, element, oldNode, node, isSVG, nextSibling) {
       var oldChild = oldNode.children[i]
       var oldKey = getKey(oldChild)
       if (null == oldKey) {
-        removeElement(element, oldElements[i], oldChild.data)
+        removeElement(element, oldElements[i], oldChild.props)
       }
       i++
     }
@@ -82,8 +82,8 @@ function patch(parent, element, oldNode, node, isSVG, nextSibling) {
     for (var i in oldKeyed) {
       var keyedNode = oldKeyed[i]
       var reusableNode = keyedNode[1]
-      if (!keyed[reusableNode.data.key]) {
-        removeElement(element, keyedNode[0], reusableNode.data)
+      if (!keyed[reusableNode.props.key]) {
+        removeElement(element, keyedNode[0], reusableNode.props)
       }
     }
   } else if (element && node !== element.nodeValue) {
@@ -91,14 +91,14 @@ function patch(parent, element, oldNode, node, isSVG, nextSibling) {
       createElement(node, isSVG),
       (nextSibling = element)
     )
-    removeElement(parent, nextSibling, oldNode.data)
+    removeElement(parent, nextSibling, oldNode.props)
   }
 
   return element
 }
 
 function getKey(node) {
-  if (node && (node = node.data)) {
+  if (node && (node = node.props)) {
     return node.key
   }
 }
@@ -125,14 +125,14 @@ function createElement(node, isSVG) {
       ? document.createElementNS("http://www.w3.org/2000/svg", node.tag)
       : document.createElement(node.tag)
 
-    if (node.data && node.data.oncreate) {
+    if (node.props && node.props.oncreate) {
       globalInvokeLaterStack.push(function() {
-        node.data.oncreate(element)
+        node.props.oncreate(element)
       })
     }
 
-    for (var i in node.data) {
-      setData(element, i, node.data[i])
+    for (var i in node.props) {
+      setProp(element, i, node.props[i])
     }
 
     for (var i = 0; i < node.children.length; ) {
@@ -143,32 +143,32 @@ function createElement(node, isSVG) {
   return element
 }
 
-function updateElement(element, oldData, data) {
-  for (var i in merge(oldData, data)) {
-    var value = data[i]
-    var oldValue = i === "value" || i === "checked" ? element[i] : oldData[i]
+function updateElement(element, oldProps, props) {
+  for (var i in merge(oldProps, props)) {
+    var value = props[i]
+    var oldValue = i === "value" || i === "checked" ? element[i] : oldProps[i]
 
     if (value !== oldValue) {
-      setData(element, i, value, oldValue)
+      setProp(element, i, value, oldValue)
     }
   }
 
-  if (data && data.onupdate) {
+  if (props && props.onupdate) {
     globalInvokeLaterStack.push(function() {
-      data.onupdate(element, oldData)
+      props.onupdate(element, oldProps)
     })
   }
 }
 
-function removeElement(parent, element, data) {
-  if (data && data.onremove) {
-    data.onremove(element)
+function removeElement(parent, element, props) {
+  if (props && props.onremove) {
+    props.onremove(element)
   } else {
     parent.removeChild(element)
   }
 }
 
-function setData(element, name, value, oldValue) {
+function setProp(element, name, value, oldValue) {
   if (name === "key") {
   } else if (name === "style") {
     for (var i in merge(oldValue, (value = value || {}))) {

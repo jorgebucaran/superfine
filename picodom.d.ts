@@ -1,18 +1,18 @@
 export interface VirtualNode<Data> {
   tag: string
-  data?: Data
-  children: VirtualNode<Data> | string
+  props?: Props
+  children: VirtualNode<Props> | string
 }
 
-export interface VirtualComponent<Data> {
-  (data?: Data, ...children: VirtualNode<Data> | string): VirtualNode<Data>
+export interface VirtualComponent<Props> {
+  (props?: Props, ...children: VirtualNode<Props> | string): VirtualNode<Props>
 }
 
-export function h<Data>(
-  tag: VirtualComponent<Data> | string,
-  data?: Data,
-  ...children: VirtualNode<Data> | string
-): VirtualNode<Data>
+export function h<Props>(
+  tag: VirtualComponent<Props> | string,
+  props?: Props,
+  ...children: VirtualNode<Props> | string
+): VirtualNode<Props>
 
 export function patch(
   oldNode: VirtualNode<{}> | null,
@@ -20,6 +20,5 @@ export function patch(
   element: Element | null,
   parent: Element | null
 ): Element
-
 
 export as namespace picodom
