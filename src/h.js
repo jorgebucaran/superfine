@@ -28,5 +28,5 @@ export function h(type, props) {
         props: props || {},
         children: children
       }
-    : type(props, children)
+    : type(props || {}, children)
 }
