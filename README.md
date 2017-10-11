@@ -10,10 +10,10 @@ Picodom is a 1 KB VDOM builder and patch function.
 ```js
 import { h, patch } from "picodom"
 
-let element, oldNode
+let node
 
-function render(node) {
-  return element = patch(oldNode, (oldNode = node), element)
+function render(view, withState) {
+  patch(node, (node = view(withState)))
 }
 
 function view(state) {
@@ -24,85 +24,69 @@ function view(state) {
         autofocus
         type="text"
         value={state}
-        oninput={e => render(view(e.target.value))}
+        oninput={e => render(view, e.target.value)}
       />
     </div>
   )
 }
 
-render(view("Hello!"))
+render(view, "Hello!")
 ```
 
-Picodom supports keyed updates & lifecycle events — all with no dependencies. Mix it with your favorite state management library and roll your own custom view framework.
+Picodom supports keyed updates & lifecycle events — all with no dependencies. Mix it with your favorite state management library or create your own custom view framework.
 
 ## Installation
 
-Download the minified library from a [CDN](https://unpkg.com/picodom).
-
-```html
-<script src="https://unpkg.com/picodom"></script>
-```
-
-Then access the exported global.
-
-```js
-const { h, patch } = picodom
-```
-
-Or install with npm / Yarn.
+Install with npm or Yarn.
 
 <pre>
 npm i <a href="https://www.npmjs.com/package/picodom">picodom</a>
 </pre>
 
-Then build with a bundler, e.g., Browserify, Rollup, Webpack, etc., and import it.
+Then with a module bundler like [Rollup](https://github.com/rollup/rollup) or [Webpack](https://github.com/webpack/webpack), use as you would anything else.
 
 ```jsx
-import { h, patch } from "picodom"
+import { h, app } from "picodom"
 ```
 
-## API
+Or download directly from [unpkg](https://unpkg.com/picodom) or [jsDelivr](https://cdn.jsdelivr.net/npm/picodom@latest/dist/picodom.js).
 
-### h
+```html
+<script src="https://unpkg.com/picodom"></script>
+```
 
-<pre>
-h(
-  string | <a href="#virtualcomponent">VirtualComponent</a>,
-  <a href="#attributes">Attributes</a>,
-  Array&lt<a href="#virtualnode">VirtualNode</a>&gt | string
-): <a href="#virtualnode">VirtualNode</a>
-</pre>
+Then find it in `window.picodom`.
 
-### VirtualNode
+```jsx
+const { h, app } = picodom
+```
 
-<pre>
-{
-  tag: string,
-  data: <a href="#attributes">Attributes</a>,
-  children: Array&lt<a href="#virtualnode">VirtualNode</a>&gt
+We support all ES5-compliant browsers, including Internet Explorer 10 and above.
+
+## Usage
+
+Create virtual nodes with the built-in `h()` function. A virtual node is an object that describes a DOM tree.
+
+```js
+const node = h("h1", { id: "title" }, "Hello.")
+```
+
+To create a component, define a function that returns a virtual node.
+
+```js
+function AwesomeTitle(text) {
+  return h("h1", { class: "awesome title" }, text)
 }
-</pre>
+```
 
-### VirtualComponent
-
-<pre>
-(any, Array&lt<a href="#virtualnode">VirtualNode</a>&gt | string): <a href="#virtualnode">VirtualNode</a>
-</pre>
-
-### Attributes
-
-<pre>
-<a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes">HTMLAttributes</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute">SVGAttributes</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/Events">DOMEvents</a> | <a href="#virtualdomevents">VirtualDOMEvents</a>
-</pre>
-
-### VirtualDOMEvents
+### Lifecycle
 
 #### oncreate
 
 Fired after the element is created and attached to the DOM.
 
 <pre>
-<a id="oncreate-api"></a>oncreate(<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element">Element</a>): void
+<a id="oncreate-api"></a>oncreate(<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element">Element</a>)
 </pre>
 
 #### onupdate
@@ -110,28 +94,28 @@ Fired after the element is created and attached to the DOM.
 Fired after the element attributes are updated. This event will fire even if the attributes have not changed.
 
 <pre>
-<a id="onupdate-api"></a>onupdate(<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element">Element</a>, oldData: <a href="#attributes">Attributes</a>): void
+<a id="onupdate-api"></a>onupdate(<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element">Element</a>, oldProps: <a href="#attributes">Attributes</a>)
 </pre>
 
 #### onremove
-Fired before the element is removed from the DOM.
+
+Fired before the element is removed from the DOM. Return a function that takes a `remove()` function and use it to remove the element asynchronously.
 
 <pre>
-<a id="onremove-api"></a>onremove(<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element">Element</a>): void
+<a id="onremove-api"></a>onremove(<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element">Element</a>)
 </pre>
-
 
 ### patch
 
-<pre>
-patch(
-  oldNode: <a href="#virtualnode">VirtualNode</a>,
-  newNode: <a href="#virtualnode">VirtualNode</a>,
-  element: <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement">HTMLElement</a>,
-  root: <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement">HTMLElement</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/body">document.body</a>
-): <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement">HTMLElement</a>
-</pre>
+Use patch to diff two nodes and update the DOM. Patch returns the patched HTML element.
 
+```js
+const element = patch(
+  oldNode: VNode,
+  newNode,
+  container
+)
+```
 
 ## Links
 

@@ -1,12 +1,119 @@
-var globalInvokeLaterStack = []
+import { h } from "./h"
 
-export default function(oldNode, node, element, parent, cb) {
-  element = patch(parent || document.body, element, oldNode, node)
-  while ((cb = globalInvokeLaterStack.pop())) cb()
+var callbacks = []
+
+export function patch(oldNode, node, container, cb) {
+  var element = patchElement(
+    container || (container = document.body),
+    container.children[0],
+    oldNode,
+    node
+  )
+
+  while ((cb = callbacks.pop())) cb()
+
   return element
 }
 
-function patch(parent, element, oldNode, node, isSVG, nextSibling) {
+function merge(target, source) {
+  var result = {}
+
+  for (var i in target) {
+    result[i] = target[i]
+  }
+  for (var i in source) {
+    result[i] = source[i]
+  }
+
+  return result
+}
+
+function createElement(node, isSVG) {
+  if (typeof node === "string") {
+    var element = document.createTextNode(node)
+  } else {
+    var element = (isSVG = isSVG || node.type === "svg")
+      ? document.createElementNS("http://www.w3.org/2000/svg", node.type)
+      : document.createElement(node.type)
+
+    if (node.props && node.props.oncreate) {
+      callbacks.push(function() {
+        node.props.oncreate(element)
+      })
+    }
+
+    for (var i = 0; i < node.children.length; i++) {
+      element.appendChild(createElement(node.children[i], isSVG))
+    }
+
+    for (var i in node.props) {
+      setElementProp(element, i, node.props[i])
+    }
+  }
+  return element
+}
+
+function setElementProp(element, name, value, oldValue) {
+  if (name === "key") {
+  } else if (name === "style") {
+    for (var name in merge(oldValue, (value = value || {}))) {
+      element.style[name] = value[name] || ""
+    }
+  } else {
+    try {
+      element[name] = value
+    } catch (_) {}
+
+    if (typeof value !== "function") {
+      if (value) {
+        element.setAttribute(name, value)
+      } else {
+        element.removeAttribute(name)
+      }
+    }
+  }
+}
+
+function updateElement(element, oldProps, props) {
+  for (var i in merge(oldProps, props)) {
+    var value = props[i]
+    var oldValue = i === "value" || i === "checked" ? element[i] : oldProps[i]
+
+    if (value !== oldValue) {
+      value !== oldValue && setElementProp(element, i, value, oldValue)
+    }
+  }
+
+  if (props && props.onupdate) {
+    callbacks.push(function() {
+      props.onupdate(element, oldProps)
+    })
+  }
+}
+
+function removeElement(parent, element, props) {
+  if (
+    props &&
+    props.onremove &&
+    typeof (props = props.onremove(element)) === "function"
+  ) {
+    props(remove)
+  } else {
+    remove()
+  }
+
+  function remove() {
+    parent.removeChild(element)
+  }
+}
+
+function getKey(node) {
+  if (node && node.props) {
+    return node.props.key
+  }
+}
+
+function patchElement(parent, element, oldNode, node, isSVG, nextSibling) {
   if (oldNode == null) {
     element = parent.insertBefore(createElement(node, isSVG), element)
   } else if (node.type != null && node.type === oldNode.type) {
@@ -50,19 +157,19 @@ function patch(parent, element, oldNode, node, isSVG, nextSibling) {
 
       if (null == newKey) {
         if (null == oldKey) {
-          patch(element, oldElement, oldChild, newChild, isSVG)
+          patchElement(element, oldElement, oldChild, newChild, isSVG)
           j++
         }
         i++
       } else {
         if (oldKey === newKey) {
-          patch(element, keyedNode[0], keyedNode[1], newChild, isSVG)
+          patchElement(element, keyedNode[0], keyedNode[1], newChild, isSVG)
           i++
         } else if (keyedNode[0]) {
           element.insertBefore(keyedNode[0], oldElement)
-          patch(element, keyedNode[0], keyedNode[1], newChild, isSVG)
+          patchElement(element, keyedNode[0], keyedNode[1], newChild, isSVG)
         } else {
-          patch(element, oldElement, null, newChild, isSVG)
+          patchElement(element, oldElement, null, newChild, isSVG)
         }
 
         j++
@@ -87,104 +194,15 @@ function patch(parent, element, oldNode, node, isSVG, nextSibling) {
       }
     }
   } else if (element && node !== element.nodeValue) {
-    element = parent.insertBefore(
-      createElement(node, isSVG),
-      (nextSibling = element)
-    )
-    removeElement(parent, nextSibling, oldNode.props)
+    if (typeof node === "string" && typeof oldNode === "string") {
+      element.nodeValue = node
+    } else {
+      element = parent.insertBefore(
+        createElement(node, isSVG),
+        (nextSibling = element)
+      )
+      removeElement(parent, nextSibling, oldNode.props)
+    }
   }
-
   return element
-}
-
-function getKey(node) {
-  if (node && (node = node.props)) {
-    return node.key
-  }
-}
-
-function merge(a, b) {
-  var obj = {}
-
-  for (var i in a) {
-    obj[i] = a[i]
-  }
-
-  for (var i in b) {
-    obj[i] = b[i]
-  }
-
-  return obj
-}
-
-function createElement(node, isSVG) {
-  if (typeof node === "string") {
-    var element = document.createTextNode(node)
-  } else {
-    var element = (isSVG = isSVG || node.type === "svg")
-      ? document.createElementNS("http://www.w3.org/2000/svg", node.type)
-      : document.createElement(node.type)
-
-    if (node.props && node.props.oncreate) {
-      globalInvokeLaterStack.push(function() {
-        node.props.oncreate(element)
-      })
-    }
-
-    for (var i in node.props) {
-      setProp(element, i, node.props[i])
-    }
-
-    for (var i = 0; i < node.children.length; ) {
-      element.appendChild(createElement(node.children[i++], isSVG))
-    }
-  }
-
-  return element
-}
-
-function updateElement(element, oldProps, props) {
-  for (var i in merge(oldProps, props)) {
-    var value = props[i]
-    var oldValue = i === "value" || i === "checked" ? element[i] : oldProps[i]
-
-    if (value !== oldValue) {
-      setProp(element, i, value, oldValue)
-    }
-  }
-
-  if (props && props.onupdate) {
-    globalInvokeLaterStack.push(function() {
-      props.onupdate(element, oldProps)
-    })
-  }
-}
-
-function removeElement(parent, element, props) {
-  if (props && props.onremove) {
-    props.onremove(element)
-  } else {
-    parent.removeChild(element)
-  }
-}
-
-function setProp(element, name, value, oldValue) {
-  if (name === "key") {
-  } else if (name === "style") {
-    for (var i in merge(oldValue, (value = value || {}))) {
-      element.style[i] = value[i] || ""
-    }
-  } else {
-    try {
-      element[name] = value
-    } catch (_) {}
-
-    if (typeof value !== "function") {
-      if (value) {
-        element.setAttribute(name, value)
-      } else {
-        element.removeAttribute(name)
-      }
-    }
-  }
 }

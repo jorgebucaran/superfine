@@ -15,18 +15,11 @@ export function h(type, props) {
         stack.push(node[i])
       }
     } else if (node != null && node !== true && node !== false) {
-      if (typeof node === "number") {
-        node = node + ""
-      }
-      children.push(node)
+      children.push(typeof node === "number" ? (node = node + "") : node)
     }
   }
 
   return typeof type === "string"
-    ? {
-        type: type,
-        props: props || {},
-        children: children
-      }
+    ? { type: type, props: props || {}, children: children }
     : type(props || {}, children)
 }

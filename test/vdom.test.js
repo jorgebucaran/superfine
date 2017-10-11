@@ -2,10 +2,10 @@ import { h, patch } from "../src"
 
 function testTrees(name, trees) {
   test(name, done => {
-    let oldNode, element
-
+    let node
+    
     trees.forEach(tree => {
-      element = patch(oldNode, (oldNode = tree.node), element)
+      patch(node, (node = tree.node))
       expect(document.body.innerHTML).toBe(tree.html.replace(/\s{2,}/g, ""))
     })
 
@@ -651,120 +651,3 @@ testTrees("update element with dynamic props", [
     html: `<input type="text" value="foo">`
   }
 ])
-
-test("oncreate", done => {
-  patch(
-    null,
-    h(
-      "div",
-      {
-        oncreate(element) {
-          element.className = "foo"
-          expect(document.body.innerHTML).toBe(`<div class="foo">foo</div>`)
-          done()
-        }
-      },
-      "foo"
-    )
-  )
-})
-
-test("onupdate", done => {
-  var view = value =>
-    h(
-      "div",
-      {
-        class: value,
-        onupdate(element, oldProps) {
-          expect(element.textContent).toBe("foo")
-          expect(oldProps.class).toBe("foo")
-          done()
-        }
-      },
-      value
-    )
-
-  let node = view("foo")
-  let element = patch(null, node)
-
-  patch(node, node, element)
-})
-
-test("onremove", done => {
-  var view = value =>
-    value
-      ? h(
-          "ul",
-          {
-            oncreate() {
-              expect(document.body.innerHTML).toBe(
-                "<ul><li></li><li></li></ul>"
-              )
-            }
-          },
-          [
-            h("li"),
-            h("li", {
-              onremove(element) {
-                element.parentNode.removeChild(element)
-                expect(document.body.innerHTML).toBe("<ul><li></li></ul>")
-                done()
-              }
-            })
-          ]
-        )
-      : h("ul", {}, [h("li")])
-
-  let node = view(true)
-  let element = patch(null, node)
-
-  patch(node, view(false), element)
-})
-
-test("event bubling", done => {
-  var view = value =>
-    h(
-      "main",
-      {
-        oncreate() {
-          expect(count++).toBe(3)
-        },
-        onupdate() {
-          expect(count++).toBe(7)
-          done()
-        }
-      },
-      [
-        h("p", {
-          oncreate() {
-            expect(count++).toBe(2)
-          },
-          onupdate() {
-            expect(count++).toBe(6)
-          }
-        }),
-        h("p", {
-          oncreate() {
-            expect(count++).toBe(1)
-          },
-          onupdate() {
-            expect(count++).toBe(5)
-          }
-        }),
-        h("p", {
-          oncreate() {
-            expect(count++).toBe(0)
-          },
-          onupdate() {
-            expect(count++).toBe(4)
-          }
-        })
-      ]
-    )
-
-  let count = 0
-  let node = view(true)
-  let element = patch(null, node)
-
-  patch(node, view(false), element)
-})
