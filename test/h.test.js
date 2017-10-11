@@ -84,6 +84,12 @@ test("skip null and Boolean children", () => {
 test("components", () => {
   const Component = (props, children) => h("div", props, children)
 
+  expect(h(Component, null, "foo")).toEqual({
+    type: "div",
+    props: {},
+    children: ["foo"]
+  })
+
   expect(h(Component, { id: "foo" }, "bar")).toEqual({
     type: "div",
     props: { id: "foo" },

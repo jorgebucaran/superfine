@@ -1,7 +1,7 @@
 {
   "name": "picodom",
   "description": "1 KB JavaScript VDOM builder and patch function.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "main": "dist/picodom.js",
   "jsnext:main": "src/index.js",
   "module": "src/index.js",
@@ -11,12 +11,8 @@
   "author": "Jorge Bucaran",
   "keywords": [
     "picodom",
-    "hyperapp",
-    "react",
-    "jsx",
-    "virtual dom",
     "vdom",
-    "hyperx",
+    "virtualdom",
     "hyperscript"
   ],
   "scripts": {
@@ -25,17 +21,17 @@
     "bundle": "rollup -i src/index.js -o dist/picodom.js -f umd -mn picodom",
     "minify": "uglifyjs dist/picodom.js -o dist/picodom.js --mangle --compress warnings=false --pure-funcs=Object.defineProperty -p relative --source-map dist/picodom.js.map",
     "format": "prettier --semi false --write 'src/**/*.js' 'picodom.d.ts'",
-    "prepublish": "npm run build",
+    "prepare": "npm run build",
     "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
   },
   "babel": {
-    "presets": "es2015"
+    "presets": "env"
   },
   "devDependencies": {
-    "babel-preset-es2015": "^6.24.1",
-    "jest": "^20.0.4",
-    "prettier": "~1.5.3",
-    "rollup": "^0.45.2",
+    "babel-preset-env": "^1.6.0",
+    "jest": "^21.2.1",
+    "prettier": "~1.7.4",
+    "rollup": "^0.50.0",
     "uglify-js": "^2.7.5"
   },
   "typings": "picodom.d.ts"
