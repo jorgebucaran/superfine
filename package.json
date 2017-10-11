@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "test": "jest --coverage --no-cache",
-    "build": "npm run bundle && npm run minify",
+    "build": "npm run bundle && npm run minify && cp picodom.js.flow dist/",
     "bundle": "rollup -i src/index.js -o dist/picodom.js -f umd -mn picodom",
     "minify": "uglifyjs dist/picodom.js -o dist/picodom.js --mangle --compress warnings=false --pure-funcs=Object.defineProperty -p relative --source-map dist/picodom.js.map",
     "format": "prettier --semi false --write 'src/**/*.js' 'picodom.d.ts'",
