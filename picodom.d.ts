@@ -6,8 +6,8 @@ export interface VNode<Props> {
   children: Array<VNode<{}> | string>
 }
 
-export interface Component<Props> {
-  (props?: Props, children: Array<VNode<{}> | string>): VNode<Props>
+export interface Component<Props = {}> {
+  (props: Props, children: Array<VNode<{}> | string>): VNode<Props>
 }
 
 export function h<Props>(
@@ -15,7 +15,6 @@ export function h<Props>(
   props?: Props,
   ...children: Array<VNode<{}> | string | number>
 ): VNode<Props>
-
 
 export function h<Props>(
   tag: Component<Props> | string,
@@ -26,7 +25,7 @@ export function h<Props>(
 export function patch(
   oldNode: VNode<{}> | null,
   newNode: VNode<{}>,
-  container: HTMLElement = document.body
+  container?: HTMLElement
 ): Element
 
 declare global {
@@ -37,4 +36,3 @@ declare global {
     }
   }
 }
-
