@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "lib": [
+            "es5",
+            "dom"
+        ],
+        "strict": true,
+        "types": [],
+        "forceConsistentCasingInFileNames": true,
+        "jsx": "react",
+        "jsxFactory": "h"
+    }
+}

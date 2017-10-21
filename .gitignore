@@ -3,6 +3,7 @@ dist
 example*
 .gz
 coverage
+test/typings/**/*.js
 
 # Dependencies
 node_modules
