@@ -113,24 +113,24 @@ test("components", () => {
     h("span", { id: "child1" }),
     h("span", { id: "child2" })
   ])).toEqual({
-    tag: "div",
-    data: { id: "foo" },
+    type: "div",
+    props: { id: "foo" },
     children: [
       {
-        tag: "div",
-        data: {},
+        type: "div",
+        props: {},
         children: [{ 
-          tag: "span", 
-          data: { id: "child1" }, 
+          type: "span", 
+          props: { id: "child1" }, 
           children: [] 
         }]
       },
       {
-        tag: "div",
-        data: {},
+        type: "div",
+        props: {},
         children: [{ 
-          tag: "span", 
-          data: { id: "child2" }, 
+          type: "span", 
+          props: { id: "child2" }, 
           children: [] 
         }]
       }

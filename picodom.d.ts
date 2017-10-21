@@ -1,6 +1,6 @@
 export as namespace picodom
 
-export interface VNode<Data> {
+export interface VNode<Props> {
   type: string
   props?: Props
   children: Array<VNode<{}> | string>
@@ -16,6 +16,13 @@ export function h<Props>(
   ...children: Array<VNode<{}> | string | number>
 ): VNode<Props>
 
+
+export function h<Props>(
+  tag: Component<Props> | string,
+  data?: Props,
+  children?: Array<VNode<{}> | string | number>
+): VNode<Props>
+
 export function patch(
   oldNode: VNode<{}> | null,
   newNode: VNode<{}>,
@@ -24,7 +31,7 @@ export function patch(
 
 declare global {
   namespace JSX {
-    interface Element extends VirtualNode<any> {}
+    interface Element extends VNode<any> {}
     interface IntrinsicElements {
       [elemName: string]: any
     }
