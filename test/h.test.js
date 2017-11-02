@@ -83,7 +83,8 @@ test("skip null and Boolean children", () => {
 
 test("components", () => {
   const Component = (props, children) => h("div", props, children)
-  const Wrapper = (data, children) => h("div", data, children.map(vn => h(Component, null, vn)))
+  const Wrapper = (data, children) =>
+    h("div", data, children.map(vn => h(Component, null, vn)))
 
   expect(h(Component, null, "foo")).toEqual({
     type: "div",
@@ -109,30 +110,36 @@ test("components", () => {
     ]
   })
 
-  expect(h(Wrapper, { id: "foo" }, [
-    h("span", { id: "child1" }),
-    h("span", { id: "child2" })
-  ])).toEqual({
+  expect(
+    h(Wrapper, { id: "foo" }, [
+      h("span", { id: "child1" }),
+      h("span", { id: "child2" })
+    ])
+  ).toEqual({
     type: "div",
     props: { id: "foo" },
     children: [
       {
         type: "div",
         props: {},
-        children: [{ 
-          type: "span", 
-          props: { id: "child1" }, 
-          children: [] 
-        }]
+        children: [
+          {
+            type: "span",
+            props: { id: "child1" },
+            children: []
+          }
+        ]
       },
       {
         type: "div",
         props: {},
-        children: [{ 
-          type: "span", 
-          props: { id: "child2" }, 
-          children: [] 
-        }]
+        children: [
+          {
+            type: "span",
+            props: { id: "child2" },
+            children: []
+          }
+        ]
       }
     ]
   })

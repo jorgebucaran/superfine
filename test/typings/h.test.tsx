@@ -40,8 +40,7 @@ h("div", props, "baz")
 // h("div", {}, false)
 
 // component tests
-const Test: Component<any> = (props, children) =>
-  h("div", props, children)
+const Test: Component<any> = (props, children) => h("div", props, children)
 const Wrapper: Component<TestProps> = (props, children) =>
   h("div", props, children.map(vn => h(Test, null, vn)))
 
