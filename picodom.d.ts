@@ -13,13 +13,13 @@ export interface Component<Props = {}> {
 export function h<Props>(
   type: Component<Props> | string,
   props?: Props,
-  ...children: Array<VNode<{}> | string | number>
+  ...children: Array<VNode<{}> | string | number | null>
 ): VNode<Props>
 
 export function h<Props>(
   tag: Component<Props> | string,
   data?: Props,
-  children?: Array<VNode<{}> | string | number>
+  children?: Array<VNode<{}> | string | number | null>
 ): VNode<Props>
 
 export function patch(
