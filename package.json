@@ -7,7 +7,11 @@
   "module": "src/index.js",
   "license": "MIT",
   "repository": "picodom/picodom",
-  "files": ["src", "dist"],
+  "files": [
+    "src",
+    "dist",
+    "picodom.d.ts"
+  ],
   "author": "Jorge Bucaran",
   "keywords": [
     "picodom",
@@ -16,7 +20,7 @@
     "hyperscript"
   ],
   "scripts": {
-    "test": "jest --coverage --no-cache",
+    "test": "jest --coverage --no-cache && tsc -p test/typings/tsconfig.json",
     "build": "npm run bundle && npm run minify",
     "bundle": "rollup -i src/index.js -o dist/picodom.js -f umd -mn picodom",
     "minify": "uglifyjs dist/picodom.js -o dist/picodom.js --mangle --compress warnings=false --pure-funcs=Object.defineProperty -p relative --source-map dist/picodom.js.map",
@@ -32,6 +36,7 @@
     "jest": "^21.2.1",
     "prettier": "~1.7.4",
     "rollup": "^0.50.0",
+    "typescript": "^2.5.3",
     "uglify-js": "^2.7.5"
   },
   "typings": "picodom.d.ts"
