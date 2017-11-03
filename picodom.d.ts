@@ -18,7 +18,7 @@ export function h<Props>(
 
 export function h<Props>(
   tag: Component<Props> | string,
-  data?: Props,
+  props?: Props,
   children?: Array<VNode<{}> | string | number | null>
 ): VNode<Props>
 
