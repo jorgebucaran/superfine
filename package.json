@@ -1,7 +1,7 @@
 {
   "name": "picodom",
   "description": "1 KB JavaScript VDOM builder and patch function.",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "dist/picodom.js",
   "jsnext:main": "src/index.js",
   "module": "src/index.js",
@@ -15,15 +15,13 @@
   "author": "Jorge Bucaran",
   "keywords": [
     "picodom",
-    "vdom",
-    "virtualdom",
-    "hyperscript"
+    "vdom"
   ],
   "scripts": {
     "test": "jest --coverage --no-cache && tsc -p test/typings/tsconfig.json",
     "build": "npm run bundle && npm run minify",
     "bundle": "rollup -i src/index.js -o dist/picodom.js -f umd -mn picodom",
-    "minify": "uglifyjs dist/picodom.js -o dist/picodom.js --mangle --compress warnings=false --pure-funcs=Object.defineProperty -p relative --in-source-map dist/picodom.js.map",
+    "minify": "uglifyjs dist/picodom.js -o dist/picodom.js --mangle --compress warnings=false --pure-funcs=Object.defineProperty -p relative --in-source-map dist/picodom.js.map --source-map dist/picodom.js.map",
     "format": "prettier --semi false --write 'src/**/*.js' 'picodom.d.ts'",
     "prepare": "npm run build",
     "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
