@@ -80,7 +80,7 @@ function updateElement(element, oldProps, props) {
     var oldValue = i === "value" || i === "checked" ? element[i] : oldProps[i]
 
     if (value !== oldValue) {
-      value !== oldValue && setElementProp(element, i, value, oldValue)
+      setElementProp(element, i, value, oldValue)
     }
   }
 
