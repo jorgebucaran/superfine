@@ -1,11 +1,9 @@
-var i
-var stack = []
-
 export function h(type, props) {
   var node
+  var stack = []
   var children = []
 
-  for (i = arguments.length; i-- > 2; ) {
+  for (var i = arguments.length; i-- > 2; ) {
     stack.push(arguments[i])
   }
 
@@ -20,6 +18,10 @@ export function h(type, props) {
   }
 
   return typeof type === "string"
-    ? { type: type, props: props || {}, children: children }
+    ? {
+        type: type,
+        props: props || {},
+        children: children
+      }
     : type(props || {}, children)
 }
