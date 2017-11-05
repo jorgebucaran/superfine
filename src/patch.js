@@ -1,5 +1,3 @@
-import { h } from "./h"
-
 var callbacks = []
 
 export function patch(oldNode, node, container) {
@@ -9,7 +7,7 @@ export function patch(oldNode, node, container) {
     oldNode,
     node
   )
-  
+
   for (var cb; (cb = callbacks.pop()); cb()) {}
 
   return element
