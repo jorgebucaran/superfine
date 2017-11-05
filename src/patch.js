@@ -2,15 +2,15 @@ import { h } from "./h"
 
 var callbacks = []
 
-export function patch(oldNode, node, container, cb) {
+export function patch(oldNode, node, container) {
   var element = patchElement(
     container || (container = document.body),
     container.children[0],
     oldNode,
     node
   )
-
-  while ((cb = callbacks.pop())) cb()
+  
+  for (var cb; (cb = callbacks.pop()); cb()) {}
 
   return element
 }
