@@ -5,7 +5,7 @@ function testTrees(name, trees) {
     let node
     
     trees.forEach(tree => {
-      patch(node, (node = tree.node))
+      patch(node, (node = tree.node), document.body)
       expect(document.body.innerHTML).toBe(tree.html.replace(/\s{2,}/g, ""))
     })
 

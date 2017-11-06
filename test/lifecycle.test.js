@@ -17,7 +17,8 @@ test("oncreate", done => {
         }
       },
       "foo"
-    )
+    ),
+    document.body
   )
 })
 
@@ -38,8 +39,8 @@ test("onupdate", done => {
 
   let node = view("foo")
 
-  patch(null, node)
-  patch(node, node)
+  patch(null, node, document.body)
+  patch(node, node, document.body)
 })
 
 test("onremove", done => {
@@ -73,8 +74,8 @@ test("onremove", done => {
       : h("ul", {}, [h("li")])
 
   let node = view(true)
-  patch(null, node)
-  patch(node, view(false))
+  patch(null, node, document.body)
+  patch(node, view(false), document.body)
 })
 
 test("event bubling", done => {
@@ -121,6 +122,6 @@ test("event bubling", done => {
   let count = 0
   let node = view(true)
 
-  patch(null, node)
-  patch(node, view(false))
+  patch(null, node, document.body)
+  patch(node, view(false), document.body)
 })

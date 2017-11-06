@@ -2,7 +2,7 @@ var callbacks = []
 
 export function patch(oldNode, node, container) {
   var element = patchElement(
-    container || (container = document.body),
+    container,
     container.children[0],
     oldNode,
     node

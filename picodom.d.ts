@@ -25,7 +25,7 @@ export function h<Props>(
 export function patch(
   oldNode: VNode<{}> | null,
   newNode: VNode<{}>,
-  container?: HTMLElement
+  container: HTMLElement
 ): Element
 
 declare global {
