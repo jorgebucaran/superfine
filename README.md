@@ -13,7 +13,7 @@ import { h, patch } from "picodom"
 let node
 
 function render(view, withState) {
-  patch(node, (node = view(withState)))
+  patch(document.body, node, (node = view(withState)))
 }
 
 function view(state) {
@@ -107,13 +107,13 @@ Fired before the element is removed from the DOM. Return a function that takes a
 
 ### patch
 
-Use patch to diff two nodes and update the DOM. Patch returns the patched HTML element.
+Use `patch` to diff two nodes and update the DOM. `patch` returns the patched child element.
 
 ```js
 const element = patch(
-  oldNode: VNode,
-  newNode,
-  container
+  parent,  // parent HTMLElement to be patched
+  oldNode, // the old VNode
+  newNode  // the new VNode
 )
 ```
 

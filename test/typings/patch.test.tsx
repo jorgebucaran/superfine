@@ -10,8 +10,8 @@ const view: View = value => <App>{value}</App>
 let oldNode: VNode<any> | null = null
 let newNode: VNode<any> = view("foo")
 
-patch(oldNode, (oldNode = newNode))
+patch(document.body, oldNode, (oldNode = newNode))
 
 newNode = view("bar")
 
-patch(oldNode, (oldNode = newNode))
+patch(document.body, oldNode, (oldNode = newNode))
