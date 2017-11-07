@@ -44,5 +44,5 @@ test("svg", done => {
     ]
   )
 
-  patch(null, node)
+  patch(document.body, null, node)
 })

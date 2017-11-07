@@ -1,11 +1,11 @@
 var callbacks = []
 
-export function patch(oldNode, node, container) {
+export function patch(parent, oldNode, newNode) {
   var element = patchElement(
-    container || (container = document.body),
-    container.children[0],
+    parent,
+    parent.children[0],
     oldNode,
-    node
+    newNode
   )
 
   for (var cb; (cb = callbacks.pop()); cb()) {}

@@ -6,6 +6,7 @@ beforeEach(() => {
 
 test("oncreate", done => {
   patch(
+    document.body,
     null,
     h(
       "div",
@@ -38,8 +39,8 @@ test("onupdate", done => {
 
   let node = view("foo")
 
-  patch(null, node)
-  patch(node, node)
+  patch(document.body, null, node)
+  patch(document.body, node, node)
 })
 
 test("onremove", done => {
@@ -73,8 +74,8 @@ test("onremove", done => {
       : h("ul", {}, [h("li")])
 
   let node = view(true)
-  patch(null, node)
-  patch(node, view(false))
+  patch(document.body, null, node)
+  patch(document.body, node, view(false))
 })
 
 test("event bubling", done => {
@@ -121,6 +122,6 @@ test("event bubling", done => {
   let count = 0
   let node = view(true)
 
-  patch(null, node)
-  patch(node, view(false))
+  patch(document.body, null, node)
+  patch(document.body, node, view(false))
 })
