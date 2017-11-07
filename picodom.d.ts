@@ -23,9 +23,9 @@ export function h<Props>(
 ): VNode<Props>
 
 export function patch(
+  parent: HTMLElement,
   oldNode: VNode<{}> | null,
-  newNode: VNode<{}>,
-  container: HTMLElement
+  newNode: VNode<{}>
 ): Element
 
 declare global {
