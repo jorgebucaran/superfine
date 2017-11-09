@@ -591,9 +591,17 @@ testTrees("styles", [
     html: `<div style="color: blue; float: left;"></div>`
   },
   {
+    node: h("div", { style: { opacity: 1 } }),
+    html: `<div style="opacity: 1;"></div>`
+  },
+  {
+    node: h("div", { style: { opacity: 0 } }),
+    html: `<div style="opacity: 0;"></div>`
+  },
+  {
     node: h("div"),
     html: `<div style=""></div>`
-  }
+  },
 ])
 
 testTrees("update element data", [
