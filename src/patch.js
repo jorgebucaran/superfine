@@ -55,7 +55,7 @@ function setElementProp(element, name, value, oldValue) {
   if (name === "key") {
   } else if (name === "style") {
     for (var name in merge(oldValue, (value = value || {}))) {
-      element.style[name] = value[name] || ""
+      element.style[name] = value[name] != null ? value[name] : ""
     }
   } else {
     try {
