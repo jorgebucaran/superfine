@@ -59,7 +59,7 @@ function setElementProp(element, name, value, oldValue) {
     }
   } else {
     try {
-      element[name] = value
+      element[name] = null == value ? "" : value
     } catch (_) {}
 
     if (typeof value !== "function") {
