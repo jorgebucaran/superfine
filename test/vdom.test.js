@@ -601,7 +601,7 @@ testTrees("styles", [
   {
     node: h("div"),
     html: `<div style=""></div>`
-  },
+  }
 ])
 
 testTrees("update element data", [
@@ -703,5 +703,4 @@ testTrees("elements with falsy values", [
     }),
     html: `<input type="text">`
   }
-
-]);
+])
