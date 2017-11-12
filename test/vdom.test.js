@@ -3,7 +3,7 @@ import { h, patch } from "../src"
 function testTrees(name, trees) {
   test(name, done => {
     let node
-    
+
     trees.forEach(tree => {
       patch(document.body, node, (node = tree.node))
       expect(document.body.innerHTML).toBe(tree.html.replace(/\s{2,}/g, ""))
@@ -659,3 +659,49 @@ testTrees("update element with dynamic props", [
     html: `<input type="text" value="foo">`
   }
 ])
+
+testTrees("elements with falsey values", [
+  {
+    node: h("input", {
+      type: "text",
+      value: ""
+    }),
+    html: `<input type="text" value="">`
+  },
+  {
+    node: h("input", {
+      type: "text",
+      value: "0"
+    }),
+    html: `<input type="text" value="0">`
+  },
+  {
+    node: h("input", {
+      type: "text",
+      value: 0
+    }),
+    html: `<input type="text" value="0">`
+  },
+  {
+    node: h("input", {
+      type: "text",
+      value: null
+    }),
+    html: `<input type="text">`
+  },
+  {
+    node: h("input", {
+      type: "text",
+      value: false
+    }),
+    html: `<input type="text">`
+  },
+  {
+    node: h("input", {
+      type: "text",
+      value: undefined
+    }),
+    html: `<input type="text">`
+  }
+
+]);
