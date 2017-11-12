@@ -660,7 +660,7 @@ testTrees("update element with dynamic props", [
   }
 ])
 
-testTrees("elements with falsey values", [
+testTrees("elements with falsy values", [
   {
     node: h("input", {
       type: "text",
