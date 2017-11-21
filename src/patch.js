@@ -59,14 +59,14 @@ function setElementProp(element, name, value, oldValue) {
     }
   } else {
     try {
-      element[name] = value
+      element[name] = null == value ? "" : value
     } catch (_) {}
 
     if (typeof value !== "function") {
-      if (value) {
-        element.setAttribute(name, value)
-      } else {
+      if (null == value || false === value) {
         element.removeAttribute(name)
+      } else {
+        element.setAttribute(name, value === true ? "" : value)
       }
     }
   }
