@@ -57,6 +57,12 @@ function setElementProp(element, name, value, oldValue) {
     for (var name in merge(oldValue, (value = value || {}))) {
       element.style[name] = value[name] != null ? value[name] : ""
     }
+  } else if (name === "class" && typeof value === "object") {
+    let classNames = value.constructor == Object
+      ? Object.keys(value).filter(function(className) { return value[className] })
+      : value // assumes Array
+
+    element.setAttribute(name, classNames.join(" "))
   } else {
     try {
       element[name] = null == value ? "" : value
