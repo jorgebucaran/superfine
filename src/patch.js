@@ -66,7 +66,7 @@ function setElementProp(element, name, value, oldValue) {
       if (null == value || false === value) {
         element.removeAttribute(name)
       } else {
-        element.setAttribute(name, value)
+        element.setAttribute(name, value === true ? "" : value)
       }
     }
   }
