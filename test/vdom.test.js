@@ -604,6 +604,17 @@ testTrees("styles", [
   }
 ])
 
+testTrees("class names", [
+  {
+    node: h("div", { class: { foo: true, bar: true, qux: false } }),
+    html: `<div class="foo bar"></div>`
+  },
+  {
+    node: h("div", { class: ["foo", "bar"] }),
+    html: `<div class="foo bar"></div>`
+  }
+])
+
 testTrees("update element data", [
   {
     node: h("div", { id: "foo", class: "bar" }),
