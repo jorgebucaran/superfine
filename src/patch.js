@@ -58,11 +58,15 @@ function setElementProp(element, name, value, oldValue) {
       element.style[name] = value[name] != null ? value[name] : ""
     }
   } else {
-    try {
-      element[name] = null == value ? "" : value
-    } catch (_) {}
+    if (name in element) {
+      try {
+        element[name] = value == null ? "" : value
+      } catch (_) { }
 
-    if (typeof value !== "function") {
+      if (null == value || false === value) {
+        element.removeAttribute(name)
+      }
+    } else if (typeof value !== "function") {
       if (null == value || false === value) {
         element.removeAttribute(name)
       } else {
