@@ -58,20 +58,18 @@ function setElementProp(element, name, value, oldValue) {
       element.style[name] = value[name] != null ? value[name] : ""
     }
   } else {
+    let empty = null == value || false === value
+
     if (name in element) {
       try {
         element[name] = value == null ? "" : value
       } catch (_) { }
-
-      if (null == value || false === value) {
-        element.removeAttribute(name)
-      }
-    } else if (typeof value !== "function") {
-      if (null == value || false === value) {
-        element.removeAttribute(name)
-      } else {
-        element.setAttribute(name, value === true ? "" : value)
-      }
+    } else if (!empty && typeof value !== "function") {
+      element.setAttribute(name, value === true ? "" : value)
+    }
+    
+    if (empty) {
+      element.removeAttribute(name)
     }
   }
 }
