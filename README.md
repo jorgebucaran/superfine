@@ -46,7 +46,7 @@ npm i <a href="https://www.npmjs.com/package/picodom">picodom</a>
 Then with a module bundler like [Rollup](https://github.com/rollup/rollup) or [Webpack](https://github.com/webpack/webpack), use as you would anything else.
 
 ```jsx
-import { h, app } from "picodom"
+import { h, patch } from "picodom"
 ```
 
 Or download directly from [unpkg](https://unpkg.com/picodom) or [jsDelivr](https://cdn.jsdelivr.net/npm/picodom@latest/dist/picodom.js).
@@ -58,7 +58,7 @@ Or download directly from [unpkg](https://unpkg.com/picodom) or [jsDelivr](https
 Then find it in `window.picodom`.
 
 ```jsx
-const { h, app } = picodom
+const { h, patch } = picodom
 ```
 
 We support all ES5-compliant browsers, including Internet Explorer 10 and above.
