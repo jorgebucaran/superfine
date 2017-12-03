@@ -12,8 +12,8 @@ import { h, patch } from "picodom"
 
 let node
 
-function render(view, withState) {
-  patch(document.body, node, (node = view(withState)))
+function render(view, state) {
+  patch(document.body, node, (node = view(state)))
 }
 
 function view(state) {
@@ -111,7 +111,7 @@ Use `patch` to diff two nodes and update the DOM. `patch` returns the patched ch
 
 ```js
 const element = patch(
-  parent,  // parent HTMLElement to be patched
+  parent,  // HTML container, e.g., document.body
   oldNode, // the old VNode
   newNode  // the new VNode
 )
