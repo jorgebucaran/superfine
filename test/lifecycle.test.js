@@ -44,38 +44,56 @@ test("onupdate", done => {
 })
 
 test("onremove", done => {
+  var _remove
   var view = value =>
     value
       ? h(
           "ul",
-          {
-            oncreate() {
-              expect(document.body.innerHTML).toBe(
-                "<ul><li></li><li></li></ul>"
-              )
-            }
-          },
+          {},
           [
-            h("li"),
+            h("li", { id: "a", key: "a" }),
             h("li", {
+              id: "b",
+              key: "b",
               onremove(element) {
                 expect(document.body.innerHTML).toBe(
-                  "<ul><li></li><li></li></ul>"
+                  '<ul><li id="a"></li><li id="b"></li><li id="c"></li></ul>'
                 )
                 return remove => {
-                  remove()
-                  expect(document.body.innerHTML).toBe("<ul><li></li></ul>")
-                  done()
+                  _remove = remove // deferred pending assertions below
                 }
               }
-            })
+            }),
+            h("li", { id: "c", key: "c" })
           ]
         )
-      : h("ul", {}, [h("li")])
+      : h(
+        "ul",
+        {},
+        [
+          h("li", { id: "a", key: "a" }),
+          h("li", { id: "c", key: "c" })
+        ]
+      )
+
+  const contents_before_removal = '<ul><li id="a"></li><li id="b"></li><li id="c"></li></ul>'
+  const contents_after_removal = '<ul><li id="a"></li><li id="c"></li></ul>'
 
   let node = view(true)
+
   patch(document.body, null, node)
+
+  expect(document.body.innerHTML).toBe(contents_before_removal)
+
   patch(document.body, node, view(false))
+
+  expect(document.body.innerHTML).toBe(contents_before_removal)
+
+  _remove() // completes deferred removal
+  
+  expect(document.body.innerHTML).toBe(contents_after_removal)
+
+  done()
 })
 
 test("event bubling", done => {
