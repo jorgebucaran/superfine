@@ -56,9 +56,6 @@ test("onremove", done => {
             id: "b",
             key: "b",
             onremove(element) {
-              expect(document.body.innerHTML).toBe(
-                '<ul><li id="a"></li><li id="b"></li><li id="c"></li></ul>'
-              )
               return remove => {
                 _remove = remove // deferred pending assertions below
               }
@@ -71,7 +68,7 @@ test("onremove", done => {
 
   const contents_before_removal = '<ul><li id="a"></li><li id="b"></li><li id="c"></li></ul>'
   const contents_after_removal = '<ul><li id="a"></li><li id="c"></li></ul>'
-
+  
   let node = view(true)
 
   patch(document.body, null, node)
