@@ -46,35 +46,28 @@ test("onupdate", done => {
 test("onremove", done => {
   var _remove
   var view = value =>
-    value
-      ? h(
-          "ul",
-          {},
-          [
-            h("li", { id: "a", key: "a" }),
-            h("li", {
-              id: "b",
-              key: "b",
-              onremove(element) {
-                expect(document.body.innerHTML).toBe(
-                  '<ul><li id="a"></li><li id="b"></li><li id="c"></li></ul>'
-                )
-                return remove => {
-                  _remove = remove // deferred pending assertions below
-                }
+    h(
+      "ul",
+      {},
+      [
+        h("li", { id: "a", key: "a" }),
+        value
+          ? h("li", {
+            id: "b",
+            key: "b",
+            onremove(element) {
+              expect(document.body.innerHTML).toBe(
+                '<ul><li id="a"></li><li id="b"></li><li id="c"></li></ul>'
+              )
+              return remove => {
+                _remove = remove // deferred pending assertions below
               }
-            }),
-            h("li", { id: "c", key: "c" })
-          ]
-        )
-      : h(
-        "ul",
-        {},
-        [
-          h("li", { id: "a", key: "a" }),
-          h("li", { id: "c", key: "c" })
-        ]
-      )
+            }
+          })
+          : null,
+        h("li", { id: "c", key: "c" })
+      ]
+    )
 
   const contents_before_removal = '<ul><li id="a"></li><li id="b"></li><li id="c"></li></ul>'
   const contents_after_removal = '<ul><li id="a"></li><li id="c"></li></ul>'
