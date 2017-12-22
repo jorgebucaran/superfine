@@ -53,7 +53,7 @@ function setElementProp(element, name, value, oldValue) {
       element.style[i] = value[i] != null ? value[i] : ""
     }
   } else {
-    let empty = null == value || false === value
+    var empty = null == value || false === value
 
     if (name in element) {
       try {
