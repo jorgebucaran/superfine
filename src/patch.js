@@ -8,28 +8,51 @@ export function patch(parent, oldNode, newNode) {
   return element
 }
 
-function merge(target, source) {
-  var result = {}
+function copy(target, source) {
+  var obj = {}
 
-  for (var i in target) {
-    result[i] = target[i]
-  }
-  for (var i in source) {
-    result[i] = source[i]
-  }
+  for (var i in target) obj[i] = target[i]
+  for (var i in source) obj[i] = source[i]
 
-  return result
+  return obj
+}
+
+function getKey(node) {
+  return node && node.props ? node.props.key : null
+}
+
+function setElementProp(element, name, value, oldValue) {
+  if (name === "key") {
+  } else if (name === "style") {
+    for (var i in copy(oldValue, (value = value || {}))) {
+      element[name][i] = value[i] != null ? value[i] : ""
+    }
+  } else {
+    var empty = null == value || false === value
+
+    if (name in element) {
+      try {
+        element[name] = null == value ? "" : value
+      } catch (_) {}
+    } else if (!empty && typeof value !== "function") {
+      element.setAttribute(name, value === true ? "" : value)
+    }
+
+    if (empty) {
+      element.removeAttribute(name)
+    }
+  }
 }
 
 function createElement(node, isSVG) {
   if (typeof node === "string") {
     var element = document.createTextNode(node)
   } else {
-    var element = (isSVG = isSVG || node.type === "svg")
+    var element = (isSVG = isSVG || "svg" === node.type)
       ? document.createElementNS("http://www.w3.org/2000/svg", node.type)
       : document.createElement(node.type)
 
-    if (node.props && node.props.oncreate) {
+    if (node.props.oncreate) {
       callbacks.push(function() {
         node.props.oncreate(element)
       })
@@ -46,65 +69,44 @@ function createElement(node, isSVG) {
   return element
 }
 
-function setElementProp(element, name, value, oldValue) {
-  if (name === "key") {
-  } else if (name === "style") {
-    for (var i in merge(oldValue, (value = value || {}))) {
-      element.style[i] = value[i] != null ? value[i] : ""
-    }
-  } else {
-    var empty = null == value || false === value
-
-    if (name in element) {
-      try {
-        element[name] = value == null ? "" : value
-      } catch (_) {}
-    } else if (!empty && typeof value !== "function") {
-      element.setAttribute(name, value === true ? "" : value)
-    }
-
-    if (empty) {
-      element.removeAttribute(name)
-    }
-  }
-}
-
 function updateElement(element, oldProps, props) {
-  for (var i in merge(oldProps, props)) {
-    var value = props[i]
-    var oldValue = i === "value" || i === "checked" ? element[i] : oldProps[i]
+  for (var i in copy(oldProps, props)) {
+    var oldValue = "value" === i || "checked" === i ? element[i] : oldProps[i]
 
-    if (value !== oldValue) {
-      setElementProp(element, i, value, oldValue)
+    if (props[i] !== oldValue) {
+      setElementProp(element, i, props[i], oldValue)
     }
   }
 
-  if (props && props.onupdate) {
+  if (props.onupdate) {
     callbacks.push(function() {
       props.onupdate(element, oldProps)
     })
   }
 }
 
-function removeElement(parent, element, props) {
-  if (
-    props &&
-    props.onremove &&
-    typeof (props = props.onremove(element)) === "function"
-  ) {
-    props(remove)
-  } else {
-    remove()
-  }
+function removeChildren(element, node, props) {
+  if ((props = node.props)) {
+    for (var i = 0; i < node.children.length; i++) {
+      removeChildren(element.childNodes[i], node.children[i])
+    }
 
-  function remove() {
-    parent.removeChild(element)
+    if (props.ondestroy) {
+      props.ondestroy(element)
+    }
   }
+  return element
 }
 
-function getKey(node) {
-  if (node && node.props) {
-    return node.props.key
+function removeElement(parent, element, node) {
+  function done() {
+    parent.removeChild(removeChildren(element, node))
+  }
+
+  if (node.props && node.props.onremove) {
+    node.props.onremove(element, done)
+  } else {
+    done()
   }
 }
 
@@ -176,7 +178,7 @@ function patchElement(parent, element, oldNode, node, isSVG, nextSibling) {
       var oldChild = oldNode.children[i]
       var oldKey = getKey(oldChild)
       if (null == oldKey) {
-        removeElement(element, oldElements[i], oldChild.props)
+        removeElement(element, oldElements[i], oldChild)
       }
       i++
     }
@@ -185,7 +187,7 @@ function patchElement(parent, element, oldNode, node, isSVG, nextSibling) {
       var keyedNode = oldKeyed[i]
       var reusableNode = keyedNode[1]
       if (!keyed[reusableNode.props.key]) {
-        removeElement(element, keyedNode[0], reusableNode.props)
+        removeElement(element, keyedNode[0], reusableNode)
       }
     }
   } else if (element && node !== element.nodeValue) {
@@ -196,7 +198,7 @@ function patchElement(parent, element, oldNode, node, isSVG, nextSibling) {
         createElement(node, isSVG),
         (nextSibling = element)
       )
-      removeElement(parent, nextSibling, oldNode.props)
+      removeElement(parent, nextSibling, oldNode)
     }
   }
   return element

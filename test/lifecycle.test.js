@@ -58,19 +58,41 @@ test("onremove", done => {
           [
             h("li"),
             h("li", {
-              onremove(element) {
+              onremove(element, remove) {
                 expect(document.body.innerHTML).toBe(
                   "<ul><li></li><li></li></ul>"
                 )
-                return remove => {
-                  remove()
-                  expect(document.body.innerHTML).toBe("<ul><li></li></ul>")
-                  done()
-                }
+
+                remove()
+                expect(document.body.innerHTML).toBe("<ul><li></li></ul>")
+                done()
               }
             })
           ]
         )
+      : h("ul", {}, [h("li")])
+
+  let node = view(true)
+  patch(document.body, null, node)
+  patch(document.body, node, view(false))
+})
+
+test("ondestroy", done => {
+  let removed = false
+
+  const view = state =>
+    state
+      ? h("ul", {}, [
+          h("li"),
+          h("li", {}, [
+            h("span", {
+              ondestroy() {
+                expect(removed).toBe(false)
+                done()
+              }
+            })
+          ])
+        ])
       : h("ul", {}, [h("li")])
 
   let node = view(true)
