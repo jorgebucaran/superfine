@@ -86,7 +86,9 @@ function updateElement(element, oldProps, props) {
   }
 }
 
-function removeElement(parent, element, props) {
+function removeElement(parent, element, node) {
+  var props = node.props
+
   if (
     props &&
     props.onremove &&
@@ -99,6 +101,17 @@ function removeElement(parent, element, props) {
 
   function remove() {
     parent.removeChild(element)
+    notifyDestroyed(node)
+  }
+}
+
+function notifyDestroyed(node) {
+  if (typeof node === "object") {
+    if (node.props.ondestroy) {
+      node.props.ondestroy(node)
+    }
+
+    node.children.map(notifyDestroyed)
   }
 }
 
@@ -176,7 +189,7 @@ function patchElement(parent, element, oldNode, node, isSVG, nextSibling) {
       var oldChild = oldNode.children[i]
       var oldKey = getKey(oldChild)
       if (null == oldKey) {
-        removeElement(element, oldElements[i], oldChild.props)
+        removeElement(element, oldElements[i], oldChild)
       }
       i++
     }
@@ -185,7 +198,7 @@ function patchElement(parent, element, oldNode, node, isSVG, nextSibling) {
       var keyedNode = oldKeyed[i]
       var reusableNode = keyedNode[1]
       if (!keyed[reusableNode.props.key]) {
-        removeElement(element, keyedNode[0], reusableNode.props)
+        removeElement(element, keyedNode[0], reusableNode)
       }
     }
   } else if (element && node !== element.nodeValue) {
@@ -196,7 +209,7 @@ function patchElement(parent, element, oldNode, node, isSVG, nextSibling) {
         createElement(node, isSVG),
         (nextSibling = element)
       )
-      removeElement(parent, nextSibling, oldNode.props)
+      removeElement(parent, nextSibling, oldNode)
     }
   }
   return element
