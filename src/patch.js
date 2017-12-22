@@ -1,12 +1,7 @@
 var callbacks = []
 
 export function patch(parent, oldNode, newNode) {
-  var element = patchElement(
-    parent,
-    parent.children[0],
-    oldNode,
-    newNode
-  )
+  var element = patchElement(parent, parent.children[0], oldNode, newNode)
 
   for (var cb; (cb = callbacks.pop()); cb()) {}
 
@@ -63,11 +58,11 @@ function setElementProp(element, name, value, oldValue) {
     if (name in element) {
       try {
         element[name] = value == null ? "" : value
-      } catch (_) { }
+      } catch (_) {}
     } else if (!empty && typeof value !== "function") {
       element.setAttribute(name, value === true ? "" : value)
     }
-    
+
     if (empty) {
       element.removeAttribute(name)
     }
