@@ -49,8 +49,8 @@ function createElement(node, isSVG) {
 function setElementProp(element, name, value, oldValue) {
   if (name === "key") {
   } else if (name === "style") {
-    for (var name in merge(oldValue, (value = value || {}))) {
-      element.style[name] = value[name] != null ? value[name] : ""
+    for (var i in merge(oldValue, (value = value || {}))) {
+      element.style[i] = value[i] != null ? value[i] : ""
     }
   } else {
     let empty = null == value || false === value
