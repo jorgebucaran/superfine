@@ -641,66 +641,60 @@ testTrees("update element with dynamic props", [
   {
     node: h("input", {
       type: "text",
+      value: "foo",
       oncreate(element) {
-        element.value = "bar"
-      },
-      value: "foo"
+        expect(element.value).toBe("foo")
+      }
     }),
-    html: `<input type="text" value="foo">`
+    html: `<input type="text">`
   },
   {
     node: h("input", {
       type: "text",
+      value: "bar",
       onupdate(element) {
-        expect(element.value).toBe("foo")
-      },
-      value: "foo"
+        expect(element.value).toBe("bar")
+      }
     }),
-    html: `<input type="text" value="foo">`
+    html: `<input type="text">`
   }
 ])
 
 testTrees("elements with falsy values", [
   {
-    node: h("input", {
-      type: "text",
-      value: ""
+    node: h("div", {
+      "data-test": "foo"
     }),
-    html: `<input type="text" value="">`
+    html: `<div data-test="foo"></div>`
   },
   {
-    node: h("input", {
-      type: "text",
-      value: "0"
+    node: h("div", {
+      "data-test": "0"
     }),
-    html: `<input type="text" value="0">`
+    html: `<div data-test="0"></div>`
   },
   {
-    node: h("input", {
-      type: "text",
-      value: 0
+    node: h("div", {
+      "data-test": 0
     }),
-    html: `<input type="text" value="0">`
+    html: `<div data-test="0"></div>`
   },
   {
-    node: h("input", {
-      type: "text",
-      value: null
+    node: h("div", {
+      "data-test": null
     }),
-    html: `<input type="text">`
+    html: `<div></div>`
   },
   {
-    node: h("input", {
-      type: "text",
-      value: false
+    node: h("div", {
+      "data-test": false
     }),
-    html: `<input type="text">`
+    html: `<div></div>`
   },
   {
-    node: h("input", {
-      type: "text",
-      value: undefined
+    node: h("div", {
+      "data-test": undefined
     }),
-    html: `<input type="text">`
+    html: `<div></div>`
   }
 ])

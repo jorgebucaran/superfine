@@ -1,12 +1,7 @@
 var callbacks = []
 
 export function patch(parent, oldNode, newNode) {
-  var element = patchElement(
-    parent,
-    parent.children[0],
-    oldNode,
-    newNode
-  )
+  var element = patchElement(parent, parent.children[0], oldNode, newNode)
 
   for (var cb; (cb = callbacks.pop()); cb()) {}
 
@@ -54,20 +49,22 @@ function createElement(node, isSVG) {
 function setElementProp(element, name, value, oldValue) {
   if (name === "key") {
   } else if (name === "style") {
-    for (var name in merge(oldValue, (value = value || {}))) {
-      element.style[name] = value[name] != null ? value[name] : ""
+    for (var i in merge(oldValue, (value = value || {}))) {
+      element.style[i] = value[i] != null ? value[i] : ""
     }
   } else {
-    try {
-      element[name] = null == value ? "" : value
-    } catch (_) {}
+    var empty = null == value || false === value
 
-    if (typeof value !== "function") {
-      if (null == value || false === value) {
-        element.removeAttribute(name)
-      } else {
-        element.setAttribute(name, value === true ? "" : value)
-      }
+    if (name in element) {
+      try {
+        element[name] = value == null ? "" : value
+      } catch (_) {}
+    } else if (!empty && typeof value !== "function") {
+      element.setAttribute(name, value === true ? "" : value)
+    }
+
+    if (empty) {
+      element.removeAttribute(name)
     }
   }
 }
