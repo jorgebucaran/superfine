@@ -78,26 +78,26 @@ test("onremove", done => {
 })
 
 test("ondestroy", done => {
-  let removed = false
-
-  const view = state =>
-    state
-      ? h("ul", {}, [
-          h("li"),
-          h("li", {}, [
-            h("span", {
-              ondestroy() {
-                expect(removed).toBe(false)
-                done()
-              }
-            })
-          ])
+  var log = []
+  
+  var view = value =>
+    value
+      ? h("p", {id: "a", onremove: () => log.push("removed a"), ondestroy: () => log.push("destroyed a")}, [
+        h("p", {id: "b", onremove: () => log.push("removed b"), ondestroy: () => log.push("destroyed b")}, [
+          h("p", {id: "c", onremove: () => log.push("removed c"), ondestroy: () => log.push("destroyed c")})
         ])
-      : h("ul", {}, [h("li")])
+      ])
+      : h("p", {id: "a", onremove: () => log.push("removed a"), ondestroy: () => log.push("destroyed a")})
+  
+  patch(document.body, null, view(true))
 
-  let node = view(true)
-  patch(document.body, null, node)
-  patch(document.body, node, view(false))
+  expect(log.length).toBe(0)
+
+  patch(document.body, view(true), view(false))
+
+  expect(log.join(', ')).toBe('removed b, destroyed b, destroyed c')
+
+  done()
 })
 
 test("event bubling", done => {
