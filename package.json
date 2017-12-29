@@ -19,7 +19,7 @@
   ],
   "scripts": {
     "test": "jest --coverage --no-cache && tsc -p test/typings/tsconfig.json",
-    "build": "npm run bundle && npm run minify",
+    "build": "npm run bundle && npm run minify && bundlesize",
     "bundle": "rollup -i src/index.js -o dist/picodom.js -f umd -mn picodom",
     "minify": "uglifyjs dist/picodom.js -o dist/picodom.js --mangle --compress warnings=false --pure-funcs=Object.defineProperty -p relative --in-source-map dist/picodom.js.map --source-map dist/picodom.js.map",
     "format": "prettier --semi false --write 'src/**/*.js' 'picodom.d.ts'",
@@ -29,8 +29,15 @@
   "babel": {
     "presets": "env"
   },
+  "bundlesize": [
+    {
+      "path": "dist/picodom.js",
+      "maxSize": "1024"
+    }
+  ],
   "devDependencies": {
     "babel-preset-env": "^1.6.0",
+    "bundlesize": "^0.15.3",
     "jest": "^21.2.1",
     "prettier": "~1.7.4",
     "rollup": "^0.50.0",
