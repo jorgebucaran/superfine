@@ -82,12 +82,12 @@ test("ondestroy", done => {
   
   var view = value =>
     value
-      ? h("p", {id: "a", onremove: () => log.push("removed a"), ondestroy: () => log.push("destroyed a")}, [
-        h("p", {id: "b", onremove: () => log.push("removed b"), ondestroy: () => log.push("destroyed b")}, [
-          h("p", {id: "c", onremove: () => log.push("removed c"), ondestroy: () => log.push("destroyed c")})
+      ? h("p", {id: "a", onremove: (el, done) => { done(); log.push("removed a") }, ondestroy: () => log.push("destroyed a")}, [
+        h("p", {id: "b", onremove: (el, done) => { done(); log.push("removed b") }, ondestroy: () => log.push("destroyed b")}, [
+          h("p", {id: "c", onremove: (el, done) => { done(); log.push("removed c") }, ondestroy: () => log.push("destroyed c")})
         ])
       ])
-      : h("p", {id: "a", onremove: () => log.push("removed a"), ondestroy: () => log.push("destroyed a")})
+      : h("p", {id: "a", onremove: (el, done) => log.push("removed a"), ondestroy: () => log.push("destroyed a")})
   
   patch(document.body, null, view(true))
 
