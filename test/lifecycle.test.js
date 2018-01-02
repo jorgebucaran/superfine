@@ -82,12 +82,12 @@ test("ondestroy", done => {
   
   var view = value =>
     value
-      ? h("p", {id: "a", onremove: (el, done) => { done(); log.push("removed a") }, ondestroy: () => log.push("destroyed a")}, [
-        h("p", {id: "b", onremove: (el, done) => { done(); log.push("removed b") }, ondestroy: () => log.push("destroyed b")}, [
-          h("p", {id: "c", onremove: (el, done) => { done(); log.push("removed c") }, ondestroy: () => log.push("destroyed c")})
+      ? h("p", {id: "a", onremove: (el, done) => { log.push("removed a"); done(); }, ondestroy: () => log.push("destroyed a")}, [
+        h("p", {id: "b", onremove: (el, done) => { log.push("removed b"); done(); }, ondestroy: () => log.push("destroyed b")}, [
+          h("p", {id: "c", onremove: (el, done) => { log.push("removed c"); done(); }, ondestroy: () => log.push("destroyed c")})
         ])
       ])
-      : h("p", {id: "a", onremove: (el, done) => log.push("removed a"), ondestroy: () => log.push("destroyed a")})
+      : h("p", {id: "a", onremove: (el, done) => { log.push("removed a"); done(); }, ondestroy: () => log.push("destroyed a")})
   
   patch(document.body, null, view(true))
 
@@ -95,7 +95,7 @@ test("ondestroy", done => {
 
   patch(document.body, view(true), view(false))
 
-  expect(log.join(', ')).toBe('removed b, destroyed b, destroyed c')
+  expect(log.join(', ')).toBe('removed b, destroyed c, destroyed b')
 
   done()
 })
