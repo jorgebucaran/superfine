@@ -58,15 +58,14 @@ test("onremove", done => {
           [
             h("li"),
             h("li", {
-              onremove(element) {
+              onremove(element, remove) {
                 expect(document.body.innerHTML).toBe(
                   "<ul><li></li><li></li></ul>"
                 )
-                return remove => {
-                  remove()
-                  expect(document.body.innerHTML).toBe("<ul><li></li></ul>")
-                  done()
-                }
+
+                remove()
+                expect(document.body.innerHTML).toBe("<ul><li></li></ul>")
+                done()
               }
             })
           ]
@@ -76,6 +75,29 @@ test("onremove", done => {
   let node = view(true)
   patch(document.body, null, node)
   patch(document.body, node, view(false))
+})
+
+test("ondestroy", done => {
+  var log = []
+  
+  var view = value =>
+    value
+      ? h("p", {id: "a", onremove: (el, done) => { log.push("removed a"); done(); }, ondestroy: () => log.push("destroyed a")}, [
+        h("p", {id: "b", onremove: (el, done) => { log.push("removed b"); done(); }, ondestroy: () => log.push("destroyed b")}, [
+          h("p", {id: "c", onremove: (el, done) => { log.push("removed c"); done(); }, ondestroy: () => log.push("destroyed c")})
+        ])
+      ])
+      : h("p", {id: "a", onremove: (el, done) => { log.push("removed a"); done(); }, ondestroy: () => log.push("destroyed a")})
+  
+  patch(document.body, null, view(true))
+
+  expect(log.length).toBe(0)
+
+  patch(document.body, view(true), view(false))
+
+  expect(log.join(', ')).toBe('removed b, destroyed c, destroyed b')
+
+  done()
 })
 
 test("event bubling", done => {
