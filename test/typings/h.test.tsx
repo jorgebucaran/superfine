@@ -1,4 +1,4 @@
-import { h, Component } from "../../"
+import { h, Component, ReservedProps } from "../../"
 
 // empty vnode
 h("div")
@@ -18,7 +18,7 @@ h("div", {}, 1, "foo", 2, "baz", 3)
 h("div", {}, "foo", h("div", {}, "bar"), "baz", "quux")
 
 // vnode with props
-interface TestProps {
+interface TestProps extends ReservedProps {
   id: string
   class: string
   style: { color: string }
@@ -62,7 +62,7 @@ let element: JSX.Element
 // element = <Wrapper />
 // element = <Wrapper id="foo">bar</Wrapper>
 element = (
-  <Wrapper {...props}>
+  <Wrapper {...props} key="foo" oncreate={ (el) => {} } onupdate={ (el, oldProps) => {} } onremove={ (el, done) => done() } ondestroy={ (el) => {} }>
     <Test />
   </Wrapper>
 )
@@ -72,3 +72,4 @@ element = (
     <span id="child2">Child 2</span>
   </Wrapper>
 )
+element = <div key="foo" oncreate={ (el) => {} } onupdate={ (el, oldProps) => {} } onremove={ (el, done) => done() } ondestroy={ (el) => {} }></div>
