@@ -10,6 +10,8 @@ Picodom is a 1 KB VDOM builder and patch function.
 ```js
 import { h, patch } from "picodom"
 
+/** @jsx h */
+
 let node
 
 function render(view, state) {
@@ -79,35 +81,7 @@ function AwesomeTitle(text) {
 }
 ```
 
-### Lifecycle
-
-#### oncreate
-
-Fired after the element is created and attached to the DOM.
-
-<pre>
-<a id="oncreate-api"></a>oncreate(<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element">Element</a>)
-</pre>
-
-#### onupdate
-
-Fired after the element attributes are updated. This event will fire even if the attributes have not changed.
-
-<pre>
-<a id="onupdate-api"></a>onupdate(<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element">Element</a>, oldProps: <a href="#attributes">Attributes</a>)
-</pre>
-
-#### onremove
-
-Fired before the element is removed from the DOM. Return a function that takes a `remove()` function and use it to remove the element asynchronously.
-
-<pre>
-<a id="onremove-api"></a>onremove(<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element">Element</a>)
-</pre>
-
-### patch
-
-Use `patch` to diff two nodes and update the DOM. `patch` returns the patched child element.
+To diff two virtual nodes and update the DOM, use the `patch` function:
 
 ```js
 const element = patch(
@@ -116,6 +90,60 @@ const element = patch(
   newNode  // the new VNode
 )
 ```
+
+The `patch` function returns the patched child element.
+
+## Lifecycle Events
+
+Picodom supports element-level life-cycle events and keyed updates, and reserves the following JSX attributes:
+
+#### `key`
+
+The `key` attribute enables Picodom to identify and preserve DOM elements, even when the order of child elements changes during an update.
+
+The value must be a string (or number) and it must be unique among all the siblings of a given child element.
+
+For example, use keys to ensure that input elements don't get replaced (and lose their focus or selection state, etc.) during updates - or for table rows (or other repeated elements) to ensure that these get reused.
+
+#### `oncreate`
+
+Fired after the element is created and attached to the DOM.
+
+<pre>
+<a id="oncreate-api"></a>oncreate(<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element">Element</a>)
+</pre>
+
+#### `onupdate`
+
+Fired after the element attributes are updated. This event will fire even if the attributes have not changed.
+
+<pre>
+<a id="onupdate-api"></a>onupdate(<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element">Element</a>, oldProps: <a href="#attributes">Attributes</a>)
+</pre>
+
+#### `onremove`
+
+Fired before the element is removed from the DOM.
+
+Your event handler will receive a reference to the element that is about to be removed, and a `done` callback function, which must be called to complete the removal, upon which the `ondestroy` handler will be fired.
+
+<pre>
+<a id="onremove-api"></a>onremove(<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element">Element</a>, done)
+</pre>
+
+You can use this event to defer the physical removal of an element from the DOM, for purposes such as animation during removal.
+
+Note that the `onremove` event is only triggered for *direct* removals, e.g. for updates where the parent of the element still exists. For *indirect* removals (where the parent element was also removed) only the `ondestroy` event will fire.
+
+#### `ondestroy`
+
+Fired after the element is removed from the DOM.
+
+<pre>
+<a id="ondestroy-api"></a>ondestroy(<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element">Element</a>)
+</pre>
+
+You can use this event to clean up after your `oncreate` handler - this enables you to integrate third-party widgets (date-pickers, content editors, etc.) and clean up after them.
 
 ## Links
 
