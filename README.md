@@ -93,7 +93,7 @@ const element = patch(
 
 The `patch` function returns the patched child element.
 
-## Lifecycle Events
+## Reserved Attributes
 
 Picodom supports element-level life-cycle events and keyed updates, and reserves the following JSX attributes:
 
