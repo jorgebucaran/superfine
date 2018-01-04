@@ -93,9 +93,27 @@ const element = patch(
 
 The `patch` function returns the patched child element.
 
-## Reserved Attributes
+## Supported Attributes
 
-Picodom supports element-level life-cycle events and keyed updates, and reserves the following JSX attributes:
+This section describes the particular handling of certain HTML/SVG attributes, and certain special attributes reserved by Picodom.
+
+### Standard HTML and SVG Attributes
+
+All standard HTML and SVG attributes are supported, and the following standard attributes are handled specifically:
+
+#### `class`
+
+Both the `className`-property and `class`-attribute are supported.
+
+#### `style`
+
+This attribute expects a standard `object` rather than a `string` as in HTML.
+
+Individual style properties will be diffed and mapped against [`HTMLElement.style`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) property members of the DOM element - you should therefore use the [Javascript](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Properties_Reference) `style` object property names, e.g. `backgroundColor` rather than `background-color`.
+
+### Life-Cycle Attributes
+
+Picodom supports element-level life-cycle events and keyed updates via the following reserved attributes:
 
 #### `key`
 
