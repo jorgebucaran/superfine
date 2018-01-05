@@ -115,11 +115,14 @@ function patchElement(parent, element, oldNode, node, isSVG, nextSibling) {
   if (oldNode == null) {
     element = parent.insertBefore(createElement(node, isSVG), element)
   } else if (node.type != null && node.type === oldNode.type) {
-    setElementProps(element, node.props, oldNode.props)
+    var props = node.props
+    var oldProps = oldNode.props
+
+    setElementProps(element, props, oldProps)
     
-    if (node.props.onupdate) {
+    if (props.onupdate) {
       callbacks.push(function() {
-        node.props.onupdate(element, oldNode.props)
+        props.onupdate(element, oldProps)
       })
     }
     
