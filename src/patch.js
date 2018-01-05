@@ -86,16 +86,6 @@ function createElement(node, isSVG) {
   return element
 }
 
-function updateElement(element, oldProps, props) {
-  setElementProps(element, props, oldProps)
-
-  if (props.onupdate) {
-    callbacks.push(function() {
-      props.onupdate(element, oldProps)
-    })
-  }
-}
-
 function removeChildren(element, node, props) {
   if ((props = node.props)) {
     for (var i = 0; i < node.children.length; i++) {
@@ -125,8 +115,14 @@ function patchElement(parent, element, oldNode, node, isSVG, nextSibling) {
   if (oldNode == null) {
     element = parent.insertBefore(createElement(node, isSVG), element)
   } else if (node.type != null && node.type === oldNode.type) {
-    updateElement(element, oldNode.props, node.props)
-
+    setElementProps(element, node.props, oldNode.props)
+    
+    if (node.props.onupdate) {
+      callbacks.push(function() {
+        node.props.onupdate(element, oldNode.props)
+      })
+    }
+    
     isSVG = isSVG || node.type === "svg"
 
     var len = node.children.length
