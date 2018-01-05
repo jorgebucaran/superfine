@@ -21,7 +21,7 @@ function getKey(node) {
   return node && node.props ? node.props.key : null
 }
 
-function setElementProp(element, name, value, oldValue) {
+function setElementProp(element, name, value, isSVG, oldValue) {
   if (name === "key") {
   } else if (name === "style") {
     for (var i in copy(oldValue, (value = value || {}))) {
@@ -30,7 +30,7 @@ function setElementProp(element, name, value, oldValue) {
   } else {
     var empty = null == value || false === value
 
-    if (name in element) {
+    if (name in element && !isSVG) {
       try {
         element[name] = null == value ? "" : value
       } catch (_) {}
@@ -63,18 +63,18 @@ function createElement(node, isSVG) {
     }
 
     for (var i in node.props) {
-      setElementProp(element, i, node.props[i])
+      setElementProp(element, i, node.props[i], isSVG)
     }
   }
   return element
 }
 
-function updateElement(element, oldProps, props) {
+function updateElement(element, oldProps, props, isSVG) {
   for (var i in copy(oldProps, props)) {
     var oldValue = "value" === i || "checked" === i ? element[i] : oldProps[i]
 
     if (props[i] !== oldValue) {
-      setElementProp(element, i, props[i], oldValue)
+      setElementProp(element, i, props[i], isSVG, oldValue)
     }
   }
 
@@ -114,7 +114,7 @@ function patchElement(parent, element, oldNode, node, isSVG, nextSibling) {
   if (oldNode == null) {
     element = parent.insertBefore(createElement(node, isSVG), element)
   } else if (node.type != null && node.type === oldNode.type) {
-    updateElement(element, oldNode.props, node.props)
+    updateElement(element, oldNode.props, node.props, isSVG)
 
     isSVG = isSVG || node.type === "svg"
 
