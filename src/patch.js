@@ -1,12 +1,18 @@
 var callbacks = []
 
+function set(element, value) {
+  element.value = value
+}
+
 export var mods = {
   key: function () {},
   style: function (element, value, oldValue) {
     for (var i in copy(oldValue, (value = value || {}))) {
       element.style[i] = value[i] != null ? value[i] : ""
     }
-  }
+  },
+  value: set,
+  checked: set
 }
 
 export function patch(parent, oldNode, newNode) {
@@ -31,6 +37,9 @@ function getKey(node) {
 }
 
 function setElementProp(element, name, value, oldValue) {
+  if (value === oldValue) {
+    return
+  }
   if (name in mods) {
     mods[name](element, value, oldValue)
   } else {
@@ -77,11 +86,7 @@ function createElement(node, isSVG) {
 
 function updateElement(element, oldProps, props) {
   for (var i in copy(oldProps, props)) {
-    var oldValue = "value" === i || "checked" === i ? element[i] : oldProps[i]
-
-    if (props[i] !== oldValue) {
-      setElementProp(element, i, props[i], oldValue)
-    }
+    setElementProp(element, i, props[i], oldProps[i])
   }
 
   if (props.onupdate) {
