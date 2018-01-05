@@ -1,5 +1,14 @@
 var callbacks = []
 
+export var mods = {
+  key: function () {},
+  style: function (element, value, oldValue) {
+    for (var i in copy(oldValue, (value = value || {}))) {
+      element.style[i] = value[i] != null ? value[i] : ""
+    }
+  }
+}
+
 export function patch(parent, oldNode, newNode) {
   var element = patchElement(parent, parent.children[0], oldNode, newNode)
 
@@ -22,11 +31,8 @@ function getKey(node) {
 }
 
 function setElementProp(element, name, value, oldValue) {
-  if (name === "key") {
-  } else if (name === "style") {
-    for (var i in copy(oldValue, (value = value || {}))) {
-      element[name][i] = value[i] != null ? value[i] : ""
-    }
+  if (name in mods) {
+    mods[name](element, value, oldValue)
   } else {
     var empty = null == value || false === value
 
