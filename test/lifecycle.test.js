@@ -77,6 +77,49 @@ test("onremove", done => {
   patch(document.body, node, view(false))
 })
 
+test("deferred removal", done => {
+  var _remove
+  var view = value =>
+    h(
+      "ul",
+      {},
+      [
+        h("li", { id: "a", key: "a" }),
+        value
+          ? h("li", {
+            id: "b",
+            key: "b",
+            onremove(element) {
+              return remove => {
+                _remove = remove // deferred pending assertions below
+              }
+            }
+          })
+          : null,
+        h("li", { id: "c", key: "c" })
+      ]
+    )
+
+  const contents_before_removal = '<ul><li id="a"></li><li id="b"></li><li id="c"></li></ul>'
+  const contents_after_removal = '<ul><li id="a"></li><li id="c"></li></ul>'
+  
+  let node = view(true)
+
+  patch(document.body, null, node)
+
+  expect(document.body.innerHTML).toBe(contents_before_removal)
+
+  patch(document.body, node, view(false))
+
+  expect(document.body.innerHTML).toBe(contents_before_removal)
+
+  _remove() // completes deferred removal
+  
+  expect(document.body.innerHTML).toBe(contents_after_removal)
+
+  done()
+})
+
 test("ondestroy", done => {
   var log = []
   
