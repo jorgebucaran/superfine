@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "babel-preset-env": "^1.6.0",
+    "gzip-size": "^4.1.0",
     "jest": "^21.2.1",
     "prettier": "~1.7.4",
     "rollup": "^0.50.0",
