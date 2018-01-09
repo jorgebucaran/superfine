@@ -1,2 +1,2 @@
 export { h } from "./h"
-export { patch } from "./patch"
+export { patch, mount } from "./patch"
