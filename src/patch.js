@@ -1,11 +1,19 @@
 var callbacks = []
 
-export function patch(parent, oldNode, newNode) {
-  var element = patchElement(parent, parent.children[0], oldNode, newNode)
+export function mount(parent, node) {
+  var element = parent.appendChild(createElement(node))
 
   for (var cb; (cb = callbacks.pop()); cb()) {}
 
   return element
+}
+
+export function patch(oldNode, newNode) {
+  newNode._ref = patchElement(oldNode._ref.parentNode, oldNode._ref, oldNode, newNode)
+
+  for (var cb; (cb = callbacks.pop()); cb()) {}
+
+  return newNode._ref
 }
 
 function copy(target, source) {
@@ -65,6 +73,8 @@ function createElement(node, isSVG) {
     for (var i in node.props) {
       setElementProp(element, i, node.props[i])
     }
+
+    node._ref = element
   }
   return element
 }
