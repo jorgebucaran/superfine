@@ -133,7 +133,7 @@ Fired after the element is created and attached to the DOM.
 
 #### `onupdate`
 
-Fired after the element attributes are updated. This event will fire even if the attributes have not changed.
+Fired after the existing element is updated. This event will fire even if the attributes have not changed.
 
 <pre>
 <a id="onupdate-api"></a>onupdate(<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element">Element</a>, oldProps: <a href="#attributes">Attributes</a>)
