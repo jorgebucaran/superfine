@@ -1,5 +1,20 @@
 var callbacks = []
 
+function set(element, value) {
+  element.value = value
+}
+
+export var mods = {
+  key: function () {},
+  style: function (element, value, oldValue) {
+    for (var i in copy(oldValue, (value = value || {}))) {
+      element.style[i] = value[i] != null ? value[i] : ""
+    }
+  },
+  value: set,
+  checked: set
+}
+
 export function patch(parent, oldNode, newNode) {
   var element = patchElement(parent, parent.children[0], oldNode, newNode)
 
@@ -21,25 +36,29 @@ function getKey(node) {
   return node && node.props ? node.props.key : null
 }
 
-function setElementProp(element, name, value, oldValue) {
-  if (name === "key") {
-  } else if (name === "style") {
-    for (var i in copy(oldValue, (value = value || {}))) {
-      element[name][i] = value[i] != null ? value[i] : ""
-    }
-  } else {
-    var empty = null == value || false === value
+function setElementProps(element, props, oldProps) {
+  for (var name in copy(oldProps, props)) {
+    var value = props[name]
+    var oldValue = oldProps[name]
 
-    if (name in element) {
-      try {
-        element[name] = null == value ? "" : value
-      } catch (_) {}
-    } else if (!empty && typeof value !== "function") {
-      element.setAttribute(name, value === true ? "" : value)
-    }
-
-    if (empty) {
-      element.removeAttribute(name)
+    if (name in mods) {
+      mods[name](element, value, oldValue)
+    } else {
+      if (value !== oldValue) {
+        var empty = null == value || false === value
+        
+        if (name in element) {
+          try {
+            element[name] = null == value ? "" : value
+          } catch (_) {}
+        } else if (!empty && typeof value !== "function") {
+          element.setAttribute(name, value === true ? "" : value)
+        }
+    
+        if (empty) {
+          element.removeAttribute(name)
+        }
+      }
     }
   }
 }
@@ -62,27 +81,9 @@ function createElement(node, isSVG) {
       element.appendChild(createElement(node.children[i], isSVG))
     }
 
-    for (var i in node.props) {
-      setElementProp(element, i, node.props[i])
-    }
+    setElementProps(element, node.props, {})
   }
   return element
-}
-
-function updateElement(element, oldProps, props) {
-  for (var i in copy(oldProps, props)) {
-    var oldValue = "value" === i || "checked" === i ? element[i] : oldProps[i]
-
-    if (props[i] !== oldValue) {
-      setElementProp(element, i, props[i], oldValue)
-    }
-  }
-
-  if (props.onupdate) {
-    callbacks.push(function() {
-      props.onupdate(element, oldProps)
-    })
-  }
 }
 
 function removeChildren(element, node, props) {
@@ -114,8 +115,17 @@ function patchElement(parent, element, oldNode, node, isSVG, nextSibling) {
   if (oldNode == null) {
     element = parent.insertBefore(createElement(node, isSVG), element)
   } else if (node.type != null && node.type === oldNode.type) {
-    updateElement(element, oldNode.props, node.props)
+    var props = node.props
+    var oldProps = oldNode.props
 
+    setElementProps(element, props, oldProps)
+    
+    if (props.onupdate) {
+      callbacks.push(function() {
+        props.onupdate(element, oldProps)
+      })
+    }
+    
     isSVG = isSVG || node.type === "svg"
 
     var len = node.children.length
