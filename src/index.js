@@ -1,6 +1,6 @@
 var map = [].map
-var lifecycle = []
-var firstRender
+var isRecycling
+var lifecycleStack = []
 
 export function h(name, attributes) {
   var node
@@ -30,29 +30,31 @@ export function h(name, attributes) {
       }
 }
 
-export function patch(next, element) {
-  firstRender = element.node == null
-
+export function patch(node, element) {
   element = patchElement(
-    element.parentNode,
+    element && element.parentNode,
     element,
-    firstRender ? elementToVNode(element) : element.node,
-    (element.node = next)
+    (isRecycling = element && element.node == null)
+      ? recycleElement(element)
+      : element && element.node,
+    node
   )
+  element.node = node
 
-  while ((next = lifecycle.pop())) next()
+  while (lifecycleStack.length) lifecycleStack.pop()()
 
   return element
 }
 
-function elementToVNode(element) {
+function recycleElement(element) {
   return {
+    // recycled: true,
     nodeName: element.nodeName.toLowerCase(),
     attributes: {},
     children: map.call(element.childNodes, function(element) {
       return element.nodeType === 3 // Node.TEXT_NODE
         ? element.nodeValue
-        : elementToVNode(element)
+        : recycleElement(element)
     })
   }
 }
@@ -97,10 +99,11 @@ function createElement(node, isSVG) {
         ? document.createElementNS("http://www.w3.org/2000/svg", node.nodeName)
         : document.createElement(node.nodeName)
 
-  if (node.attributes) {
-    if (node.attributes.oncreate) {
-      lifecycle.push(function() {
-        node.attributes.oncreate(element)
+  var attributes = node.attributes
+  if (attributes) {
+    if (attributes.oncreate) {
+      lifecycleStack.push(function() {
+        attributes.oncreate(element)
       })
     }
 
@@ -108,15 +111,15 @@ function createElement(node, isSVG) {
       element.appendChild(createElement(node.children[i], isSVG))
     }
 
-    for (var name in node.attributes) {
-      updateAttribute(element, name, node.attributes[name], isSVG)
+    for (var name in attributes) {
+      updateAttribute(element, name, attributes[name], isSVG)
     }
   }
 
   return element
 }
 
-function updateElement(element, oldAttributes, attributes, isSVG) {
+function updateElement(element, /*oldNode,*/ oldAttributes, attributes, isSVG) {
   for (var name in clone(oldAttributes, attributes)) {
     if (
       attributes[name] !==
@@ -134,16 +137,18 @@ function updateElement(element, oldAttributes, attributes, isSVG) {
     }
   }
 
-  var cb = firstRender ? attributes.oncreate : attributes.onupdate
+  var cb = isRecycling ? attributes.oncreate : attributes.onupdate
+  // var cb = oldNode.recycled ? attributes.oncreate : attributes.onupdate
   if (cb) {
-    lifecycle.push(function() {
+    lifecycleStack.push(function() {
       cb(element, oldAttributes)
     })
   }
 }
 
-function removeChildren(element, node, attributes) {
-  if ((attributes = node.attributes)) {
+function removeChildren(element, node) {
+  var attributes = node.attributes
+  if (attributes) {
     for (var i = 0; i < node.children.length; i++) {
       removeChildren(element.childNodes[i], node.children[i])
     }
@@ -155,12 +160,13 @@ function removeChildren(element, node, attributes) {
   return element
 }
 
-function removeElement(parent, element, node, cb) {
+function removeElement(parent, element, node) {
   function done() {
     parent.removeChild(removeChildren(element, node))
   }
 
-  if (node.attributes && (cb = node.attributes.onremove)) {
+  var cb = node.attributes && node.attributes.onremove
+  if (cb) {
     cb(element, done)
   } else {
     done()
@@ -169,15 +175,24 @@ function removeElement(parent, element, node, cb) {
 
 function patchElement(parent, element, oldNode, node, isSVG) {
   if (node === oldNode) {
-  } else if (oldNode == null) {
-    element = parent.insertBefore(createElement(node, isSVG), element)
-  } else if (node.nodeName && node.nodeName === oldNode.nodeName) {
+  } else if (oldNode == null || oldNode.nodeName !== node.nodeName) {
+    var newElement = createElement(node, isSVG)
+    if (parent) {
+      parent.insertBefore(newElement, element)
+      if (oldNode != null) {
+        removeElement(parent, element, oldNode)
+      }
+    }
+    element = newElement
+  } else if (oldNode.nodeName == null) {
+    element.nodeValue = node
+  } else {
     updateElement(
       element,
+      // oldNode,
       oldNode.attributes,
       node.attributes,
-      (isSVG = isSVG || node.nodeName === "svg"),
-      oldNode.recycled
+      (isSVG = isSVG || node.nodeName === "svg")
     )
 
     var oldElements = []
@@ -252,12 +267,6 @@ function patchElement(parent, element, oldNode, node, isSVG) {
         removeElement(element, oldKeyed[i][0], oldKeyed[i][1])
       }
     }
-  } else if (node.nodeName === oldNode.nodeName) {
-    element.nodeValue = node
-  } else {
-    var nextSibling = element
-    element = parent.insertBefore(createElement(node, isSVG), nextSibling)
-    removeElement(parent, nextSibling, oldNode)
   }
   return element
 }
