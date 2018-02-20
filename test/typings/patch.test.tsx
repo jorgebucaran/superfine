@@ -7,11 +7,10 @@ const App: Component<any> = (props, children) => (
 type View = (value: string) => VNode<any>
 const view: View = value => <App>{value}</App>
 
-let oldNode: VNode<any> | null = null
-let newNode: VNode<any> = view("foo")
+let node: VNode<any> = view("foo")
 
-patch(document.body, oldNode, (oldNode = newNode))
+const element = document.body.appendChild(patch(node))
 
-newNode = view("bar")
+node = view("bar")
 
-patch(document.body, oldNode, (oldNode = newNode))
+patch(node, element);
