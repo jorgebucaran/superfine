@@ -2,10 +2,8 @@ import { h, patch } from "../src"
 
 function testTrees(name, trees) {
   test(name, done => {
-    let node
-
-    trees.forEach(tree => {
-      patch(document.body, node, (node = tree.node))
+    trees.map(tree => {
+      patch(tree.node, document.body.firstElementChild)
       expect(document.body.innerHTML).toBe(tree.html.replace(/\s{2,}/g, ""))
     })
 
@@ -14,7 +12,7 @@ function testTrees(name, trees) {
 }
 
 beforeEach(() => {
-  document.body.innerHTML = ""
+  document.body.innerHTML = "<div></div>"
 })
 
 testTrees("replace element", [
@@ -591,14 +589,6 @@ testTrees("styles", [
     html: `<div style="color: blue; float: left;"></div>`
   },
   {
-    node: h("div", { style: { opacity: 1 } }),
-    html: `<div style="opacity: 1;"></div>`
-  },
-  {
-    node: h("div", { style: { opacity: 0 } }),
-    html: `<div style="opacity: 0;"></div>`
-  },
-  {
     node: h("div"),
     html: `<div style=""></div>`
   }
@@ -629,11 +619,18 @@ testTrees("removeAttribute", [
 testTrees("skip setAttribute for functions", [
   {
     node: h("div", {
-      onclick() {
-        /**/
-      }
+      onclick() {}
     }),
     html: `<div></div>`
+  }
+])
+
+testTrees("setAttribute true", [
+  {
+    node: h("div", {
+      enabled: true
+    }),
+    html: `<div enabled="true"></div>`
   }
 ])
 
@@ -660,7 +657,46 @@ testTrees("update element with dynamic props", [
   }
 ])
 
-testTrees("elements with falsy values", [
+testTrees("don't touch textnodes if equal", [
+  {
+    node: h(
+      "main",
+      {
+        oncreate(element) {
+          element.childNodes[0].textContent = "foobar"
+        }
+      },
+      "foo"
+    ),
+    html: `<main>foobar</main>`
+  },
+  {
+    node: h("main", {}, "foobar"),
+    html: `<main>foobar</main>`
+  }
+])
+
+testTrees("a list with empty text nodes", [
+  {
+    node: h("ul", {}, [h("li", {}, ""), h("div", {}, "foo")]),
+    html: `<ul><li></li><div>foo</div></ul>`
+  },
+  {
+    node: h("ul", {}, [h("li", {}, ""), h("li", {}, ""), h("div", {}, "foo")]),
+    html: `<ul><li></li><li></li><div>foo</div></ul>`
+  },
+  {
+    node: h("ul", {}, [
+      h("li", {}, ""),
+      h("li", {}, ""),
+      h("li", {}, ""),
+      h("div", {}, "foo")
+    ]),
+    html: `<ul><li></li><li></li><li></li><div>foo</div></ul>`
+  }
+])
+
+testTrees("elements with falsey values", [
   {
     node: h("div", {
       "data-test": "foo"
@@ -696,5 +732,14 @@ testTrees("elements with falsy values", [
       "data-test": undefined
     }),
     html: `<div></div>`
+  }
+])
+
+testTrees("input list attribute", [
+  {
+    node: h("input", {
+      list: "foobar"
+    }),
+    html: `<input list="foobar">`
   }
 ])
