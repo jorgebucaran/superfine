@@ -2,47 +2,47 @@ import { h } from "../src"
 
 test("empty vnode", () => {
   expect(h("div")).toEqual({
-    type: "div",
-    props: {},
+    nodeName: "div",
+    attributes: {},
     children: []
   })
 })
 
 test("vnode with a single child", () => {
   expect(h("div", {}, ["foo"])).toEqual({
-    type: "div",
-    props: {},
+    nodeName: "div",
+    attributes: {},
     children: ["foo"]
   })
 
   expect(h("div", {}, "foo")).toEqual({
-    type: "div",
-    props: {},
+    nodeName: "div",
+    attributes: {},
     children: ["foo"]
   })
 })
 
 test("positional String/Number children", () => {
   expect(h("div", {}, "foo", "bar", "baz")).toEqual({
-    type: "div",
-    props: {},
+    nodeName: "div",
+    attributes: {},
     children: ["foo", "bar", "baz"]
   })
 
-  expect(h("div", {}, 1, "foo", 2, "baz", 3)).toEqual({
-    type: "div",
-    props: {},
-    children: ["1", "foo", "2", "baz", "3"]
+  expect(h("div", {}, 0, "foo", 1, "baz", 2)).toEqual({
+    nodeName: "div",
+    attributes: {},
+    children: [0, "foo", 1, "baz", 2]
   })
 
   expect(h("div", {}, "foo", h("div", {}, "bar"), "baz", "quux")).toEqual({
-    type: "div",
-    props: {},
+    nodeName: "div",
+    attributes: {},
     children: [
       "foo",
       {
-        type: "div",
-        props: {},
+        nodeName: "div",
+        attributes: {},
         children: ["bar"]
       },
       "baz",
@@ -51,8 +51,8 @@ test("positional String/Number children", () => {
   })
 })
 
-test("vnode with data", () => {
-  const props = {
+test("vnode with attributes", () => {
+  const attributes = {
     id: "foo",
     class: "bar",
     style: {
@@ -60,87 +60,54 @@ test("vnode with data", () => {
     }
   }
 
-  expect(h("div", props, "baz")).toEqual({
-    type: "div",
-    props,
+  expect(h("div", attributes, "baz")).toEqual({
+    nodeName: "div",
+    attributes,
     children: ["baz"]
   })
 })
 
 test("skip null and Boolean children", () => {
   const expected = {
-    type: "div",
-    props: {},
+    nodeName: "div",
+    attributes: {},
     children: []
   }
 
   expect(h("div", {}, true)).toEqual(expected)
-
   expect(h("div", {}, false)).toEqual(expected)
-
   expect(h("div", {}, null)).toEqual(expected)
 })
 
 test("components", () => {
-  const Component = (props, children) => h("div", props, children)
-  const Wrapper = (data, children) =>
-    h("div", data, children.map(vn => h(Component, null, vn)))
-
-  expect(h(Component, null, "foo")).toEqual({
-    type: "div",
-    props: {},
-    children: ["foo"]
-  })
+  const Component = (attributes, children) => h("div", attributes, children)
 
   expect(h(Component, { id: "foo" }, "bar")).toEqual({
-    type: "div",
-    props: { id: "foo" },
+    nodeName: "div",
+    attributes: { id: "foo" },
     children: ["bar"]
   })
 
   expect(h(Component, { id: "foo" }, [h(Component, { id: "bar" })])).toEqual({
-    type: "div",
-    props: { id: "foo" },
+    nodeName: "div",
+    attributes: { id: "foo" },
     children: [
       {
-        type: "div",
-        props: { id: "bar" },
+        nodeName: "div",
+        attributes: { id: "bar" },
         children: []
       }
     ]
   })
+})
 
-  expect(
-    h(Wrapper, { id: "foo" }, [
-      h("span", { id: "child1" }),
-      h("span", { id: "child2" })
-    ])
-  ).toEqual({
-    type: "div",
-    props: { id: "foo" },
-    children: [
-      {
-        type: "div",
-        props: {},
-        children: [
-          {
-            type: "span",
-            props: { id: "child1" },
-            children: []
-          }
-        ]
-      },
-      {
-        type: "div",
-        props: {},
-        children: [
-          {
-            type: "span",
-            props: { id: "child2" },
-            children: []
-          }
-        ]
-      }
-    ]
+test("component with no attributes adds default attributes", () => {
+  const Component = ({ name = "world" }, children) =>
+    h("div", {}, "Hello " + name)
+
+  expect(h(Component)).toEqual({
+    nodeName: "div",
+    attributes: {},
+    children: ["Hello world"]
   })
 })
