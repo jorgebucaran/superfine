@@ -8,6 +8,14 @@ const deepExpectNS = (element, ns) =>
     deepExpectNS(child, ns)
   })
 
+let element;
+
+beforeEach(() => {
+  document.body.innerHTML= "";
+  const el = document.createElement('div');
+  element = document.body.appendChild(el);
+})
+
 test("svg", done => {
   const node = h(
     "div",
@@ -44,5 +52,5 @@ test("svg", done => {
     ]
   )
 
-  patch(document.body, null, node)
+  patch(node, element)
 })

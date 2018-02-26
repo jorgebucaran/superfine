@@ -1,16 +1,18 @@
 import { h, patch } from "../src"
 
+let element;
 beforeEach(() => {
-  document.body.innerHTML = ""
+  document.body.innerHTML= "";
+  const el = document.createElement('div');
+  element = document.body.appendChild(el);
 })
 
 test("oncreate", done => {
-  patch(
-    document.body,
-    null,
+  var view = value =>
     h(
       "div",
       {
+        key: "create",
         oncreate(element) {
           element.className = "foo"
           expect(document.body.innerHTML).toBe(`<div class="foo">foo</div>`)
@@ -19,7 +21,9 @@ test("oncreate", done => {
       },
       "foo"
     )
-  )
+
+    let node = view("foo")
+    patch(node, element)
 })
 
 test("onupdate", done => {
@@ -29,7 +33,7 @@ test("onupdate", done => {
       {
         class: value,
         onupdate(element, oldProps) {
-          expect(element.textContent).toBe("foo")
+          expect(element.textContent).toBe("foo2")
           expect(oldProps.class).toBe("foo")
           done()
         }
@@ -37,10 +41,10 @@ test("onupdate", done => {
       value
     )
 
-  let node = view("foo")
+  let node = view("foo");
 
-  patch(document.body, null, node)
-  patch(document.body, node, node)
+  patch(node, element)
+  patch(view("foo2"), element)
 })
 
 test("onremove", done => {
@@ -72,14 +76,13 @@ test("onremove", done => {
         )
       : h("ul", {}, [h("li")])
 
-  let node = view(true)
-  patch(document.body, null, node)
-  patch(document.body, node, view(false))
+  patch(view(true), document.body.firstElementChild)
+  patch(view(false), document.body.firstElementChild)
 })
 
 test("ondestroy", done => {
   var log = []
-  
+
   var view = value =>
     value
       ? h("p", {id: "a", onremove: (el, done) => { log.push("removed a"); done(); }, ondestroy: () => log.push("destroyed a")}, [
@@ -88,12 +91,12 @@ test("ondestroy", done => {
         ])
       ])
       : h("p", {id: "a", onremove: (el, done) => { log.push("removed a"); done(); }, ondestroy: () => log.push("destroyed a")})
-  
-  patch(document.body, null, view(true))
+
+  patch(view(true), document.body.firstElementChild)
 
   expect(log.length).toBe(0)
 
-  patch(document.body, view(true), view(false))
+  patch(view(false), document.body.firstElementChild)
 
   expect(log.join(', ')).toBe('removed b, destroyed c, destroyed b')
 
@@ -144,6 +147,6 @@ test("event bubling", done => {
   let count = 0
   let node = view(true)
 
-  patch(document.body, null, node)
-  patch(document.body, node, view(false))
+  patch(view(true), document.body.firstElementChild)
+  patch(view(false), document.body.firstElementChild)
 })
