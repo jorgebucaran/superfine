@@ -23,9 +23,8 @@ export function h<Props>(
 ): VNode<Props>
 
 export function patch(
-  parent: Element,
-  oldNode: VNode | null,
-  newNode: VNode
+  node: VNode,
+  target?: Element | null,
 ): Element
 
 declare global {
