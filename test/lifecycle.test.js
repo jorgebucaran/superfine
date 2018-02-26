@@ -23,7 +23,7 @@ test("oncreate", done => {
     )
 
     let node = view("foo")
-    patch(node, element);
+    patch(node, element)
 })
 
 test("onupdate", done => {
@@ -43,8 +43,8 @@ test("onupdate", done => {
 
   let node = view("foo");
 
-  patch(node, element);
-  patch(view("foo2"), element);
+  patch(node, element)
+  patch(view("foo2"), element)
 })
 
 test("onremove", done => {
