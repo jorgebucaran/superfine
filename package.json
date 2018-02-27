@@ -19,12 +19,12 @@
     "virtual-dom"
   ],
   "scripts": {
-    "test": "jest --coverage --no-cache && tsc -p test/typings/tsconfig.json",
+    "test": "jest --coverage --no-cache && tsc -p test/ts",
     "build": "npm run bundle && npm run minify",
-    "bundle": "rollup -i src/index.js -o dist/patchdom.js -f umd -mn patchdom",
-    "minify": "uglifyjs dist/patchdom.js -o dist/patchdom.js --mangle --compress warnings=false --pure-funcs=Object.defineProperty -p relative --in-source-map dist/patchdom.js.map --source-map dist/patchdom.js.map",
-    "format": "prettier --semi false --write 'src/**/*.js' 'patchdom.d.ts'",
+    "bundle": "rollup -i src/index.js -o dist/patchdom.js -m -f umd -n patchdom",
+    "minify": "uglifyjs dist/patchdom.js -o dist/patchdom.js -mc pure_funcs=Object.defineProperty --source-map includeSources,url=patchdom.js.map",
     "prepare": "npm run build",
+    "format": "prettier --semi false --write {src,test}/**/*.js {,test/ts/}*.{ts,tsx}",
     "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
   },
   "babel": {
