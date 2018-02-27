@@ -1,8 +1,8 @@
 export as namespace patchdom
 
 export interface VNode<Props = {}> {
-  type: string
-  props?: Props
+  nodeName: string
+  attributes?: Props
   children: Array<VNode | string>
 }
 
@@ -11,22 +11,12 @@ export interface Component<Props = {}> {
 }
 
 export function h<Props>(
-  type: Component<Props> | string,
-  props?: Props,
+  nodeName: Component<Props> | string,
+  attributes?: Props,
   ...children: Array<VNode | string | number | null>
 ): VNode<Props>
 
-export function h<Props>(
-  tag: Component<Props> | string,
-  props?: Props,
-  children?: Array<VNode | string | number | null>
-): VNode<Props>
-
-export function patch(
-  parent: Element,
-  oldNode: VNode | null,
-  newNode: VNode
-): Element
+export function patch(node: VNode, element?: Element): Element
 
 declare global {
   namespace JSX {

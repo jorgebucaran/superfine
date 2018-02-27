@@ -23,6 +23,9 @@ document.body.appendChild(
     )
   )
 )
+
+
+<>
 ```
 
 Patchdom supports keyed updates & lifecycle events — all with no dependencies. Mix it with your favorite state management library or create your own custom view framework.

@@ -1,4 +1,4 @@
-import { Component, h, patch, VNode } from "../../"
+import { h, patch, VNode, Component } from "patchdom"
 
 const App: Component<any> = (props, children) => (
   <div class="app">{children}</div>
@@ -11,6 +11,4 @@ let node: VNode<any> = view("foo")
 
 const element = document.body.appendChild(patch(node))
 
-node = view("bar")
-
-patch(node, element);
+patch(view("bar"), element)

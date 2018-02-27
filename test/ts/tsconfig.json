@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "jsx": "react",
+    "jsxFactory": "h",
+    "baseUrl": "../..",
+    "paths": {
+      "patchdom": ["src", "patchdom.d.ts"]
+    }
+  },
+  "include": ["*.ts", "*.tsx", "**/*.ts", "**/*.tsx"]
+}
