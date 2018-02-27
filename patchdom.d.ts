@@ -1,4 +1,4 @@
-export as namespace picodom
+export as namespace patchdom
 
 export interface VNode<Props = {}> {
   type: string
@@ -23,8 +23,9 @@ export function h<Props>(
 ): VNode<Props>
 
 export function patch(
-  node: VNode,
-  target?: Element | null,
+  parent: Element,
+  oldNode: VNode | null,
+  newNode: VNode
 ): Element
 
 declare global {

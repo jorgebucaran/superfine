@@ -1,5 +1,4 @@
 var map = [].map
-var isRecycling
 var lifecycleStack = []
 
 export function h(name, attributes) {
@@ -34,7 +33,7 @@ export function patch(node, element) {
   element = patchElement(
     element && element.parentNode,
     element,
-    (isRecycling = element && element.node == null)
+    element && element.node == null
       ? recycleElement(element)
       : element && element.node,
     node
@@ -48,7 +47,7 @@ export function patch(node, element) {
 
 function recycleElement(element) {
   return {
-    // recycled: true,
+    recycled: true,
     nodeName: element.nodeName.toLowerCase(),
     attributes: {},
     children: map.call(element.childNodes, function(element) {
@@ -122,7 +121,7 @@ function createElement(node, isSVG) {
   return element
 }
 
-function updateElement(element, /*oldNode,*/ oldAttributes, attributes, isSVG) {
+function updateElement(element, oldNode, oldAttributes, attributes, isSVG) {
   for (var name in clone(oldAttributes, attributes)) {
     if (
       attributes[name] !==
@@ -140,8 +139,7 @@ function updateElement(element, /*oldNode,*/ oldAttributes, attributes, isSVG) {
     }
   }
 
-  var cb = isRecycling ? attributes.oncreate : attributes.onupdate
-  // var cb = oldNode.recycled ? attributes.oncreate : attributes.onupdate
+  var cb = oldNode.recycled ? attributes.oncreate : attributes.onupdate
   if (cb) {
     lifecycleStack.push(function() {
       cb(element, oldAttributes)
@@ -192,7 +190,7 @@ function patchElement(parent, element, oldNode, node, isSVG) {
   } else {
     updateElement(
       element,
-      // oldNode,
+      oldNode,
       oldNode.attributes,
       node.attributes,
       (isSVG = isSVG || node.nodeName === "svg")

@@ -8,41 +8,33 @@ const deepExpectNS = (element, ns) =>
     deepExpectNS(child, ns)
   })
 
-test("svg", done => {
-  const node = h(
-    "div",
-    {
-      oncreate() {
-        const foo = document.getElementById("foo")
-        const bar = document.getElementById("bar")
-        const baz = document.getElementById("baz")
-
-        expect(foo.namespaceURI).not.toBe(SVG_NS)
-        expect(baz.namespaceURI).not.toBe(SVG_NS)
-        expect(bar.namespaceURI).toBe(SVG_NS)
-        expect(bar.getAttribute("viewBox")).toBe("0 0 10 10")
-        deepExpectNS(bar, SVG_NS)
-
-        done()
-      }
-    },
-    [
-      h("p", { id: "foo" }, "foo"),
-      h("svg", { id: "bar", viewBox: "0 0 10 10" }, [
-        h("quux", {}, [
-          h("beep", {}, [h("ping", {}), h("pong", {})]),
-          h("bop", {}),
-          h("boop", {}, [h("ping", {}), h("pong", {})])
-        ]),
-        h("xuuq", {}, [
-          h("beep", {}),
-          h("bop", {}, [h("ping", {}), h("pong", {})]),
-          h("boop", {})
-        ])
+test("svg", () => {
+  const node = h("div", {}, [
+    h("p", { id: "foo" }, "foo"),
+    h("svg", { id: "bar", viewBox: "0 0 10 10" }, [
+      h("quux", {}, [
+        h("beep", {}, [h("ping", {}), h("pong", {})]),
+        h("bop", {}),
+        h("boop", {}, [h("ping", {}), h("pong", {})])
       ]),
-      h("p", { id: "baz" }, "baz")
-    ]
-  )
+      h("xuuq", {}, [
+        h("beep", {}),
+        h("bop", {}, [h("ping", {}), h("pong", {})]),
+        h("boop", {})
+      ])
+    ]),
+    h("p", { id: "baz" }, "baz")
+  ])
 
-  patch(document.body, null, node)
+  document.body.appendChild(patch(node))
+
+  const foo = document.getElementById("foo")
+  const bar = document.getElementById("bar")
+  const baz = document.getElementById("baz")
+
+  expect(foo.namespaceURI).not.toBe(SVG_NS)
+  expect(baz.namespaceURI).not.toBe(SVG_NS)
+  expect(bar.namespaceURI).toBe(SVG_NS)
+  expect(bar.getAttribute("viewBox")).toBe("0 0 10 10")
+  deepExpectNS(bar, SVG_NS)
 })

@@ -4,104 +4,112 @@ beforeEach(() => {
   document.body.innerHTML = ""
 })
 
-test("oncreate", done => {
-  patch(
-    document.body,
-    null,
-    h(
-      "div",
-      {
-        oncreate(element) {
-          element.className = "foo"
-          expect(document.body.innerHTML).toBe(`<div class="foo">foo</div>`)
-          done()
-        }
-      },
-      "foo"
+test("oncreate", () => {
+  document.body.appendChild(
+    patch(
+      h(
+        "div",
+        {
+          oncreate(element) {
+            element.className = "foo"
+          }
+        },
+        "foo"
+      )
     )
   )
+
+  expect(document.body.innerHTML).toBe(`<div class="foo">foo</div>`)
 })
 
 test("onupdate", done => {
-  var view = value =>
+  const view = state =>
     h(
       "div",
       {
-        class: value,
-        onupdate(element, oldProps) {
-          expect(element.textContent).toBe("foo")
-          expect(oldProps.class).toBe("foo")
+        class: state,
+        onupdate(element, old) {
+          expect(element.textContent).toBe("bar")
+          expect(old.class).toBe("foo")
           done()
         }
       },
-      value
+      state
     )
 
-  let node = view("foo")
-
-  patch(document.body, null, node)
-  patch(document.body, node, node)
+  patch(view("bar"), document.body.appendChild(patch(view("foo"))))
 })
 
 test("onremove", done => {
-  var view = value =>
-    value
-      ? h(
-          "ul",
-          {
-            oncreate() {
-              expect(document.body.innerHTML).toBe(
-                "<ul><li></li><li></li></ul>"
-              )
+  const view = state =>
+    state
+      ? h("ul", {}, [
+          h("li"),
+          h("li", {
+            onremove(element, remove) {
+              remove()
+              expect(document.body.innerHTML).toBe("<ul><li></li></ul>")
+              done()
             }
-          },
-          [
-            h("li"),
-            h("li", {
-              onremove(element, remove) {
-                expect(document.body.innerHTML).toBe(
-                  "<ul><li></li><li></li></ul>"
-                )
-
-                remove()
-                expect(document.body.innerHTML).toBe("<ul><li></li></ul>")
-                done()
-              }
-            })
-          ]
-        )
+          })
+        ])
       : h("ul", {}, [h("li")])
 
-  let node = view(true)
-  patch(document.body, null, node)
-  patch(document.body, node, view(false))
+  patch(view(false), document.body.appendChild(patch(view(true))))
 })
 
 test("ondestroy", done => {
-  var log = []
-  
-  var view = value =>
-    value
-      ? h("p", {id: "a", onremove: (el, done) => { log.push("removed a"); done(); }, ondestroy: () => log.push("destroyed a")}, [
-        h("p", {id: "b", onremove: (el, done) => { log.push("removed b"); done(); }, ondestroy: () => log.push("destroyed b")}, [
-          h("p", {id: "c", onremove: (el, done) => { log.push("removed c"); done(); }, ondestroy: () => log.push("destroyed c")})
+  const view = state =>
+    state
+      ? h("ul", {}, [
+          h("li"),
+          h("li", {}, [
+            h("span", {
+              ondestroy() {
+                expect(document.body.innerHTML).toBe(
+                  "<ul><li></li><li><span></span></li></ul>"
+                )
+                setTimeout(() => {
+                  expect(document.body.innerHTML).toBe("<ul><li></li></ul>")
+                  done()
+                })
+              }
+            })
+          ])
         ])
-      ])
-      : h("p", {id: "a", onremove: (el, done) => { log.push("removed a"); done(); }, ondestroy: () => log.push("destroyed a")})
-  
-  patch(document.body, null, view(true))
+      : h("ul", {}, [h("li")])
 
-  expect(log.length).toBe(0)
-
-  patch(document.body, view(true), view(false))
-
-  expect(log.join(', ')).toBe('removed b, destroyed c, destroyed b')
-
-  done()
+  patch(view(false), document.body.appendChild(patch(view(true))))
 })
 
-test("event bubling", done => {
-  var view = value =>
+test("onremove/ondestroy", done => {
+  let destroyed = false
+
+  const view = state =>
+    state
+      ? h("ul", {}, [
+          h("li"),
+          h("li", {
+            ondestroy() {
+              destroyed = true
+            },
+            onremove(element, remove) {
+              expect(destroyed).toBe(false)
+              remove()
+              expect(destroyed).toBe(true)
+              done()
+            }
+          })
+        ])
+      : h("ul", {}, [h("li")])
+
+  patch(view(false), document.body.appendChild(patch(view(true))))
+})
+
+test("event bubbling", done => {
+  let count = 0
+
+  const view = state =>
     h(
       "main",
       {
@@ -141,9 +149,5 @@ test("event bubling", done => {
       ]
     )
 
-  let count = 0
-  let node = view(true)
-
-  patch(document.body, null, node)
-  patch(document.body, node, view(false))
+  patch(view(), document.body.appendChild(patch(view())))
 })
