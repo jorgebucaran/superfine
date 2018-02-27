@@ -3,7 +3,7 @@
 [![Travis CI](https://img.shields.io/travis/jorgebucaran/patchdom/master.svg)](https://travis-ci.org/jorgebucaran/patchdom)
 [![Codecov](https://img.shields.io/codecov/c/github/jorgebucaran/patchdom/master.svg)](https://codecov.io/gh/jorgebucaran/patchdom)
 [![npm](https://img.shields.io/npm/v/patchdom.svg)](https://www.npmjs.org/package/patchdom)
- [![Slack](https://hyperappjs.herokuapp.com/badge.svg)](https://hyperappjs.herokuapp.com "#patchdom")
+[![Slack](https://hyperappjs.herokuapp.com/badge.svg)](https://hyperappjs.herokuapp.com "#patchdom")
 
 Patchdom is a 1 kB Virtual DOM builder and patch function.
 
@@ -11,9 +11,18 @@ Try it live [here](https://codepen.io/jorgebucaran/pen/BRbJpG?editors=0010).
 
 ```js
 import { h, patch } from "patchdom"
-// @jsx h
 
-document.body.appendChild(patch(<h1>Hello World</h1>))
+document.body.appendChild(
+  patch(
+    h(
+      "h1",
+      {
+        class: "app"
+      },
+      "Hello World"
+    )
+  )
+)
 ```
 
 Patchdom supports keyed updates & lifecycle events — all with no dependencies. Mix it with your favorite state management library or create your own custom view framework.
@@ -63,9 +72,13 @@ Individual style properties will be diffed and mapped against [`HTMLElement.styl
 ### Attributes and Life-Cycle
 
 #### `key`
+
 #### `oncreate`
+
 #### `onupdate`
+
 #### `onremove`
+
 #### `ondestroy`
 
 ## License
