@@ -1,7 +1,7 @@
 {
   "name": "patchdom",
   "description": "1 kB JavaScript Virtual DOM builder and patch function.",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "main": "dist/patchdom.js",
   "jsnext:main": "src/index.js",
   "module": "src/index.js",

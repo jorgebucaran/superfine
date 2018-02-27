@@ -10,18 +10,10 @@ Patchdom is a 1 kB Virtual DOM builder and patch function.
 Try it live [here](https://codepen.io/jorgebucaran/pen/BRbJpG?editors=0010).
 
 ```js
-import { h, patch } from "../src"
+import { h, patch } from "patchdom"
 // @jsx h
 
-const view = state => {
-  return (
-    <div>
-      <h1>{state}</h1>
-    </div>
-  )
-}
-
-document.body.appendChild(patch(view("Hello World")))
+document.body.appendChild(patch(<h1>Hello World</h1>))
 ```
 
 Patchdom supports keyed updates & lifecycle events — all with no dependencies. Mix it with your favorite state management library or create your own custom view framework.
