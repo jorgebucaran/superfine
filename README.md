@@ -76,12 +76,6 @@ Individual style properties will be diffed and mapped against [`HTMLElement.styl
 #### `onremove`
 #### `ondestroy`
 
-## Links
-
-- [Twitter](https://twitter.com/patchdom)
-- [CodePen](https://codepen.io/patchdom)
-- [/r/patchdom](https://www.reddit.com/r/patchdom)
-
 ## License
 
 patchdom is MIT licensed. See [LICENSE](/LICENSE.md).
