@@ -1,7 +1,7 @@
 # ▞ Patchdom
 
-[![Travis CI](https://img.shields.io/travis/jorgebucaran/patchdom/master.svg)](https://travis-ci.org/patchdom/patchdom)
-[![Codecov](https://img.shields.io/codecov/c/github/jorgebucaran/patchdom/master.svg)](https://codecov.io/gh/patchdom/patchdom)
+[![Travis CI](https://img.shields.io/travis/jorgebucaran/patchdom/master.svg)](https://travis-ci.org/jorgebucaran/patchdom)
+[![Codecov](https://img.shields.io/codecov/c/github/jorgebucaran/patchdom/master.svg)](https://codecov.io/gh/jorgebucaran/patchdom)
 [![npm](https://img.shields.io/npm/v/patchdom.svg)](https://www.npmjs.org/package/patchdom)
  [![Slack](https://hyperappjs.herokuapp.com/badge.svg)](https://hyperappjs.herokuapp.com "#patchdom")
 
