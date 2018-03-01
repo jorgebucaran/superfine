@@ -1,4 +1,4 @@
-import { h, patch, VNode, Component } from "patchdom"
+import { h, patch, VNode, Component } from "ultradom"
 
 const App: Component<any> = (props, children) => (
   <div class="app">{children}</div>
@@ -7,8 +7,4 @@ const App: Component<any> = (props, children) => (
 type View = (value: string) => VNode<any>
 const view: View = value => <App>{value}</App>
 
-let node: VNode<any> = view("foo")
-
-const element = document.body.appendChild(patch(node))
-
-patch(view("bar"), element)
+const element = document.body.appendChild(patch(view("foo")))

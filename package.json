@@ -1,28 +1,28 @@
 {
-  "name": "patchdom",
-  "description": "1 kB JavaScript Virtual DOM builder and patch function.",
+  "name": "ultradom",
+  "description": "1 kB Virtual DOM library for building web applications.",
   "version": "0.1.0",
-  "main": "dist/patchdom.js",
+  "main": "dist/ultradom.js",
   "jsnext:main": "src/index.js",
   "module": "src/index.js",
   "license": "MIT",
-  "repository": "jorgebucaran/patchdom",
+  "repository": "jorgebucaran/ultradom",
   "files": [
     "src",
     "dist",
-    "patchdom.d.ts"
+    "ultradom.d.ts"
   ],
   "author": "Jorge Bucaran",
   "keywords": [
-    "patchdom",
+    "ultradom",
     "vdom",
     "virtual-dom"
   ],
   "scripts": {
     "test": "jest --coverage --no-cache && tsc -p test/ts",
     "build": "npm run bundle && npm run minify",
-    "bundle": "rollup -i src/index.js -o dist/patchdom.js -m -f umd -n patchdom",
-    "minify": "uglifyjs dist/patchdom.js -o dist/patchdom.js -mc pure_funcs=['Object.defineProperty'] --source-map includeSources,url=patchdom.js.map",
+    "bundle": "rollup -i src/index.js -o dist/ultradom.js -m -f umd -n ultradom",
+    "minify": "uglifyjs dist/ultradom.js -o dist/ultradom.js -mc pure_funcs=['Object.defineProperty'] --source-map includeSources,url=ultradom.js.map",
     "prepare": "npm run build",
     "format": "prettier --semi false --write {src,test}/**/*.js {,test/ts/}*.{ts,tsx}",
     "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
@@ -33,10 +33,10 @@
   "devDependencies": {
     "babel-preset-env": "^1.6.1",
     "jest": "^22.4.2",
-    "prettier": "~1.11.0",
+    "prettier": "~1.11.1",
     "rollup": "^0.56.3",
     "uglify-js": "^3.3.12",
     "typescript": "^2.7.2"
   },
-  "typings": "patchdom.d.ts"
+  "typings": "ultradom.d.ts"
 }

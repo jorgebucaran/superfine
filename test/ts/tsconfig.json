@@ -6,7 +6,7 @@
     "jsxFactory": "h",
     "baseUrl": "../..",
     "paths": {
-      "patchdom": ["src", "patchdom.d.ts"]
+      "ultradom": ["src", "ultradom.d.ts"]
     }
   },
   "include": ["*.ts", "*.tsx", "**/*.ts", "**/*.tsx"]
