@@ -4,26 +4,26 @@
 [![npm](https://img.shields.io/npm/v/ultradom.svg)](https://www.npmjs.org/package/ultradom)
 [![Slack](https://hyperappjs.herokuapp.com/badge.svg)](https://hyperappjs.herokuapp.com "#ultradom")
 
-**Ultradom** is a virtual DOM view layer for building web-based applications and frameworks. Remix with your favorite state management architecture or use it standalone for maximum flexibility.
+**Ultradom** is a virtual DOM micro-library for building browser-based applications and frameworks. Mix it with your favorite state management architecture or use it standalone for maximum flexibility. Out of the box, you get server-rendered DOM recycling, keyed updates & lifecycle events — all with no dependencies.
 
 ## Getting Started
 
-Let's begin with a simple counter that can be incremented or decremented. You can [try it online](https://codepen.io/jorgebucaran/pen/PQLZqg?editors=0010) to get a sense of what we are building. We'll break it down afterwards. Notice we've aliased <samp>createNode</samp> to <samp>U</samp> only for typing convenience.
+Let's walkthrough a simple counter that can be incremented or decremented. You can [try it online](https://codepen.io/jorgebucaran/pen/PQLZqg?editors=0010) to get a sense of what we are building. We'll break it down afterwards. Notice we've aliased <samp>createNode</samp> to <samp>u</samp> because we're lazy to type it out for every node of the application.
 
 ```jsx
-import { createNode as U, patch } from "ultradom"
+import { createNode as u, patch } from "ultradom"
 
 const view = count =>
-  U("div", {}, [
-    U("h1", {}, count),
-    U("button", { onclick: () => patch(view(count - 1), element) }, "-"),
-    U("button", { onclick: () => patch(view(count + 1), element) }, "+")
+  u("div", {}, [
+    u("h1", {}, count),
+    u("button", { onclick: () => patch(view(count - 1), element) }, "-"),
+    u("button", { onclick: () => patch(view(count + 1), element) }, "+")
   ])
 
 const element = document.body.appendChild(patch(view(0)))
 ```
 
-Without a DOM element, <samp>patch</samp> returns a new element which we can append to the page as seen above, otherwise it will update the supplied element to match the virtual DOM.
+Without a DOM element, <samp>patch</samp> returns a new element which we can append to the page as seen above, otherwise it updates the supplied element to match the virtual DOM.
 
 A virtual DOM is a description of what a DOM should look like using a tree of nested JavaScript objects known as virtual nodes. The <samp>createNode</samp> function takes an element's name, its attributes and an optional array of children elements and creates a virtual DOM node. In the example, the view function returns and object like this.
 
@@ -53,6 +53,8 @@ A virtual DOM is a description of what a DOM should look like using a tree of ne
 
 The virtual DOM allows us to write code as if the entire document is thrown away and rebuilt every time we patch an element, while we only update the parts of the DOM that actually changed. We try to do this in the least number of steps possible, by comparing the new virtual DOM against the previous one. This leads to high efficiency, since typically only a small percentage of nodes need to change, and changing real DOM nodes is costly compared to recalculating the virtual DOM.
 
+It may seem wasteful to throw away the old virtual DOM and re-create it entirely on every update — not to mention the fact that at any one time, Ultradom is keeping two virtual DOM trees in memory, but as it turns out, browsers can create hundreds of thousands of objects very quickly.
+
 The first time you try to update a DOM element, <samp>patch</samp> will attempt to reuse the supplied element and its children (instead of creating everything from scratch) enabling SEO optimization and improving your application time-to-interactive. This is how we can turn server-rendered content into an interative application out the previous example.
 
 ```html
@@ -71,6 +73,12 @@ The first time you try to update a DOM element, <samp>patch</samp> will attempt 
   </div>
 </body>
 </html>
+```
+
+Then patch the element you want to recycle (the first element of the body in this example).
+
+```jsx
+const element = patch(view(0), document.body.firstElementChild)
 ```
 
 ## Installation
