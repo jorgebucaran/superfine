@@ -1,4 +1,4 @@
-import { h, patch } from "../src"
+import { createNode as U, patch } from "../src"
 
 function testTrees(name, trees) {
   test(name, done => {
@@ -17,18 +17,18 @@ beforeEach(() => {
 
 testTrees("replace element", [
   {
-    node: h("main", {}),
+    node: U("main", {}),
     html: `<main></main>`
   },
   {
-    node: h("div", {}),
+    node: U("div", {}),
     html: `<div></div>`
   }
 ])
 
 testTrees("replace child", [
   {
-    node: h("main", {}, [h("div", {}, "foo")]),
+    node: U("main", {}, [U("div", {}, "foo")]),
     html: `
         <main>
           <div>foo</div>
@@ -36,7 +36,7 @@ testTrees("replace child", [
       `
   },
   {
-    node: h("main", {}, [h("main", {}, "bar")]),
+    node: U("main", {}, [U("main", {}, "bar")]),
     html: `
         <main>
           <main>bar</main>
@@ -47,8 +47,8 @@ testTrees("replace child", [
 
 testTrees("insert children on top", [
   {
-    node: h("main", {}, [
-      h(
+    node: U("main", {}, [
+      U(
         "div",
         {
           key: "a",
@@ -66,8 +66,8 @@ testTrees("insert children on top", [
       `
   },
   {
-    node: h("main", {}, [
-      h(
+    node: U("main", {}, [
+      U(
         "div",
         {
           key: "b",
@@ -77,7 +77,7 @@ testTrees("insert children on top", [
         },
         "B"
       ),
-      h("div", { key: "a" }, "A")
+      U("div", { key: "a" }, "A")
     ]),
     html: `
         <main>
@@ -87,8 +87,8 @@ testTrees("insert children on top", [
       `
   },
   {
-    node: h("main", {}, [
-      h(
+    node: U("main", {}, [
+      U(
         "div",
         {
           key: "c",
@@ -98,8 +98,8 @@ testTrees("insert children on top", [
         },
         "C"
       ),
-      h("div", { key: "b" }, "B"),
-      h("div", { key: "a" }, "A")
+      U("div", { key: "b" }, "B"),
+      U("div", { key: "a" }, "A")
     ]),
     html: `
         <main>
@@ -110,8 +110,8 @@ testTrees("insert children on top", [
       `
   },
   {
-    node: h("main", {}, [
-      h(
+    node: U("main", {}, [
+      U(
         "div",
         {
           key: "d",
@@ -121,9 +121,9 @@ testTrees("insert children on top", [
         },
         "D"
       ),
-      h("div", { key: "c" }, "C"),
-      h("div", { key: "b" }, "B"),
-      h("div", { key: "a" }, "A")
+      U("div", { key: "c" }, "C"),
+      U("div", { key: "b" }, "B"),
+      U("div", { key: "a" }, "A")
     ]),
     html: `
         <main>
@@ -138,7 +138,7 @@ testTrees("insert children on top", [
 
 testTrees("remove text node", [
   {
-    node: h("main", {}, [h("div", {}, ["foo"]), "bar"]),
+    node: U("main", {}, [U("div", {}, ["foo"]), "bar"]),
     html: `
         <main>
           <div>foo</div>
@@ -147,7 +147,7 @@ testTrees("remove text node", [
       `
   },
   {
-    node: h("main", {}, [h("div", {}, ["foo"])]),
+    node: U("main", {}, [U("div", {}, ["foo"])]),
     html: `
         <main>
           <div>foo</div>
@@ -158,8 +158,8 @@ testTrees("remove text node", [
 
 testTrees("replace keyed", [
   {
-    node: h("main", {}, [
-      h(
+    node: U("main", {}, [
+      U(
         "div",
         {
           key: "a",
@@ -177,8 +177,8 @@ testTrees("replace keyed", [
       `
   },
   {
-    node: h("main", {}, [
-      h(
+    node: U("main", {}, [
+      U(
         "div",
         {
           key: "b",
@@ -199,8 +199,8 @@ testTrees("replace keyed", [
 
 testTrees("reorder keyed", [
   {
-    node: h("main", {}, [
-      h(
+    node: U("main", {}, [
+      U(
         "div",
         {
           key: "a",
@@ -210,7 +210,7 @@ testTrees("reorder keyed", [
         },
         "A"
       ),
-      h(
+      U(
         "div",
         {
           key: "b",
@@ -220,7 +220,7 @@ testTrees("reorder keyed", [
         },
         "B"
       ),
-      h(
+      U(
         "div",
         {
           key: "c",
@@ -230,7 +230,7 @@ testTrees("reorder keyed", [
         },
         "C"
       ),
-      h(
+      U(
         "div",
         {
           key: "d",
@@ -240,7 +240,7 @@ testTrees("reorder keyed", [
         },
         "D"
       ),
-      h(
+      U(
         "div",
         {
           key: "e",
@@ -262,12 +262,12 @@ testTrees("reorder keyed", [
       `
   },
   {
-    node: h("main", {}, [
-      h("div", { key: "e" }, "E"),
-      h("div", { key: "a" }, "A"),
-      h("div", { key: "b" }, "B"),
-      h("div", { key: "c" }, "C"),
-      h("div", { key: "d" }, "D")
+    node: U("main", {}, [
+      U("div", { key: "e" }, "E"),
+      U("div", { key: "a" }, "A"),
+      U("div", { key: "b" }, "B"),
+      U("div", { key: "c" }, "C"),
+      U("div", { key: "d" }, "D")
     ]),
     html: `
         <main>
@@ -280,12 +280,12 @@ testTrees("reorder keyed", [
       `
   },
   {
-    node: h("main", {}, [
-      h("div", { key: "e" }, "E"),
-      h("div", { key: "d" }, "D"),
-      h("div", { key: "a" }, "A"),
-      h("div", { key: "c" }, "C"),
-      h("div", { key: "b" }, "B")
+    node: U("main", {}, [
+      U("div", { key: "e" }, "E"),
+      U("div", { key: "d" }, "D"),
+      U("div", { key: "a" }, "A"),
+      U("div", { key: "c" }, "C"),
+      U("div", { key: "b" }, "B")
     ]),
     html: `
         <main>
@@ -298,12 +298,12 @@ testTrees("reorder keyed", [
       `
   },
   {
-    node: h("main", {}, [
-      h("div", { key: "c" }, "C"),
-      h("div", { key: "e" }, "E"),
-      h("div", { key: "b" }, "B"),
-      h("div", { key: "a" }, "A"),
-      h("div", { key: "d" }, "D")
+    node: U("main", {}, [
+      U("div", { key: "c" }, "C"),
+      U("div", { key: "e" }, "E"),
+      U("div", { key: "b" }, "B"),
+      U("div", { key: "a" }, "A"),
+      U("div", { key: "d" }, "D")
     ]),
     html: `
         <main>
@@ -319,8 +319,8 @@ testTrees("reorder keyed", [
 
 testTrees("grow/shrink keyed", [
   {
-    node: h("main", {}, [
-      h(
+    node: U("main", {}, [
+      U(
         "div",
         {
           key: "a",
@@ -330,7 +330,7 @@ testTrees("grow/shrink keyed", [
         },
         "A"
       ),
-      h(
+      U(
         "div",
         {
           key: "b",
@@ -340,7 +340,7 @@ testTrees("grow/shrink keyed", [
         },
         "B"
       ),
-      h(
+      U(
         "div",
         {
           key: "c",
@@ -350,7 +350,7 @@ testTrees("grow/shrink keyed", [
         },
         "C"
       ),
-      h(
+      U(
         "div",
         {
           key: "d",
@@ -360,7 +360,7 @@ testTrees("grow/shrink keyed", [
         },
         "D"
       ),
-      h(
+      U(
         "div",
         {
           key: "e",
@@ -382,10 +382,10 @@ testTrees("grow/shrink keyed", [
       `
   },
   {
-    node: h("main", {}, [
-      h("div", { key: "a" }, "A"),
-      h("div", { key: "c" }, "C"),
-      h("div", { key: "d" }, "D")
+    node: U("main", {}, [
+      U("div", { key: "a" }, "A"),
+      U("div", { key: "c" }, "C"),
+      U("div", { key: "d" }, "D")
     ]),
     html: `
         <main>
@@ -396,7 +396,7 @@ testTrees("grow/shrink keyed", [
       `
   },
   {
-    node: h("main", {}, [h("div", { key: "d" }, "D")]),
+    node: U("main", {}, [U("div", { key: "d" }, "D")]),
     html: `
         <main>
           <div id="d">D</div>
@@ -404,8 +404,8 @@ testTrees("grow/shrink keyed", [
       `
   },
   {
-    node: h("main", {}, [
-      h(
+    node: U("main", {}, [
+      U(
         "div",
         {
           key: "a",
@@ -415,7 +415,7 @@ testTrees("grow/shrink keyed", [
         },
         "A"
       ),
-      h(
+      U(
         "div",
         {
           key: "b",
@@ -425,7 +425,7 @@ testTrees("grow/shrink keyed", [
         },
         "B"
       ),
-      h(
+      U(
         "div",
         {
           key: "c",
@@ -435,8 +435,8 @@ testTrees("grow/shrink keyed", [
         },
         "C"
       ),
-      h("div", { key: "d" }, "D"),
-      h(
+      U("div", { key: "d" }, "D"),
+      U(
         "div",
         {
           key: "e",
@@ -458,11 +458,11 @@ testTrees("grow/shrink keyed", [
       `
   },
   {
-    node: h("main", {}, [
-      h("div", { key: "d" }, "D"),
-      h("div", { key: "c" }, "C"),
-      h("div", { key: "b" }, "B"),
-      h("div", { key: "a" }, "A")
+    node: U("main", {}, [
+      U("div", { key: "d" }, "D"),
+      U("div", { key: "c" }, "C"),
+      U("div", { key: "b" }, "B"),
+      U("div", { key: "a" }, "A")
     ]),
     html: `
         <main>
@@ -477,8 +477,8 @@ testTrees("grow/shrink keyed", [
 
 testTrees("mixed keyed/non-keyed", [
   {
-    node: h("main", {}, [
-      h(
+    node: U("main", {}, [
+      U(
         "div",
         {
           key: "a",
@@ -488,9 +488,9 @@ testTrees("mixed keyed/non-keyed", [
         },
         "A"
       ),
-      h("div", {}, "B"),
-      h("div", {}, "C"),
-      h(
+      U("div", {}, "B"),
+      U("div", {}, "C"),
+      U(
         "div",
         {
           key: "d",
@@ -500,7 +500,7 @@ testTrees("mixed keyed/non-keyed", [
         },
         "D"
       ),
-      h(
+      U(
         "div",
         {
           key: "e",
@@ -522,12 +522,12 @@ testTrees("mixed keyed/non-keyed", [
       `
   },
   {
-    node: h("main", {}, [
-      h("div", { key: "e" }, "E"),
-      h("div", {}, "C"),
-      h("div", {}, "B"),
-      h("div", { key: "d" }, "D"),
-      h("div", { key: "a" }, "A")
+    node: U("main", {}, [
+      U("div", { key: "e" }, "E"),
+      U("div", {}, "C"),
+      U("div", {}, "B"),
+      U("div", { key: "d" }, "D"),
+      U("div", { key: "a" }, "A")
     ]),
     html: `
         <main>
@@ -540,12 +540,12 @@ testTrees("mixed keyed/non-keyed", [
       `
   },
   {
-    node: h("main", {}, [
-      h("div", {}, "C"),
-      h("div", { key: "d" }, "D"),
-      h("div", { key: "a" }, "A"),
-      h("div", { key: "e" }, "E"),
-      h("div", {}, "B")
+    node: U("main", {}, [
+      U("div", {}, "C"),
+      U("div", { key: "d" }, "D"),
+      U("div", { key: "a" }, "A"),
+      U("div", { key: "e" }, "E"),
+      U("div", {}, "B")
     ]),
     html: `
         <main>
@@ -558,11 +558,11 @@ testTrees("mixed keyed/non-keyed", [
       `
   },
   {
-    node: h("main", {}, [
-      h("div", { key: "e" }, "E"),
-      h("div", { key: "d" }, "D"),
-      h("div", {}, "B"),
-      h("div", {}, "C")
+    node: U("main", {}, [
+      U("div", { key: "e" }, "E"),
+      U("div", { key: "d" }, "D"),
+      U("div", {}, "B"),
+      U("div", {}, "C")
     ]),
     html: `
         <main>
@@ -577,48 +577,48 @@ testTrees("mixed keyed/non-keyed", [
 
 testTrees("styles", [
   {
-    node: h("div"),
+    node: U("div"),
     html: `<div></div>`
   },
   {
-    node: h("div", { style: { color: "red", fontSize: "1em" } }),
+    node: U("div", { style: { color: "red", fontSize: "1em" } }),
     html: `<div style="color: red; font-size: 1em;"></div>`
   },
   {
-    node: h("div", { style: { color: "blue", float: "left" } }),
+    node: U("div", { style: { color: "blue", float: "left" } }),
     html: `<div style="color: blue; float: left;"></div>`
   },
   {
-    node: h("div"),
+    node: U("div"),
     html: `<div style=""></div>`
   }
 ])
 
 testTrees("update element data", [
   {
-    node: h("div", { id: "foo", class: "bar" }),
+    node: U("div", { id: "foo", class: "bar" }),
     html: `<div id="foo" class="bar"></div>`
   },
   {
-    node: h("div", { id: "foo", class: "baz" }),
+    node: U("div", { id: "foo", class: "baz" }),
     html: `<div id="foo" class="baz"></div>`
   }
 ])
 
 testTrees("removeAttribute", [
   {
-    node: h("div", { id: "foo", class: "bar" }),
+    node: U("div", { id: "foo", class: "bar" }),
     html: `<div id="foo" class="bar"></div>`
   },
   {
-    node: h("div"),
+    node: U("div"),
     html: `<div></div>`
   }
 ])
 
 testTrees("skip setAttribute for functions", [
   {
-    node: h("div", {
+    node: U("div", {
       onclick() {}
     }),
     html: `<div></div>`
@@ -627,7 +627,7 @@ testTrees("skip setAttribute for functions", [
 
 testTrees("setAttribute true", [
   {
-    node: h("div", {
+    node: U("div", {
       enabled: true
     }),
     html: `<div enabled="true"></div>`
@@ -636,7 +636,7 @@ testTrees("setAttribute true", [
 
 testTrees("update element with dynamic props", [
   {
-    node: h("input", {
+    node: U("input", {
       type: "text",
       value: "foo",
       oncreate(element) {
@@ -646,7 +646,7 @@ testTrees("update element with dynamic props", [
     html: `<input type="text">`
   },
   {
-    node: h("input", {
+    node: U("input", {
       type: "text",
       value: "bar",
       onupdate(element) {
@@ -659,7 +659,7 @@ testTrees("update element with dynamic props", [
 
 testTrees("don't touch textnodes if equal", [
   {
-    node: h(
+    node: U(
       "main",
       {
         oncreate(element) {
@@ -671,26 +671,26 @@ testTrees("don't touch textnodes if equal", [
     html: `<main>foobar</main>`
   },
   {
-    node: h("main", {}, "foobar"),
+    node: U("main", {}, "foobar"),
     html: `<main>foobar</main>`
   }
 ])
 
 testTrees("a list with empty text nodes", [
   {
-    node: h("ul", {}, [h("li", {}, ""), h("div", {}, "foo")]),
+    node: U("ul", {}, [U("li", {}, ""), U("div", {}, "foo")]),
     html: `<ul><li></li><div>foo</div></ul>`
   },
   {
-    node: h("ul", {}, [h("li", {}, ""), h("li", {}, ""), h("div", {}, "foo")]),
+    node: U("ul", {}, [U("li", {}, ""), U("li", {}, ""), U("div", {}, "foo")]),
     html: `<ul><li></li><li></li><div>foo</div></ul>`
   },
   {
-    node: h("ul", {}, [
-      h("li", {}, ""),
-      h("li", {}, ""),
-      h("li", {}, ""),
-      h("div", {}, "foo")
+    node: U("ul", {}, [
+      U("li", {}, ""),
+      U("li", {}, ""),
+      U("li", {}, ""),
+      U("div", {}, "foo")
     ]),
     html: `<ul><li></li><li></li><li></li><div>foo</div></ul>`
   }
@@ -698,37 +698,37 @@ testTrees("a list with empty text nodes", [
 
 testTrees("elements with falsey values", [
   {
-    node: h("div", {
+    node: U("div", {
       "data-test": "foo"
     }),
     html: `<div data-test="foo"></div>`
   },
   {
-    node: h("div", {
+    node: U("div", {
       "data-test": "0"
     }),
     html: `<div data-test="0"></div>`
   },
   {
-    node: h("div", {
+    node: U("div", {
       "data-test": 0
     }),
     html: `<div data-test="0"></div>`
   },
   {
-    node: h("div", {
+    node: U("div", {
       "data-test": null
     }),
     html: `<div></div>`
   },
   {
-    node: h("div", {
+    node: U("div", {
       "data-test": false
     }),
     html: `<div></div>`
   },
   {
-    node: h("div", {
+    node: U("div", {
       "data-test": undefined
     }),
     html: `<div></div>`
@@ -737,7 +737,7 @@ testTrees("elements with falsey values", [
 
 testTrees("input list attribute", [
   {
-    node: h("input", {
+    node: U("input", {
       list: "foobar"
     }),
     html: `<input list="foobar">`

@@ -1,4 +1,4 @@
-export as namespace Ultradom
+export as namespace ultradom
 
 /** The virtual DOM representation of an Element. */
 export interface VNode<Attributes = {}> {
@@ -12,7 +12,7 @@ export interface Component<Attributes = {}> {
   (attributes: Attributes, children: Array<VNode | string>): VNode<Attributes>
 }
 
-export function h<Attributes>(
+export function createNode<Attributes>(
   nodeName: Component<Attributes> | string,
   attributes?: Attributes,
   ...children: Array<VNode | string | number | null>

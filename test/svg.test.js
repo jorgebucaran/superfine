@@ -1,4 +1,4 @@
-import { h, patch } from "../src"
+import { createNode as U, patch } from "../src"
 
 const SVG_NS = "http://www.w3.org/2000/svg"
 
@@ -9,21 +9,21 @@ const deepExpectNS = (element, ns) =>
   })
 
 test("svg", () => {
-  const node = h("div", {}, [
-    h("p", { id: "foo" }, "foo"),
-    h("svg", { id: "bar", viewBox: "0 0 10 10" }, [
-      h("quux", {}, [
-        h("beep", {}, [h("ping", {}), h("pong", {})]),
-        h("bop", {}),
-        h("boop", {}, [h("ping", {}), h("pong", {})])
+  const node = U("div", {}, [
+    U("p", { id: "foo" }, "foo"),
+    U("svg", { id: "bar", viewBox: "0 0 10 10" }, [
+      U("quux", {}, [
+        U("beep", {}, [U("ping", {}), U("pong", {})]),
+        U("bop", {}),
+        U("boop", {}, [U("ping", {}), U("pong", {})])
       ]),
-      h("xuuq", {}, [
-        h("beep", {}),
-        h("bop", {}, [h("ping", {}), h("pong", {})]),
-        h("boop", {})
+      U("xuuq", {}, [
+        U("beep", {}),
+        U("bop", {}, [U("ping", {}), U("pong", {})]),
+        U("boop", {})
       ])
     ]),
-    h("p", { id: "baz" }, "baz")
+    U("p", { id: "baz" }, "baz")
   ])
 
   document.body.appendChild(patch(node))

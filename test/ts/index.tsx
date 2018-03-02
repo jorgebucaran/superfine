@@ -1,4 +1,4 @@
-import { h, patch, VNode, Component } from "ultradom"
+import { createNode, patch, VNode, Component } from "ultradom"
 
 const App: Component<any> = (props, children) => (
   <div class="app">{children}</div>

@@ -1,6 +1,6 @@
 {
   "name": "ultradom",
-  "description": "1 kB Virtual DOM library for building web applications.",
+  "description": "Virtual DOM view layer for building web-based applications and frameworks.",
   "version": "0.1.0",
   "main": "dist/ultradom.js",
   "jsnext:main": "src/index.js",

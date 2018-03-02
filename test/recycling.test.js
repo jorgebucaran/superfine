@@ -1,10 +1,10 @@
-import { h, patch } from "../src"
+import { createNode as U, patch } from "../src"
 
 test("recycle markup", done => {
   const SSR_BODY = (document.body.innerHTML = `<main><p id="foo">foo</p></main>`)
 
-  const node = h("main", {}, [
-    h(
+  const node = U("main", {}, [
+    U(
       "p",
       {
         oncreate(element) {
@@ -22,8 +22,8 @@ test("recycle markup", done => {
 test("recycle markup against keyed vdom", done => {
   const SSR_BODY = (document.body.innerHTML = `<main><p id="foo">foo</p></main>`)
 
-  const node = h("main", {}, [
-    h(
+  const node = U("main", {}, [
+    U(
       "p",
       {
         key: "key",
@@ -36,6 +36,6 @@ test("recycle markup against keyed vdom", done => {
       "foo"
     )
   ])
-  
+
   patch(node, document.body.lastElementChild)
 })
