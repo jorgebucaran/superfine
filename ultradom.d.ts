@@ -24,7 +24,7 @@ export function createNode<Attributes>(
  * @param {VNode} node The new virtual DOM representation.
  * @param {Element?} element A DOM element.
  **/
-export function patch(node: VNode, element?: Element): Element
+export function patch(node: VNode, element?: Element | null): Element
 
 declare global {
   namespace JSX {
