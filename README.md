@@ -4,7 +4,7 @@
 [![npm](https://img.shields.io/npm/v/ultradom.svg)](https://www.npmjs.org/package/ultradom)
 [![Slack](https://hyperappjs.herokuapp.com/badge.svg)](https://hyperappjs.herokuapp.com "#ultradom")
 
-*Ultradom* is a minimal virtual DOM view layer for building browser-based applications and frameworks. Mix it with your favorite state management architecture or use it standalone for maximum flexibility. Out of the box, you get server-rendered DOM recycling, keyed updates & lifecycle events — all with no dependencies.
+Ultradom is a minimal virtual DOM view layer for building browser-based applications and frameworks. Mix it with your favorite state solution architecture or use it standalone for maximum flexibility. Features include server-rendered DOM recycling, keyed updates & lifecycle events — all with no dependencies.
 
 ## Getting Started
 
@@ -271,7 +271,7 @@ const view = state => (
 const element = document.body.appendChild(patch(view(0)))
 ```
 
-Usually, all you need to do is install the JSX [transform plugin](https://babeljs.io/docs/plugins/transform-react-jsx) and add the pragma option to your <samp>.babelrc</samp> file to get JSX running in your application. 
+Usually, all you need to do is install the JSX [transform plugin](https://babeljs.io/docs/plugins/transform-react-jsx) and add the pragma option to your <samp>.babelrc</samp> file to get JSX running in your application.
 
 ```json
 {
