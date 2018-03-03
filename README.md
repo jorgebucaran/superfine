@@ -119,11 +119,13 @@ export const Jumbotron = text =>
   createNode(
     "div",
     {
-      color: "white",
-      margin: "20px",
-      textAlign: center,
-      fontSize: "32px",
-      backgroundImage: `url(${imgUrl})`
+      style: {
+        color: "white",
+        margin: "20px",
+        textAlign: center,
+        fontSize: "32px",
+        backgroundImage: `url(${imgUrl})`
+      }
     },
     text
   )
