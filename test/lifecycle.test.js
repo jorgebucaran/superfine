@@ -1,4 +1,4 @@
-import { createNode as U, patch } from "../src"
+import { h, patch } from "../src"
 
 beforeEach(() => {
   document.body.innerHTML = ""
@@ -7,7 +7,7 @@ beforeEach(() => {
 test("oncreate", () => {
   document.body.appendChild(
     patch(
-      U(
+      h(
         "div",
         {
           oncreate(element) {
@@ -24,7 +24,7 @@ test("oncreate", () => {
 
 test("onupdate", done => {
   const view = state =>
-    U(
+    h(
       "div",
       {
         class: state,
@@ -43,9 +43,9 @@ test("onupdate", done => {
 test("onremove", done => {
   const view = state =>
     state
-      ? U("ul", {}, [
-          U("li"),
-          U("li", {
+      ? h("ul", {}, [
+          h("li"),
+          h("li", {
             onremove(element, remove) {
               remove()
               expect(document.body.innerHTML).toBe("<ul><li></li></ul>")
@@ -53,7 +53,7 @@ test("onremove", done => {
             }
           })
         ])
-      : U("ul", {}, [U("li")])
+      : h("ul", {}, [h("li")])
 
   patch(view(false), document.body.appendChild(patch(view(true))))
 })
@@ -61,10 +61,10 @@ test("onremove", done => {
 test("ondestroy", done => {
   const view = state =>
     state
-      ? U("ul", {}, [
-          U("li"),
-          U("li", {}, [
-            U("span", {
+      ? h("ul", {}, [
+          h("li"),
+          h("li", {}, [
+            h("span", {
               ondestroy() {
                 expect(document.body.innerHTML).toBe(
                   "<ul><li></li><li><span></span></li></ul>"
@@ -77,7 +77,7 @@ test("ondestroy", done => {
             })
           ])
         ])
-      : U("ul", {}, [U("li")])
+      : h("ul", {}, [h("li")])
 
   patch(view(false), document.body.appendChild(patch(view(true))))
 })
@@ -87,9 +87,9 @@ test("onremove/ondestroy", done => {
 
   const view = state =>
     state
-      ? U("ul", {}, [
-          U("li"),
-          U("li", {
+      ? h("ul", {}, [
+          h("li"),
+          h("li", {
             ondestroy() {
               destroyed = true
             },
@@ -101,7 +101,7 @@ test("onremove/ondestroy", done => {
             }
           })
         ])
-      : U("ul", {}, [U("li")])
+      : h("ul", {}, [h("li")])
 
   patch(view(false), document.body.appendChild(patch(view(true))))
 })
@@ -110,7 +110,7 @@ test("event bubbling", done => {
   let count = 0
 
   const view = state =>
-    U(
+    h(
       "main",
       {
         oncreate() {
@@ -122,7 +122,7 @@ test("event bubbling", done => {
         }
       },
       [
-        U("p", {
+        h("p", {
           oncreate() {
             expect(count++).toBe(2)
           },
@@ -130,7 +130,7 @@ test("event bubbling", done => {
             expect(count++).toBe(6)
           }
         }),
-        U("p", {
+        h("p", {
           oncreate() {
             expect(count++).toBe(1)
           },
@@ -138,7 +138,7 @@ test("event bubbling", done => {
             expect(count++).toBe(5)
           }
         }),
-        U("p", {
+        h("p", {
           oncreate() {
             expect(count++).toBe(0)
           },

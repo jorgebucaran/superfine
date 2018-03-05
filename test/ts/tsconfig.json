@@ -3,7 +3,7 @@
     "strict": true,
     "noEmit": true,
     "jsx": "react",
-    "jsxFactory": "createNode",
+    "jsxFactory": "h",
     "baseUrl": "../..",
     "paths": {
       "ultradom": ["src", "ultradom.d.ts"]

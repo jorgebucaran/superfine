@@ -1,4 +1,6 @@
-export function createNode(name, attributes /*...rest*/) {
+export var options = {}
+
+export function h(name, attributes /*...rest*/) {
   var rest = []
   var children = []
   var length = arguments.length
@@ -20,7 +22,7 @@ export function createNode(name, attributes /*...rest*/) {
   }
 
   return typeof name === "function"
-    ? name(attributes || {}, children) // createNode(Component)
+    ? name(attributes || {}, children) // h(Component)
     : {
         nodeName: name,
         attributes: attributes || {},
@@ -74,6 +76,10 @@ function getKey(node) {
   return node ? node.key : null
 }
 
+function eventListener(event) {
+  return event.target.events[event.type](event)
+}
+
 function updateAttribute(element, name, value, oldValue, isSVG) {
   if (name === "key") {
   } else if (name === "style") {
@@ -81,10 +87,19 @@ function updateAttribute(element, name, value, oldValue, isSVG) {
       element[name][i] = value == null || value[i] == null ? "" : value[i]
     }
   } else {
-    if (
-      typeof value === "function" ||
-      (name in element && name !== "list" && !isSVG)
-    ) {
+    if (name[0] === "o" && name[1] === "n") {
+      if (!element.events) {
+        element.events = {}
+      }
+      element.events[(name = name.slice(2))] = value
+      if (value) {
+        if (!oldValue) {
+          element.addEventListener(name, options.proxy || eventListener)
+        }
+      } else {
+        element.removeEventListener(name, options.proxy || eventListener)
+      }
+    } else if (name in element && name !== "list" && !isSVG) {
       element[name] = value == null ? "" : value
     } else if (value != null && value !== false) {
       element.setAttribute(name, value)
@@ -265,6 +280,7 @@ function patchElement(
             keyedNode[0],
             keyedNode[1],
             children[k],
+            callbacks,
             isRecycling,
             isSVG
           )
