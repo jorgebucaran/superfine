@@ -12,7 +12,7 @@ export interface Component<Attributes = {}> {
   (attributes: Attributes, children: Array<VNode | string>): VNode<Attributes>
 }
 
-export function createNode<Attributes>(
+export function h<Attributes>(
   nodeName: Component<Attributes> | string,
   attributes?: Attributes,
   ...children: Array<VNode | string | number | null>

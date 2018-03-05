@@ -8,24 +8,24 @@ Ultradom is a minimal virtual DOM view layer for building browser-based applicat
 
 ## Getting Started
 
-Let's walkthrough a simple counter that can be incremented or decremented. You can [try it online](https://codepen.io/jorgebucaran/pen/PQLZqg?editors=0010) to get a sense of what we are building. We'll break it down afterwards. Notice we've aliased <samp>createNode</samp> to <samp>u</samp> because we're lazy to type it out for every node of the application.
+Let's walkthrough a simple counter that can be incremented or decremented. You can [try it online](https://codepen.io/jorgebucaran/pen/PQLZqg?editors=0010) to get a sense of what we are building. We'll break it down afterwards.
 
 ```jsx
-import { createNode as u, patch } from "ultradom"
+import { h, patch } from "ultradom"
 
 const view = count =>
-  u("div", {}, [
-    u("h1", {}, count),
-    u("button", { onclick: () => patch(view(count - 1), element) }, "-"),
-    u("button", { onclick: () => patch(view(count + 1), element) }, "+")
+  h("div", {}, [
+    h("h1", {}, count),
+    h("button", { onclick: () => patch(view(count - 1), element) }, "-"),
+    h("button", { onclick: () => patch(view(count + 1), element) }, "+")
   ])
 
 const element = document.body.appendChild(patch(view(0)))
 ```
 
-Without a DOM element, <samp>patch</samp> returns a new element which we can append to the page as seen above, otherwise it updates the supplied element to match the virtual DOM.
+Ultradom consists of a two-function API. <samp>ultradom.h</samp> returns a new virtual DOM node tree and <samp>ultradom.patch</samp> updates the attributes and children of the supplied DOM element to match the virtual DOM. Without an element, <samp>patch</samp> returns a new element which we can append to the page as seen above.
 
-A virtual DOM is a description of what a DOM should look like using a tree of nested JavaScript objects known as virtual nodes. The <samp>createNode</samp> function takes an element's name, its attributes and an optional array of children elements and creates a virtual DOM node. In the example, the view function returns and object like this.
+A virtual DOM is a description of what a DOM should look like using a tree of nested JavaScript objects known as virtual nodes. In the example, the view function returns and object like this.
 
 ```jsx
 {
@@ -92,7 +92,7 @@ npm i <a href=https://www.npmjs.com/package/ultradom>ultradom</a>
 Then with a module bundler like [Rollup](https://rollupjs.org) or [Webpack](https://webpack.js.org), use as you would anything else.
 
 ```js
-import { createNode, patch } from "ultradom"
+import { h, patch } from "ultradom"
 ```
 
 Don't want to set up a build environment? Download Ultradom from a CDN like [unpkg.com](https://unpkg.com/ultradom) and it will be globally available through the <samp>window.ultradom</samp> object. We support all ES5-compliant browsers, including IE 10 and above.
@@ -113,10 +113,10 @@ Each declaration consists of a style name property written in <samp>camelCase</s
 Individual style properties will be diffed and mapped against <samp>[HTMLElement.style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style)</samp> property members of the DOM element — you should therefore use the JavaScript style object [property names](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Properties_Reference), e.g. <samp>backgroundColor</samp> rather than <samp>background-color</samp>.
 
 ```jsx
-import { createNode } from "ultradom"
+import { h } from "ultradom"
 
 export const Jumbotron = text =>
-  createNode(
+  h(
     "div",
     {
       style: {
@@ -140,10 +140,10 @@ You can be notified when elements managed by the virtual DOM are created, update
 This event is fired after the element is created and attached to the DOM. Use it to manipulate the DOM node directly, make a network request, create a slide/fade in animation, etc.
 
 ```jsx
-import { createNode } from "ultradom"
+import { h } from "ultradom"
 
 export const Textbox = placeholder =>
-  createNode("input", {
+  h("input", {
     type: "text",
     placeholder,
     oncreate: element => element.focus()
@@ -155,10 +155,10 @@ export const Textbox = placeholder =>
 This event is fired every time we update the element attributes. Use <samp>oldAttributes</samp> inside the event handler to check if any attributes changed or not.
 
 ```jsx
-import { createNode } from "ultradom"
+import { h } from "ultradom"
 
 export const Textbox = placeholder =>
-  createNode("input", {
+  h("input", {
     type: "text",
     placeholder,
     onupdate: (element, oldAttributes) => {
@@ -174,15 +174,15 @@ export const Textbox = placeholder =>
 This event is fired before the element is removed from the DOM. Use it to create slide/fade out animations. Call <samp>done</samp> inside the function to remove the element. This event is not called in its child elements.
 
 ```jsx
-import { createNode } from "ultradom"
+import { h } from "ultradom"
 
 export const MessageWithFadeout = title =>
-  createNode(
+  h(
     "div",
     {
       onremove: (element, done) => fadeout(element).then(done)
     },
-    [createNode("h1", {}, title)]
+    [h("h1", {}, title)]
   )
 ```
 
@@ -191,10 +191,10 @@ export const MessageWithFadeout = title =>
 This event is fired after the element has been removed from the DOM, either directly or as a result of a parent being removed. Use it for invalidating timers, canceling a network request, removing global events listeners, etc.
 
 ```jsx
-import { createNode } from "ultradom"
+import { h } from "ultradom"
 
 export const Camera = onerror =>
-  createNode("video", {
+  h("video", {
     poster: "loading.png",
     oncreate: element => {
       navigator.mediaDevices
@@ -211,17 +211,17 @@ export const Camera = onerror =>
 Keys help identify which nodes were added, changed or removed from a list when a view is rendered. A key must be unique among sibling-nodes.
 
 ```jsx
-import { createNode } from "ultradom"
+import { h } from "ultradom"
 
 export const ImageGallery = images =>
   images.map(({ hash, url, description }) =>
-    createNode(
+    h(
       "li",
       {
         key: hash
       },
       [
-        createNode("img", {
+        h("img", {
           src: url,
           alt: description
         })
@@ -235,14 +235,14 @@ By setting the <samp>key</samp> property on a virtual node, you declare that the
 Don't use an array index as key, if the index also specifies the order of siblings. If the position and number of items in a list is fixed, it will make no difference, but if the list is dynamic, the key will change every time the tree is rebuilt.
 
 ```jsx
-import { createNode } from "ultradom"
+import { h } from "ultradom"
 
 export const PlayerList = players =>
   players
     .slice()
     .sort((player, nextPlayer) => nextPlayer.score - player.score)
     .map(player =>
-      createNode(
+      h(
         "li",
         {
           key: player.username,
@@ -255,10 +255,10 @@ export const PlayerList = players =>
 
 ## JSX
 
-[JSX](https://facebook.github.io/jsx/) is a language syntax extension that lets you write HTML tags interspersed with JavaScript. Because browsers don't understand JSX, you must use a compiler like [Babel](https://babeljs.io) or [TypeScript](https://www.typescriptlang.org) to transform it into <samp>ultradom.createNode</samp> function calls.
+[JSX](https://facebook.github.io/jsx/) is a language syntax extension that lets you write HTML tags interspersed with JavaScript. Because browsers don't understand JSX, you must use a compiler like [Babel](https://babeljs.io) or [TypeScript](https://www.typescriptlang.org) to transform it into <samp>ultradom.h</samp> function calls.
 
 ```jsx
-import { createNode, patch } from "ultradom"
+import { h, patch } from "ultradom"
 
 const view = state => (
   <main>
@@ -275,7 +275,7 @@ Usually, all you need to do is install the JSX [transform plugin](https://babelj
 
 ```json
 {
-  "plugins": [["transform-react-jsx", { "pragma": "createNode" }]]
+  "plugins": [["transform-react-jsx", { "pragma": "h" }]]
 }
 ```
 
