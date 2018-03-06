@@ -6,6 +6,26 @@
 
 Ultradom is a minimal virtual DOM view layer for building browser-based applications and frameworks. Mix it with your favorite state solution architecture or use it standalone for maximum flexibility. Features include server-rendered DOM recycling, keyed updates & lifecycle events — all with no dependencies.
 
+## Installation
+
+Install with npm or Yarn.
+
+<pre>
+npm i <a href=https://www.npmjs.com/package/ultradom>ultradom</a>
+</pre>
+
+Then with a module bundler like [Rollup](https://rollupjs.org) or [Webpack](https://webpack.js.org), use as you would anything else.
+
+```js
+import { h, patch } from "ultradom"
+```
+
+Don't want to set up a build environment? Download Ultradom from a CDN like [unpkg.com](https://unpkg.com/ultradom) and it will be globally available through the <samp>window.ultradom</samp> object. We support all ES5-compliant browsers, including IE 10 and above.
+
+```html
+<script src="https://unpkg.com/ultradom"></script>
+```
+
 ## Getting Started
 
 Let's walkthrough a simple counter that can be incremented or decremented. You can [try it online](https://codepen.io/jorgebucaran/pen/PQLZqg?editors=0010) to get a sense of what we are building. We'll break it down afterwards.
@@ -24,6 +44,8 @@ const element = document.body.appendChild(patch(view(0)))
 ```
 
 Ultradom consists of a two-function API. <samp>ultradom.h</samp> returns a new virtual DOM node tree and <samp>ultradom.patch</samp> updates the attributes and children of the supplied DOM element to match the virtual DOM. Without an element, <samp>patch</samp> returns a new element which we can append to the page as seen above.
+
+### Virtual DOM
 
 A virtual DOM is a description of what a DOM should look like using a tree of nested JavaScript objects known as virtual nodes. In the example, the view function returns and object like this.
 
@@ -79,26 +101,6 @@ Then patch the element you want to recycle (the first element of the body in thi
 
 ```jsx
 const element = patch(view(0), document.body.firstElementChild)
-```
-
-## Installation
-
-Install with npm or Yarn.
-
-<pre>
-npm i <a href=https://www.npmjs.com/package/ultradom>ultradom</a>
-</pre>
-
-Then with a module bundler like [Rollup](https://rollupjs.org) or [Webpack](https://webpack.js.org), use as you would anything else.
-
-```js
-import { h, patch } from "ultradom"
-```
-
-Don't want to set up a build environment? Download Ultradom from a CDN like [unpkg.com](https://unpkg.com/ultradom) and it will be globally available through the <samp>window.ultradom</samp> object. We support all ES5-compliant browsers, including IE 10 and above.
-
-```html
-<script src="https://unpkg.com/ultradom"></script>
 ```
 
 ## Supported Attributes
