@@ -1,7 +1,7 @@
 {
   "name": "ultradom",
   "description": "Minimal virtual DOM view layer for building browser-based applications and frameworks.",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "main": "dist/ultradom.js",
   "jsnext:main": "src/index.js",
   "module": "src/index.js",
