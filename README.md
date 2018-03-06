@@ -20,7 +20,7 @@ Then with a module bundler like [Rollup](https://rollupjs.org) or [Webpack](http
 import { h, patch } from "ultradom"
 ```
 
-Don't want to set up a build environment? Download Ultradom from a CDN like [unpkg.com](https://unpkg.com/ultradom) and it will be globally available through the <samp>window.ultradom</samp> object. We support all ES5-compliant browsers, including IE 10 and above.
+Don't want to set up a build environment? Download Ultradom from a CDN like [unpkg.com](https://unpkg.com/ultradom) and it will be globally available through the <samp>window.ultradom</samp> object. Ultradom supports ES5-compliant browsers, including IE 10.
 
 ```html
 <script src="https://unpkg.com/ultradom"></script>
