@@ -14,9 +14,10 @@ export interface Component<Attributes = {}> {
 
 export function h<Attributes>(
   nodeName: Component<Attributes> | string,
-  attributes?: Attributes,
-  ...children: Array<VNode | string | number | null>
+  attributes?: Attributes | null,
+  children?: Array<VNode | string | number | null>
 ): VNode<Attributes>
+
 
 /**
  * Patch a DOM element to match the supplied virtual DOM representation. If no element is given, create and return a new DOM element.
