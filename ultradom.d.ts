@@ -18,7 +18,6 @@ export function h<Attributes>(
   children?: Array<VNode | string | number | null>
 ): VNode<Attributes>
 
-
 /**
  * Patch a DOM element to match the supplied virtual DOM representation. If no element is given, create and return a new DOM element.
  *
