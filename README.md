@@ -37,7 +37,7 @@ const view = count =>
 const element = document.body.appendChild(patch(view(0)))
 ```
 
-Ultradom consists of a two-function API. <samp>ultradom.h</samp> returns a new virtual DOM node tree and <samp>ultradom.patch</samp> updates the attributes and children of the supplied DOM element to match the virtual DOM. Without an element, the patch function returns a new element which we can append or insert to the page as seen above.
+Ultradom consists of a two-function API. <samp>ultradom.h</samp> returns a new virtual DOM node tree and <samp>ultradom.patch</samp> updates the attributes and children of the supplied DOM element to match the virtual DOM. Without an element, the patch function returns a new element which we can append or insert to the document as seen above.
 
 A virtual DOM is a description of what a DOM should look like using a tree of nested JavaScript objects known as virtual nodes. Think of it as a lightweight representation of the DOM. In the example, the view function returns and object like this.
 
