@@ -11,18 +11,7 @@ const deepExpectNS = (element, ns) =>
 test("svg", () => {
   const node = h("div", {}, [
     h("p", { id: "foo" }, "foo"),
-    h("svg", { id: "bar", viewBox: "0 0 10 10" }, [
-      h("quux", {}, [
-        h("beep", {}, [h("ping", {}), h("pong", {})]),
-        h("bop", {}),
-        h("boop", {}, [h("ping", {}), h("pong", {})])
-      ]),
-      h("xuuq", {}, [
-        h("beep", {}),
-        h("bop", {}, [h("ping", {}), h("pong", {})]),
-        h("boop", {})
-      ])
-    ]),
+    h("svg", { id: "bar", viewBox: "0 0 10 10" }, [h("foo")]),
     h("p", { id: "baz" }, "baz")
   ])
 
@@ -36,5 +25,6 @@ test("svg", () => {
   expect(baz.namespaceURI).not.toBe(SVG_NS)
   expect(bar.namespaceURI).toBe(SVG_NS)
   expect(bar.getAttribute("viewBox")).toBe("0 0 10 10")
+
   deepExpectNS(bar, SVG_NS)
 })

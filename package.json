@@ -1,6 +1,6 @@
 {
   "name": "ultradom",
-  "description": "Minimal virtual DOM view layer for building browser-based applications and frameworks.",
+  "description": "Minimal view layer for building declarative web user interfaces.",
   "version": "2.2.0",
   "main": "dist/ultradom.js",
   "jsnext:main": "src/index.js",
@@ -31,7 +31,7 @@
     "presets": "env"
   },
   "devDependencies": {
-    "babel-preset-env": "^1.6.1",
+    "babel-env": "2.4.1",
     "jest": "^22.4.2",
     "prettier": "~1.11.1",
     "rollup": "^0.56.3",

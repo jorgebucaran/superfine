@@ -108,31 +108,6 @@ testTrees("insert children on top", [
           <div id="a">A</div>
         </main>
       `
-  },
-  {
-    node: h("main", {}, [
-      h(
-        "div",
-        {
-          key: "d",
-          oncreate(e) {
-            e.id = "d"
-          }
-        },
-        "D"
-      ),
-      h("div", { key: "c" }, "C"),
-      h("div", { key: "b" }, "B"),
-      h("div", { key: "a" }, "A")
-    ]),
-    html: `
-        <main>
-          <div id="d">D</div>
-          <div id="c">C</div>
-          <div id="b">B</div>
-          <div id="a">A</div>
-        </main>
-      `
   }
 ])
 
@@ -581,11 +556,11 @@ testTrees("styles", [
     html: `<div></div>`
   },
   {
-    node: h("div", { style: { color: "red", fontSize: "1em" } }),
+    node: h("div", { style: { color: "red", fontSize: "1em", "--foo": "red" } }),
     html: `<div style="color: red; font-size: 1em;"></div>`
   },
   {
-    node: h("div", { style: { color: "blue", float: "left" } }),
+    node: h("div", { style: { color: "blue", float: "left", "--foo": "blue"  } }),
     html: `<div style="color: blue; float: left;"></div>`
   },
   {
