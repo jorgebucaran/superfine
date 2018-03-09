@@ -37,7 +37,7 @@ const view = count =>
 const element = document.body.appendChild(patch(view(0)))
 ```
 
-Ultradom consists of a two-function API. <samp>ultradom.h</samp> returns a new virtual DOM node tree and <samp>ultradom.patch</samp> updates the attributes and children of the supplied DOM element to match the virtual DOM. Without an element, <samp>patch</samp> returns a new element which we can append or insert to the page as seen above.
+Ultradom consists of a two-function API. <samp>ultradom.h</samp> returns a new virtual DOM node tree and <samp>ultradom.patch</samp> updates the attributes and children of the supplied DOM element to match the virtual DOM. Without an element, the patch function returns a new element which we can append or insert to the page as seen above.
 
 A virtual DOM is a description of what a DOM should look like using a tree of nested JavaScript objects known as virtual nodes. Think of it as a lightweight representation of the DOM. In the example, the view function returns and object like this.
 
@@ -65,7 +65,9 @@ A virtual DOM is a description of what a DOM should look like using a tree of ne
 }
 ```
 
-The virtual DOM allows us to write code as if the entire document is thrown away and rebuilt every time we patch an element, while we only update the parts of the DOM that actually changed. We try to do this in the least number of steps possible, by comparing the new virtual DOM against the previous one. This leads to high efficiency, since typically only a small percentage of nodes need to change, and changing real DOM nodes is costly compared to recalculating the virtual DOM.
+The virtual DOM allows us to write code as if the entire document is thrown away and rebuilt every time we patch an element, while we only update the parts of the DOM that actually changed.
+
+We try to do this in the least number of steps possible, by comparing the new virtual DOM against the previous one. This leads to high efficiency, since typically only a small percentage of nodes need to change, and changing real DOM nodes is costly compared to recalculating the virtual DOM.
 
 ### Recycling
 
