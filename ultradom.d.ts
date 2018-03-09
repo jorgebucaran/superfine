@@ -1,5 +1,6 @@
 export as namespace ultradom
 
+export type Children = VNode | string | number | null;
 /** The virtual DOM representation of an Element. */
 export interface VNode<Attributes = {}> {
   nodeName: string
@@ -14,8 +15,8 @@ export interface Component<Attributes = {}> {
 
 export function h<Attributes>(
   nodeName: Component<Attributes> | string,
-  attributes?: Attributes,
-  ...children: Array<VNode | string | number | null>
+  attributes?: Attributes | null,
+  ...children: Array<Children | Children[]>,
 ): VNode<Attributes>
 
 /**
