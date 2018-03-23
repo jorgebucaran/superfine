@@ -22,7 +22,7 @@ Don't want to set up a build environment? Download Ultradom from a CDN like [unp
 
 ## Getting Started
 
-Let's walkthrough a simple counter that can be incremented or decremented. You can [try it online](https://codepen.io/jorgebucaran/pen/PQLZqg?editors=0010) to get a sense of what we are building. We'll break it down below.
+Let's walkthrough a simple counter that can be incremented or decremented. You can [try it online](https://codepen.io/jorgebucaran/pen/LdLJXX?editors=0010) to get a sense of what we are building. We'll break it down below.
 
 ```jsx
 import { h, patch } from "ultradom"
