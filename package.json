@@ -16,7 +16,7 @@
   "keywords": [
     "ultradom",
     "vdom",
-    "virtual-dom"
+    "virtual dom"
   ],
   "scripts": {
     "test": "jest --coverage --no-cache && tsc -p test/ts",
