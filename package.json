@@ -15,8 +15,10 @@
   "author": "Jorge Bucaran",
   "keywords": [
     "ultradom",
-    "vdom",
-    "virtual dom"
+    "frontend",
+    "library",
+    "virtual dom",
+    "vdom"
   ],
   "scripts": {
     "test": "jest --coverage --no-cache && tsc -p test/ts",
