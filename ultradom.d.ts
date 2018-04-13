@@ -25,7 +25,7 @@ export interface Component<Attributes = {}> {
 export function h<Attributes>(
   nodeName: Component<Attributes> | string,
   attributes?: Attributes | null,
-  ...children: Array<Children | Children[]>
+  ...children: Array<Children[]>
 ): VNode<Attributes>
 
 /**
