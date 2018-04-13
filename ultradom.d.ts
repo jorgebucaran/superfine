@@ -8,7 +8,7 @@ export type Children = VNode | string | number | null
 export interface VNode<Attributes = {}> {
   nodeName: string
   attributes?: Attributes
-  children: Array<VNode | string>
+  children: Array<VNode>
   key: string
 }
 
@@ -25,7 +25,7 @@ export interface Component<Attributes = {}> {
 export function h<Attributes>(
   nodeName: Component<Attributes> | string,
   attributes?: Attributes | null,
-  ...children: Array<Children[]>
+  ...children: Array<Children | Children[]>
 ): VNode<Attributes>
 
 /**
