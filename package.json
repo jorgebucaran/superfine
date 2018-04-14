@@ -6,7 +6,6 @@
   "module": "src/index.js",
   "license": "MIT",
   "repository": "jorgebucaran/ultradom",
-  "homepage": "https://github.com/jorgebucaran",
   "files": [
     "src",
     "dist",
@@ -16,7 +15,6 @@
   "keywords": [
     "ultradom",
     "frontend",
-    "library",
     "virtual dom",
     "vdom"
   ],
