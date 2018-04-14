@@ -8,7 +8,7 @@ export function patch(node, element) {
     ? patchElement(
         element.parentNode,
         element,
-        element.node == null ? recycleElement(element, [].map) : element.node,
+        element.node == null ? recycleElement(element) : element.node,
         node,
         lifecycle,
         element.node == null // isRecycling
