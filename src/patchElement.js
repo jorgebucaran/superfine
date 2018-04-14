@@ -61,6 +61,14 @@ export function patchElement(
         continue
       }
 
+      if (newKey != null && newKey === getKey(oldChildren[i + 1])) {
+        if (oldKey == null) {
+          removeElement(element, oldElements[i], oldChildren[i])
+        }
+        i++
+        continue
+      }
+
       if (newKey == null || isRecycling) {
         if (oldKey == null) {
           patchElement(
