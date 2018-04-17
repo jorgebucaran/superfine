@@ -32,11 +32,11 @@
   },
   "devDependencies": {
     "babel-env": "2.4.1",
-    "jest": "^22.4.2",
-    "prettier": "~1.11.1",
-    "rollup": "^0.56.3",
-    "uglify-js": "^3.3.12",
-    "typescript": "^2.7.2"
+    "jest": "^22.4.3",
+    "prettier": "~1.12.1",
+    "rollup": "^0.58.0",
+    "uglify-js": "^3.3.21",
+    "typescript": "^2.8.1"
   },
   "typings": "ultradom.d.ts"
 }

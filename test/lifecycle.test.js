@@ -1,25 +1,25 @@
-import { h, patch } from "../src"
+import * as ultradom from "../src"
+
+const { h } = ultradom
+const render = node => ultradom.render(node, document.body)
 
 beforeEach(() => {
   document.body.innerHTML = ""
 })
 
 test("oncreate", () => {
-  document.body.appendChild(
-    patch(
-      h(
-        "div",
-        {
-          oncreate(element) {
-            element.className = "foo"
-          }
-        },
-        "foo"
-      )
+  render(
+    h(
+      "div",
+      {
+        oncreate: element => {
+          element.className = "foo"
+          expect(document.body.innerHTML).toBe(`<div class="foo">foo</div>`)
+        }
+      },
+      "foo"
     )
   )
-
-  expect(document.body.innerHTML).toBe(`<div class="foo">foo</div>`)
 })
 
 test("onupdate", done => {
@@ -28,7 +28,7 @@ test("onupdate", done => {
       "div",
       {
         class: state,
-        onupdate(element, old) {
+        onupdate: (element, old) => {
           expect(element.textContent).toBe("bar")
           expect(old.class).toBe("foo")
           done()
@@ -37,7 +37,8 @@ test("onupdate", done => {
       state
     )
 
-  patch(view("bar"), document.body.appendChild(patch(view("foo"))))
+  render(view("foo"))
+  render(view("bar"))
 })
 
 test("onremove", done => {
@@ -55,7 +56,8 @@ test("onremove", done => {
         ])
       : h("ul", {}, [h("li")])
 
-  patch(view(false), document.body.appendChild(patch(view(true))))
+  render(view(true))
+  render(view(false))
 })
 
 test("ondestroy", done => {
@@ -79,7 +81,8 @@ test("ondestroy", done => {
         ])
       : h("ul", {}, [h("li")])
 
-  patch(view(false), document.body.appendChild(patch(view(true))))
+  render(view(true))
+  render(view(false))
 })
 
 test("onremove/ondestroy", done => {
@@ -103,7 +106,8 @@ test("onremove/ondestroy", done => {
         ])
       : h("ul", {}, [h("li")])
 
-  patch(view(false), document.body.appendChild(patch(view(true))))
+  render(view(true))
+  render(view(false))
 })
 
 test("event bubbling", done => {
@@ -149,5 +153,6 @@ test("event bubbling", done => {
       ]
     )
 
-  patch(view(), document.body.appendChild(patch(view())))
+  render(view())
+  render(view())
 })

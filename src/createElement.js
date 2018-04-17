@@ -4,9 +4,9 @@ export function createElement(node, lifecycle, isSVG) {
   var element =
     typeof node === "string" || typeof node === "number"
       ? document.createTextNode(node)
-      : (isSVG = isSVG || node.nodeName === "svg")
-        ? document.createElementNS("http://www.w3.org/2000/svg", node.nodeName)
-        : document.createElement(node.nodeName)
+      : (isSVG = isSVG || node.name === "svg")
+        ? document.createElementNS("http://www.w3.org/2000/svg", node.name)
+        : document.createElement(node.name)
 
   var attributes = node.attributes
   if (attributes) {

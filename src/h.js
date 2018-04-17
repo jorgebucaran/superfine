@@ -16,12 +16,10 @@ export function h(name, attributes) {
     }
   }
 
-  return typeof name === "function"
-    ? name(attributes || {}, children) // h(Component)
-    : {
-        nodeName: name,
-        attributes: attributes || {},
-        children: children,
-        key: attributes && attributes.key
-      }
+  return {
+    name: name,
+    attributes: attributes || {},
+    children: children,
+    key: attributes && attributes.key
+  }
 }

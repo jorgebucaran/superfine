@@ -6,7 +6,6 @@ export function updateElement(
   oldAttributes,
   attributes,
   lifecycle,
-  isRecycling,
   isSVG
 ) {
   for (var name in clone(oldAttributes, attributes)) {
@@ -26,10 +25,9 @@ export function updateElement(
     }
   }
 
-  var cb = isRecycling ? attributes.oncreate : attributes.onupdate
-  if (cb) {
+  if (attributes.onupdate) {
     lifecycle.push(function() {
-      cb(element, oldAttributes)
+      attributes.onupdate(element, oldAttributes)
     })
   }
 }

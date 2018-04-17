@@ -1,4 +1,4 @@
-import { h, patch } from "../src"
+import { h, render } from "../src"
 
 const SVG_NS = "http://www.w3.org/2000/svg"
 
@@ -15,7 +15,7 @@ test("svg", () => {
     h("p", { id: "baz" }, "baz")
   ])
 
-  document.body.appendChild(patch(node))
+  render(node, document.body)
 
   const foo = document.getElementById("foo")
   const bar = document.getElementById("bar")

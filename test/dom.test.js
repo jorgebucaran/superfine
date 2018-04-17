@@ -1,9 +1,9 @@
-import { h, patch } from "../src"
+import { h, render } from "../src"
 
 function testTrees(name, trees) {
   test(name, done => {
     trees.map(tree => {
-      patch(tree.node, document.body.firstElementChild)
+      render(tree.node, document.body)
       expect(document.body.innerHTML).toBe(tree.html.replace(/\s{2,}/g, ""))
     })
 
@@ -12,7 +12,7 @@ function testTrees(name, trees) {
 }
 
 beforeEach(() => {
-  document.body.innerHTML = "<div></div>"
+  document.body.innerHTML = ""
 })
 
 testTrees("replace element", [
@@ -556,11 +556,15 @@ testTrees("styles", [
     html: `<div></div>`
   },
   {
-    node: h("div", { style: { color: "red", fontSize: "1em", "--foo": "red" } }),
+    node: h("div", {
+      style: { color: "red", fontSize: "1em", "--foo": "red" }
+    }),
     html: `<div style="color: red; font-size: 1em;"></div>`
   },
   {
-    node: h("div", { style: { color: "blue", float: "left", "--foo": "blue"  } }),
+    node: h("div", {
+      style: { color: "blue", float: "left", "--foo": "blue" }
+    }),
     html: `<div style="color: blue; float: left;"></div>`
   },
   {
@@ -720,11 +724,15 @@ testTrees("input list attribute", [
 ])
 
 test("event handlers", done => {
-  patch(
+  render(
     h("button", {
+      oncreate(el) {
+        el.dispatchEvent(new Event("click"))
+      },
       onclick(event) {
         done()
       }
-    })
-  ).dispatchEvent(new Event("click"))
+    }),
+    document.body
+  )
 })
