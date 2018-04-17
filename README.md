@@ -5,9 +5,9 @@
 [![npm](https://img.shields.io/npm/v/ultradom.svg)](https://www.npmjs.org/package/ultradom)
 [![Slack](https://hyperappjs.herokuapp.com/badge.svg)](https://hyperappjs.herokuapp.com "#ultradom")
 
-Ultradom is a minimal view layer for building declarative web user interfaces. We take care of the DOM, you take care of evertyhing else. Mix it with your favorite state management solution or use it standalone for maximum flexibility.
+Ultradom is a minimal view layer for building declarative web user interfaces. Mix it with your favorite state management solution or use it standalone for maximum flexibility.
 
-What's in the bundle? A virtual DOM and diff algorithm, JSX support, automatic SSR DOM recycling, keyed-based node [reconciliation](#keys), element-level life-cycle events and browser support all the way back to IE9 — no polyfills required.
+What's in the bundle? A virtual DOM and diff algorithm, keyed-based node [reconciliation](#keys), automatic SSR DOM [recycling](#recycling), element-level life-cycle events and browser support all the way back to IE9 — all in 1 kB.
 
 ## Installation
 
@@ -25,22 +25,25 @@ Don't want to set up a build environment? Download Ultradom from a CDN like [unp
 
 Let's walkthrough a simple counter that can be incremented or decremented. You can [try it online](https://codepen.io/jorgebucaran/pen/LdLJXX?editors=0010) to get a sense of what we are building. We'll break it down below.
 
-```jsx
-import { h, patch } from "ultradom"
+```js
+import { h, render } from "ultradom"
 
-const view = count =>
-  h("div", {}, [
-    h("h1", {}, count),
-    h("button", { onclick: () => patch(view(count - 1), element) }, "-"),
-    h("button", { onclick: () => patch(view(count + 1), element) }, "+")
-  ])
+export const app = state =>
+  render(
+    h("div", {}, [
+      h("h1", {}, state),
+      h("button", { onclick: () => app(state - 1) }, "-"),
+      h("button", { onclick: () => app(state + 1) }, "+")
+    ]),
+    document.body
+  )
 
-const element = document.body.appendChild(patch(view(0)))
+app(0)
 ```
 
-Ultradom consists of a two-function API. <samp>ultradom.h</samp> returns a new virtual DOM node tree and <samp>ultradom.patch</samp> updates the attributes and children of the supplied DOM element to match the virtual DOM. Without an element, the patch function returns a new element which we can append or insert to the document as seen above.
+Ultradom consists of a two-function API. <samp>ultradom.h</samp> returns a new virtual DOM node tree and <samp>ultradom.render</samp> creates a DOM element to match the virtual DOM and inserts it in the supplied container.
 
-A virtual DOM is a description of what a DOM should look like using a tree of nested JavaScript objects known as virtual nodes. Think of it as a lightweight representation of the DOM. In the example, the view function returns and object like this.
+A virtual DOM is a description of what a DOM should look like using a tree of nested JavaScript objects known as virtual nodes. Think of it as a lightweight representation of the DOM. In the example, the virtual DOM looks like this.
 
 ```jsx
 {
@@ -66,13 +69,13 @@ A virtual DOM is a description of what a DOM should look like using a tree of ne
 }
 ```
 
-The virtual DOM allows us to write code as if the entire document is thrown away and rebuilt every time we patch an element, while we only update the parts of the DOM that actually changed.
+The virtual DOM allows us to write code as if the entire document is thrown away and rebuilt every time we render an element, while we only update the parts of the DOM that actually changed.
 
 We try to do this in the least number of steps possible, by comparing the new virtual DOM against the previous one. This leads to high efficiency, since typically only a small percentage of nodes need to change, and changing real DOM nodes is costly compared to recalculating the virtual DOM.
 
 ### Recycling
 
-The first time you try to update a DOM element, <samp>patch</samp> will attempt to recycle the supplied element and its children (instead of creating everything from scratch) enabling SEO optimization and improving your application time-to-interactive. This is how we can turn server-rendered content into an interative application out the previous example.
+The first time you try to update a DOM element, <samp>render</samp> will attempt to recycle existing elements inside the supplied container enabling SEO optimization and improving your application time-to-interactive. This is how we can turn server-rendered content into an interative application out the previous example.
 
 ```html
 <!doctype html>
@@ -92,35 +95,38 @@ The first time you try to update a DOM element, <samp>patch</samp> will attempt 
 </html>
 ```
 
-Then patch the element you want to recycle (the first element of the body in the example above).
-
-```jsx
-const element = patch(view(0), document.body.firstElementChild)
-```
-
 ### JSX
 
 [JSX](https://facebook.github.io/jsx/) is a language syntax extension that lets you write HTML tags interspersed with JavaScript. Because browsers don't understand JSX, we use a compiler like [Babel](https://babeljs.io) or [TypeScript](https://www.typescriptlang.org) to transform it into <samp>ultradom.h</samp> function calls.
 
 ```jsx
-import { h, patch } from "ultradom"
+import { h, render } from "ultradom"
 
-const view = state => (
-  <main>
-    <h1>{state}</h1>
-    <button onclick={() => patch(view(state - 1), element)}>-</button>
-    <button onclick={() => patch(view(state + 1), element)}>+</button>
-  </main>
-)
+export const app = state =>
+  render(
+    <div>
+      <h1>{state}</h1>
+      <button onclick={() => app(state - 1)}>-</button>
+      <button onclick={() => app(state + 1)}>+</button>
+    </div>,
+    document.body
+  )
 
-const element = document.body.appendChild(patch(view(0)))
+app(0)
 ```
 
-Usually, all you need to do is install the JSX [transform plugin](https://babeljs.io/docs/plugins/transform-react-jsx) and add the pragma option to your <samp>.babelrc</samp> file to get JSX running in your application.
+To get JSX running in your application install the JSX [transform plugin](https://babeljs.io/docs/plugins/transform-react-jsx) and add the pragma option to your <samp>.babelrc</samp> file.
 
 ```json
 {
-  "plugins": [["transform-react-jsx", { "pragma": "h" }]]
+  "plugins": [
+    [
+      "transform-react-jsx",
+      {
+        "pragma": "h"
+      }
+    ]
+  ]
 }
 ```
 

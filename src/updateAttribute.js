@@ -14,15 +14,10 @@ export function updateAttribute(element, name, value, oldValue, isSVG) {
     }
   } else {
     if (name[0] === "o" && name[1] === "n") {
-      name = name.slice(2)
-
-      if (element.events) {
-        if (!oldValue) oldValue = element.events[name]
-      } else {
+      if (!element.events) {
         element.events = {}
       }
-
-      element.events[name] = value
+      element.events[(name = name.slice(2)) /*.toLowerCase()*/] = value
 
       if (value) {
         if (!oldValue) {

@@ -17,7 +17,7 @@ export function h(name, attributes) {
   }
 
   return typeof name === "function"
-    ? name(attributes || {}, children) // h(Component)
+    ? name(attributes || {}, children) 
     : {
         nodeName: name,
         attributes: attributes || {},

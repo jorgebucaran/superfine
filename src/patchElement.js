@@ -3,15 +3,7 @@ import { removeElement } from "./removeElement"
 import { updateElement } from "./updateElement"
 import { getKey } from "./getKey"
 
-export function patchElement(
-  parent,
-  element,
-  oldNode,
-  node,
-  lifecycle,
-  isRecycling,
-  isSVG
-) {
+export function patchElement(parent, element, oldNode, node, lifecycle, isSVG) {
   if (node === oldNode) {
   } else if (oldNode == null || oldNode.nodeName !== node.nodeName) {
     var newElement = createElement(node, lifecycle, isSVG)
@@ -30,7 +22,7 @@ export function patchElement(
       oldNode.attributes,
       node.attributes,
       lifecycle,
-      isRecycling,
+      oldNode.recycled,
       (isSVG = isSVG || node.nodeName === "svg")
     )
 
@@ -69,7 +61,7 @@ export function patchElement(
         continue
       }
 
-      if (newKey == null || isRecycling) {
+      if (newKey == null || oldNode.recycled) {
         if (oldKey == null) {
           patchElement(
             element,
@@ -77,7 +69,6 @@ export function patchElement(
             oldChildren[i],
             children[k],
             lifecycle,
-            isRecycling,
             isSVG
           )
           k++
@@ -93,7 +84,6 @@ export function patchElement(
             keyedNode[1],
             children[k],
             lifecycle,
-            isRecycling,
             isSVG
           )
           i++
@@ -104,7 +94,6 @@ export function patchElement(
             keyedNode[1],
             children[k],
             lifecycle,
-            isRecycling,
             isSVG
           )
         } else {
@@ -114,7 +103,6 @@ export function patchElement(
             null,
             children[k],
             lifecycle,
-            isRecycling,
             isSVG
           )
         }
