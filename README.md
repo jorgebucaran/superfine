@@ -105,7 +105,7 @@ To get up and running with JSX install the JSX [transform plugin](https://babelj
 
 #### Component Syntax
 
-Ultradom does not support the JSX component syntax out of the box, but you can wrap <samp>ultradom.h</samp> in a function that adds this functionality.
+Ultradom does not support the JSX component syntax out of the box, but you can wrap <samp>ultradom.h</samp> in a function to add this functionality.
 
 ```jsx
 import * as ultradom from "ultradom"
