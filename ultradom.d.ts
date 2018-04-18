@@ -1,6 +1,6 @@
 export as namespace ultradom
 
-export type Children = VNode | string | number | null
+export type Children = VNode<any> | null;
 
 /**
  * The virtual DOM representation of an Element.
@@ -8,12 +8,12 @@ export type Children = VNode | string | number | null
 export interface VNode<Attributes = {}> {
   nodeName: string
   attributes?: Attributes
-  children: Array<VNode>
+  children: Array<VNode<any>>
   key: string
 }
 
 export interface Component<Attributes = {}> {
-  (attributes: Attributes, children: Array<VNode | string>): VNode<Attributes>
+  (attributes: Attributes, children: Array<VNode<any>>): VNode<Attributes>
 }
 
 /**
@@ -34,7 +34,7 @@ export function h<Attributes>(
  * @param {VNode} node The new virtual DOM representation.
  * @param {Element?} element A DOM element.
  **/
-export function patch(node: VNode, element?: Element | null): Element
+export function render(node: VNode, element: Element): Element
 
 declare global {
   namespace JSX {
