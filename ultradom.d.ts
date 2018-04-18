@@ -8,12 +8,12 @@ export type Children = VNode<any> | null;
 export interface VNode<Attributes = {}> {
   nodeName: string
   attributes?: Attributes
-  children: Array<VNode<Attributes>>
+  children: Array<VNode<any>>
   key: string
 }
 
 export interface Component<Attributes = {}> {
-  (attributes: Attributes, children: Array<VNode<Attributes>>): VNode<Attributes>
+  (attributes: Attributes, children: Array<VNode<any>>): VNode<Attributes>
 }
 
 /**
