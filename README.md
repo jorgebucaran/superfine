@@ -5,7 +5,7 @@
 [![npm](https://img.shields.io/npm/v/ultradom.svg)](https://www.npmjs.org/package/ultradom)
 [![Slack](https://hyperappjs.herokuapp.com/badge.svg)](https://hyperappjs.herokuapp.com "#ultradom")
 
-Ultradom is a minimal view layer for building declarative web user interfaces. Mix it with your favorite state management solution or use it standalone for maximum flexibility.
+Ultradom is a minimal (1 kB) view layer for building declarative web user interfaces. Mix it with your favorite state management solution or use it standalone for maximum flexibility.
 
 What's in the bundle? A virtual DOM and diff algorithm, keyed-based node [reconciliation](#keys), element-level [lifecycle](#lifecycle-events) events and browser support all the way back to IE9.
 
