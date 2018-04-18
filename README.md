@@ -103,29 +103,6 @@ To get up and running with JSX install the JSX [transform plugin](https://babelj
 }
 ```
 
-#### Component Syntax
-
-Ultradom does not support the JSX component syntax out of the box, but you can wrap <samp>ultradom.h</samp> in a function to add this functionality.
-
-```jsx
-import * as ultradom from "ultradom"
-
-const h = (name, attributes, ...children) => {
-  return typeof name === "function"
-    ? name(attributes, children)
-    : ultradom.h(name, attributes, children)
-}
-
-const Clock = () => (
-  <div>
-    <h1>Hello World!</h1>
-    <h2>The time is: {new Date().toLocaleTimeString()}</h2>
-  </div>
-)
-
-setInterval(() => ultradom.render(<Clock />, document.body), 1000)
-```
-
 ## Supported Attributes
 
 * [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes)
