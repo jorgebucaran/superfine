@@ -1,10 +1,6 @@
-import { h, patch, VNode, Component } from "ultradom"
-
-const App: Component<any> = (props, children) => (
-  <div class="app">{children}</div>
-)
+import { h, render, VNode } from "ultradom"
 
 type View = (value: string) => VNode<any>
-const view: View = value => <App>{value}</App>
+const view: View = value => <h1>{value}</h1>
 
-const element = document.body.appendChild(patch(view("foo")))
+render(view("Hello World"), document.body)

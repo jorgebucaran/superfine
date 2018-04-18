@@ -4,9 +4,9 @@
   "version": "2.3.4",
   "main": "dist/ultradom.js",
   "module": "src/index.js",
+  "typings": "ultradom.d.ts",
   "license": "MIT",
   "repository": "jorgebucaran/ultradom",
-  "homepage": "https://github.com/jorgebucaran",
   "files": [
     "src",
     "dist",
@@ -16,7 +16,6 @@
   "keywords": [
     "ultradom",
     "frontend",
-    "library",
     "virtual dom",
     "vdom"
   ],
@@ -26,7 +25,7 @@
     "bundle": "rollup -i src/index.js -o dist/ultradom.js -m -f umd -n ultradom",
     "minify": "uglifyjs dist/ultradom.js -o dist/ultradom.js -mc pure_funcs=['Object.defineProperty'] --source-map includeSources,url=ultradom.js.map",
     "prepare": "npm run build",
-    "format": "prettier --semi false --write {src,test}/**/*.js {,test/ts/}*.{ts,tsx}",
+    "format": "prettier --write {src,test}/**/*.js {,test/ts/}*.{ts,tsx}",
     "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
   },
   "babel": {
@@ -34,11 +33,13 @@
   },
   "devDependencies": {
     "babel-env": "2.4.1",
-    "jest": "^22.4.2",
-    "prettier": "~1.11.1",
-    "rollup": "^0.56.3",
-    "uglify-js": "^3.3.12",
-    "typescript": "^2.7.2"
+    "jest": "^22.4.3",
+    "prettier": "~1.12.1",
+    "rollup": "^0.58.0",
+    "uglify-js": "^3.3.21",
+    "typescript": "^2.8.1"
   },
-  "typings": "ultradom.d.ts"
+  "prettier": {
+    "semi": false
+  }
 }
