@@ -4,6 +4,7 @@
   "version": "2.3.4",
   "main": "dist/ultradom.js",
   "module": "src/index.js",
+  "typings": "ultradom.d.ts",
   "license": "MIT",
   "repository": "jorgebucaran/ultradom",
   "files": [
@@ -24,7 +25,7 @@
     "bundle": "rollup -i src/index.js -o dist/ultradom.js -m -f umd -n ultradom",
     "minify": "uglifyjs dist/ultradom.js -o dist/ultradom.js -mc pure_funcs=['Object.defineProperty'] --source-map includeSources,url=ultradom.js.map",
     "prepare": "npm run build",
-    "format": "prettier --semi false --write {src,test}/**/*.js {,test/ts/}*.{ts,tsx}",
+    "format": "prettier --write {src,test}/**/*.js {,test/ts/}*.{ts,tsx}",
     "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
   },
   "babel": {
@@ -38,5 +39,7 @@
     "uglify-js": "^3.3.21",
     "typescript": "^2.8.1"
   },
-  "typings": "ultradom.d.ts"
+  "prettier": {
+    "semi": false
+  }
 }
