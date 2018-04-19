@@ -1,13 +1,32 @@
-# _Ultradom_
+# Ultradom
 
 [![Travis CI](https://img.shields.io/travis/jorgebucaran/ultradom/master.svg)](https://travis-ci.org/jorgebucaran/ultradom)
 [![Codecov](https://img.shields.io/codecov/c/github/jorgebucaran/ultradom/master.svg)](https://codecov.io/gh/jorgebucaran/ultradom)
 [![npm](https://img.shields.io/npm/v/ultradom.svg)](https://www.npmjs.org/package/ultradom)
 [![Slack](https://hyperappjs.herokuapp.com/badge.svg)](https://hyperappjs.herokuapp.com "#ultradom")
 
-Ultradom is a minimal (1 kB) view layer for building declarative web user interfaces. Mix it with your favorite state management solution or use it standalone for maximum flexibility.
+Ultradom is a minimal (1 kB) view layer for building declarative web user interfaces. Mix it with your favorite state management library or use it standalone for unlimited flexibility.
 
 What's in the bundle? A virtual DOM and diff algorithm, keyed-based node [reconciliation](#keys), element-level [lifecycle](#lifecycle-events) events and browser support all the way back to IE9.
+
+<h2>Table of Contents</h2>
+<!-- TOC -->
+
+* [Installation](#installation)
+* [Getting Started](#getting-started)
+* [Supported Attributes](#supported-attributes)
+  * [Styles](#styles)
+  * [Lifecycle Events](#lifecycle-events)
+    * [oncreate](#oncreate)
+    * [onupdate](#onupdate)
+    * [onremove](#onremove)
+    * [ondestroy](#ondestroy)
+  * [Keys](#keys)
+* [JSX](#jsx)
+* [Community](#community)
+* [License](#license)
+
+<!-- /TOC -->
 
 ## Installation
 
@@ -68,41 +87,6 @@ The virtual DOM allows us to write code as if the entire document is thrown away
 
 We try to do this in the least number of steps possible, by comparing the new virtual DOM against the previous one. This leads to high efficiency, since typically only a small percentage of nodes need to change, and changing real DOM nodes is costly compared to recalculating the virtual DOM.
 
-### JSX
-
-[JSX](https://facebook.github.io/jsx/) is an optional language syntax extension that lets you write HTML tags interspersed with JavaScript. Because browsers don't understand JSX, we use a compiler like [Babel](https://babeljs.io) to transform it into <samp>ultradom.h</samp> function calls.
-
-```jsx
-import { h, render } from "ultradom"
-
-setInterval(
-  () =>
-    render(
-      <div>
-        <h1>Hello World!</h1>
-        <h2>The time is: {new Date().toLocaleTimeString()}</h2>
-      </div>,
-      document.body
-    ),
-  1000
-)
-```
-
-To get up and running with JSX install the JSX [transform plugin](https://babeljs.io/docs/plugins/transform-react-jsx) and add the pragma option to your <samp>.babelrc</samp> file.
-
-```json
-{
-  "plugins": [
-    [
-      "transform-react-jsx",
-      {
-        "pragma": "h"
-      }
-    ]
-  ]
-}
-```
-
 ## Supported Attributes
 
 * [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes)
@@ -116,8 +100,6 @@ To get up and running with JSX install the JSX [transform plugin](https://babelj
 
 The <samp>style</samp> attribute expects a plain object rather than a string as in HTML.
 Each declaration consists of a style name property written in <samp>camelCase</samp> and a value. CSS variables are also supported.
-
-Individual style properties will be diffed and mapped against <samp>[style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style)</samp> property members of the DOM element — you should therefore use the JavaScript style object [property names](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Properties_Reference), e.g. <samp>backgroundColor</samp> rather than <samp>background-color</samp>.
 
 ```jsx
 import { h } from "ultradom"
@@ -224,6 +206,23 @@ export const ImageGallery = images =>
       })
     ])
   )
+```
+
+## JSX
+
+[JSX](https://facebook.github.io/jsx/) is an optional language syntax extension that lets you write HTML tags interspersed with JavaScript. Because browsers don't understand JSX, we use a compiler like [Babel](https://babeljs.io) to transform it into <samp>ultradom.h</samp> function calls. To use JSX install the JSX [transform plugin](https://babeljs.io/docs/plugins/transform-react-jsx) and add the pragma option to your <samp>.babelrc</samp> file.
+
+```json
+{
+  "plugins": [
+    [
+      "transform-react-jsx",
+      {
+        "pragma": "h"
+      }
+    ]
+  ]
+}
 ```
 
 ## Community
