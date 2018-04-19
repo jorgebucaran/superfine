@@ -1,6 +1,6 @@
 import { createElement } from "./createElement"
-import { removeElement } from "./removeElement"
 import { updateElement } from "./updateElement"
+import { removeElement } from "./removeElement"
 import { getKey } from "./getKey"
 
 export function patch(parent, element, oldNode, node, lifecycle, isSVG) {
