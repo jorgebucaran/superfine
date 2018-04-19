@@ -9,25 +9,6 @@ Ultradom is a minimal (1 kB) view layer for building declarative web user interf
 
 What's in the bundle? A virtual DOM and diff algorithm, keyed-based node [reconciliation](#keys), element-level [lifecycle](#lifecycle-events) events and browser support all the way back to IE9.
 
-<h2>Table of Contents</h2>
-<!-- TOC -->
-
-* [Installation](#installation)
-* [Getting Started](#getting-started)
-* [Supported Attributes](#supported-attributes)
-  * [Styles](#styles)
-  * [Lifecycle Events](#lifecycle-events)
-    * [oncreate](#oncreate)
-    * [onupdate](#onupdate)
-    * [onremove](#onremove)
-    * [ondestroy](#ondestroy)
-  * [Keys](#keys)
-* [JSX](#jsx)
-* [Community](#community)
-* [License](#license)
-
-<!-- /TOC -->
-
 ## Installation
 
 <pre>
