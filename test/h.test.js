@@ -1,4 +1,4 @@
-import { h } from "../src"
+import { h, render } from "../src"
 
 test("empty vnode", () => {
   expect(h("div")).toEqual({

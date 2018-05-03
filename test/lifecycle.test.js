@@ -1,14 +1,13 @@
-import * as ultradom from "../src"
+import { h, render } from "../src"
 
-const { h } = ultradom
-const render = node => ultradom.render(node, document.body)
+const app = (view, state) => render(view(state), document.body)
 
 beforeEach(() => {
   document.body.innerHTML = ""
 })
 
 test("oncreate", () => {
-  render(
+  app(() =>
     h(
       "div",
       {
@@ -37,8 +36,8 @@ test("onupdate", done => {
       state
     )
 
-  render(view("foo"))
-  render(view("bar"))
+  app(view, "foo")
+  app(view, "bar")
 })
 
 test("onremove", done => {
@@ -56,8 +55,8 @@ test("onremove", done => {
         ])
       : h("ul", {}, [h("li")])
 
-  render(view(true))
-  render(view(false))
+  app(view, true)
+  app(view, false)
 })
 
 test("ondestroy", done => {
@@ -81,8 +80,8 @@ test("ondestroy", done => {
         ])
       : h("ul", {}, [h("li")])
 
-  render(view(true))
-  render(view(false))
+  app(view, true)
+  app(view, false)
 })
 
 test("onremove/ondestroy", done => {
@@ -106,8 +105,8 @@ test("onremove/ondestroy", done => {
         ])
       : h("ul", {}, [h("li")])
 
-  render(view(true))
-  render(view(false))
+  app(view, true)
+  app(view, false)
 })
 
 test("event bubbling", done => {
@@ -153,6 +152,6 @@ test("event bubbling", done => {
       ]
     )
 
-  render(view())
-  render(view())
+  app(view)
+  app(view)
 })

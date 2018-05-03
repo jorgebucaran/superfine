@@ -9,8 +9,7 @@
   "repository": "jorgebucaran/ultradom",
   "files": [
     "src",
-    "dist",
-    "ultradom.d.ts"
+    "dist"
   ],
   "author": "Jorge Bucaran",
   "keywords": [
@@ -20,12 +19,11 @@
     "vdom"
   ],
   "scripts": {
-    "test": "jest --coverage --no-cache && tsc -p test/ts",
+    "test": "jest --coverage --no-cache",
     "build": "npm run bundle && npm run minify",
-    "bundle": "rollup -i src/index.js -o dist/ultradom.js -m -f umd -n ultradom",
+    "bundle": "rollup -i src/index.js -o dist/ultradom.js -m -f iife -n ultradom",
     "minify": "uglifyjs dist/ultradom.js -o dist/ultradom.js -mc pure_funcs=['Object.defineProperty'] --source-map includeSources,url=ultradom.js.map",
     "prepare": "npm run build",
-    "format": "prettier --write {src,test}/**/*.js {,test/ts/}*.{ts,tsx}",
     "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
   },
   "babel": {
@@ -34,12 +32,7 @@
   "devDependencies": {
     "babel-env": "2.4.1",
     "jest": "^22.4.3",
-    "prettier": "~1.12.1",
-    "rollup": "^0.58.0",
-    "uglify-js": "^3.3.21",
-    "typescript": "^2.8.1"
-  },
-  "prettier": {
-    "semi": false
+    "rollup": "^0.58.2",
+    "uglify-js": "^3.3.23"
   }
 }

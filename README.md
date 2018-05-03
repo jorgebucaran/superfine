@@ -1,13 +1,30 @@
-# Ultradom
+# _Ultradom_
 
 [![Travis CI](https://img.shields.io/travis/jorgebucaran/ultradom/master.svg)](https://travis-ci.org/jorgebucaran/ultradom)
 [![Codecov](https://img.shields.io/codecov/c/github/jorgebucaran/ultradom/master.svg)](https://codecov.io/gh/jorgebucaran/ultradom)
 [![npm](https://img.shields.io/npm/v/ultradom.svg)](https://www.npmjs.org/package/ultradom)
 [![Slack](https://hyperappjs.herokuapp.com/badge.svg)](https://hyperappjs.herokuapp.com "#ultradom")
 
-Ultradom is a minimal (1 kB) view layer for building declarative web user interfaces. Mix it with your favorite state management library or use it standalone for unlimited flexibility.
+Ultradom is a minimal (1 kB) view layer for building declarative web user interfaces. Includes a virtual DOM diff algorithm, keyed-based node [reconciliation](#keys), element-level [lifecycle](#lifecycle-events) events and browser support all the way back to IE9. Mix it with your favorite state management library or use it standalone for maximum flexibility.
 
-What's in the bundle? A virtual DOM and diff algorithm, keyed-based node [reconciliation](#keys), element-level [lifecycle](#lifecycle-events) events and browser support all the way back to IE9.
+<h2>Table of Contents</h2>
+<!-- TOC -->
+
+* [Installation](#installation)
+* [Getting Started](#getting-started)
+* [Supported Attributes](#supported-attributes)
+  * [Styles](#styles)
+  * [Lifecycle Events](#lifecycle-events)
+    * [oncreate](#oncreate)
+    * [onupdate](#onupdate)
+    * [onremove](#onremove)
+    * [ondestroy](#ondestroy)
+  * [Keys](#keys)
+* [JSX](#jsx)
+* [Community](#community)
+* [License](#license)
+
+<!-- /TOC -->
 
 ## Installation
 
@@ -23,7 +40,7 @@ Don't want to set up a build environment? Download Ultradom from a CDN such as [
 
 ## Getting Started
 
-Let's walkthrough a simple ticking clock. You can [try it online](https://codepen.io/jorgebucaran/pen/LdLJXX?editors=0010) to see what it looks like.
+Let's walkthrough a simple ticking clock. You can [try it online](https://codepen.io/jorgebucaran/pen/wjvEBj?editors=0010) to see what it looks like.
 
 ```js
 import { h, render } from "ultradom"
@@ -43,49 +60,23 @@ setInterval(
 
 Ultradom consists of a two-function API. <samp>ultradom.h</samp> creates a new virtual DOM node and <samp>ultradom.render</samp> renders it into the supplied container.
 
-A virtual DOM is a description of what a DOM should look like using a tree of nested JavaScript objects known as virtual nodes. Think of it as a lightweight representation of the DOM.
-
-```jsx
-{
-  name: "div",
-  attributes: {},
-  children: [
-    {
-      name: "h1",
-      attributes: {},
-      children: "Hello World!"
-    },
-    {
-      name: "h2",
-      attributes: {},
-      children: `The time is: ${new Date().toLocaleTimeString()}`
-    }
-  ]
-}
-```
-
-The virtual DOM allows us to write code as if the entire document is thrown away and rebuilt every time we render a node, while we only update the parts of the DOM that actually changed.
+A virtual DOM is a description of what a DOM should look like using a tree of nested JavaScript objects known as virtual nodes. It allows us to write code as if the entire document is rebuilt every time we render a node, while we only update the parts of the DOM that actually changed.
 
 We try to do this in the least number of steps possible, by comparing the new virtual DOM against the previous one. This leads to high efficiency, since typically only a small percentage of nodes need to change, and changing real DOM nodes is costly compared to recalculating the virtual DOM.
 
 ## Supported Attributes
 
-* [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes)
-* [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute)
-* [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events)
-* [Styles](#styles)
-* [Lifecycle Events](#lifecycle-events)
-* [Keys](#keys)
+Ultradom elements support the standard [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute) and [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events). Some attributes like [Styles](#styles) are handled specially. Non-standard attributes include [Lifecycle Events](#lifecycle-events) and [Keys](#keys).
 
 ### Styles
 
 The <samp>style</samp> attribute expects a plain object rather than a string as in HTML.
-Each declaration consists of a style name property written in <samp>camelCase</samp> and a value. CSS variables are also supported.
+Each declaration consists of a style name property written in <samp>camelCase</samp> and a value.
 
 ```jsx
 import { h } from "ultradom"
 
-export const Jumbotron = text =>
+export const Banner = text =>
   h(
     "div",
     {

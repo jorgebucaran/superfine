@@ -6,9 +6,11 @@ import { getKey } from "./getKey"
 export function patch(parent, element, oldNode, node, lifecycle, isSVG) {
   if (node === oldNode) {
   } else if (oldNode == null || oldNode.name !== node.name) {
-    var newElement = createElement(node, lifecycle, isSVG)
+    var newElement = parent.insertBefore(
+      createElement(node, lifecycle, isSVG),
+      element
+    )
 
-    parent.insertBefore(newElement, element)
     if (oldNode != null) {
       removeElement(parent, element, oldNode)
     }
@@ -74,23 +76,16 @@ export function patch(parent, element, oldNode, node, lifecycle, isSVG) {
         }
         i++
       } else {
-        var keyedNode = oldKeyed[newKey] || []
+        var keyed = oldKeyed[newKey] || []
 
         if (oldKey === newKey) {
-          patch(
-            element,
-            keyedNode[0],
-            keyedNode[1],
-            children[k],
-            lifecycle,
-            isSVG
-          )
+          patch(element, keyed[0], keyed[1], children[k], lifecycle, isSVG)
           i++
-        } else if (keyedNode[0]) {
+        } else if (keyed[0]) {
           patch(
             element,
-            element.insertBefore(keyedNode[0], oldElements[i]),
-            keyedNode[1],
+            element.insertBefore(keyed[0], oldElements[i]),
+            keyed[1],
             children[k],
             lifecycle,
             isSVG
