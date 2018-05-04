@@ -2,14 +2,16 @@
   "name": "ultradom",
   "description": "Minimal view layer for building declarative web user interfaces.",
   "version": "3.0.1",
-  "main": "dist/ultradom.js",
-  "module": "src/index.js",
-  "typings": "ultradom.d.ts",
+  "main": "ultradom.js",
+  "module": "index.js",
   "license": "MIT",
   "repository": "jorgebucaran/ultradom",
   "files": [
-    "src",
-    "dist"
+    "ultradom.mjs",
+    "ultradom.d.ts",
+    "ultradom.js",
+    "ultradom.js.map",
+    ""
   ],
   "author": "Jorge Bucaran",
   "keywords": [
@@ -21,8 +23,8 @@
   "scripts": {
     "test": "jest --coverage --no-cache",
     "build": "npm run bundle && npm run minify",
-    "bundle": "rollup -i src/index.js -o dist/ultradom.js -m -f iife -n ultradom",
-    "minify": "uglifyjs dist/ultradom.js -o dist/ultradom.js -mc pure_funcs=['Object.defineProperty'] --source-map includeSources,url=ultradom.js.map",
+    "bundle": "rollup -i ultradom.mjs -o ultradom.js -m -f iife -n ultradom",
+    "minify": "uglifyjs ultradom.js -o ultradom.js -mc pure_funcs=['Object.defineProperty'] --source-map includeSources,url=ultradom.js.map",
     "prepare": "npm run build",
     "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
   },
