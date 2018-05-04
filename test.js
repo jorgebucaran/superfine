@@ -1,4 +1,4 @@
-import { h, render } from "../src"
+import { h, render } from "./src"
 
 function testTrees(name, trees) {
   test(name, done => {
@@ -14,6 +14,202 @@ beforeEach(() => {
   document.body.innerHTML = ""
 })
 
+beforeEach(() => {
+  document.body.innerHTML = ""
+})
+
+test("oncreate", () => {
+  render(
+    h(
+      "div",
+      {
+        oncreate: element => {
+          element.className = "foo"
+          expect(document.body.innerHTML).toBe(`<div class="foo">foo</div>`)
+        }
+      },
+      "foo"
+    ),
+    document.body
+  )
+})
+
+test("onupdate", done => {
+  const view = state =>
+    h(
+      "div",
+      {
+        class: state,
+        onupdate: (element, old) => {
+          expect(element.textContent).toBe("bar")
+          expect(old.class).toBe("foo")
+          done()
+        }
+      },
+      state
+    )
+
+  render(view("foo"), document.body)
+  render(view("bar"), document.body)
+})
+
+test("onremove", done => {
+  const view = state =>
+    state
+      ? h("ul", {}, [
+          h("li"),
+          h("li", {
+            onremove(element, remove) {
+              remove()
+              expect(document.body.innerHTML).toBe("<ul><li></li></ul>")
+              done()
+            }
+          })
+        ])
+      : h("ul", {}, [h("li")])
+
+  render(view(true), document.body)
+  render(view(false), document.body)
+})
+
+test("ondestroy", done => {
+  const view = state =>
+    state
+      ? h("ul", {}, [
+          h("li"),
+          h("li", {}, [
+            h("span", {
+              ondestroy() {
+                expect(document.body.innerHTML).toBe(
+                  "<ul><li></li><li><span></span></li></ul>"
+                )
+                setTimeout(() => {
+                  expect(document.body.innerHTML).toBe("<ul><li></li></ul>")
+                  done()
+                })
+              }
+            })
+          ])
+        ])
+      : h("ul", {}, [h("li")])
+
+  render(view(true), document.body)
+  render(view(false), document.body)
+})
+
+test("onremove/ondestroy", done => {
+  let destroyed = false
+
+  const view = state =>
+    state
+      ? h("ul", {}, [
+          h("li"),
+          h("li", {
+            ondestroy() {
+              destroyed = true
+            },
+            onremove(element, remove) {
+              expect(destroyed).toBe(false)
+              remove()
+              expect(destroyed).toBe(true)
+              done()
+            }
+          })
+        ])
+      : h("ul", {}, [h("li")])
+
+  render(view(true), document.body)
+  render(view(false), document.body)
+})
+
+test("event bubbling", done => {
+  let count = 0
+
+  const view = state =>
+    h(
+      "main",
+      {
+        oncreate() {
+          expect(count++).toBe(3)
+        },
+        onupdate() {
+          expect(count++).toBe(7)
+          done()
+        }
+      },
+      [
+        h("p", {
+          oncreate() {
+            expect(count++).toBe(2)
+          },
+          onupdate() {
+            expect(count++).toBe(6)
+          }
+        }),
+        h("p", {
+          oncreate() {
+            expect(count++).toBe(1)
+          },
+          onupdate() {
+            expect(count++).toBe(5)
+          }
+        }),
+        h("p", {
+          oncreate() {
+            expect(count++).toBe(0)
+          },
+          onupdate() {
+            expect(count++).toBe(4)
+          }
+        })
+      ]
+    )
+
+  render(view(), document.body)
+  render(view(), document.body)
+})
+
+test("positional string/number children", () => {
+  expect(h("div", {}, "foo", "bar", "baz")).toEqual({
+    name: "div",
+    attributes: {},
+    children: ["foo", "bar", "baz"]
+  })
+
+  expect(h("div", {}, 0, "foo", 1, "baz", 2)).toEqual({
+    name: "div",
+    attributes: {},
+    children: [0, "foo", 1, "baz", 2]
+  })
+
+  expect(h("div", {}, "foo", h("div", {}, "bar"), "baz", "quux")).toEqual({
+    name: "div",
+    attributes: {},
+    children: [
+      "foo",
+      {
+        name: "div",
+        attributes: {},
+        children: ["bar"]
+      },
+      "baz",
+      "quux"
+    ]
+  })
+})
+
+test("skip null and boolean children", () => {
+  const expected = {
+    name: "div",
+    attributes: {},
+    children: []
+  }
+
+  expect(h("div", {}, true)).toEqual(expected)
+  expect(h("div", {}, false)).toEqual(expected)
+  expect(h("div", {}, null)).toEqual(expected)
+})
+
 testTrees("replace element", [
   {
     node: h("main", {}),
@@ -22,25 +218,6 @@ testTrees("replace element", [
   {
     node: h("div", {}),
     html: `<div></div>`
-  }
-])
-
-testTrees("replace child", [
-  {
-    node: h("main", {}, [h("div", {}, "foo")]),
-    html: `
-        <main>
-          <div>foo</div>
-        </main>
-      `
-  },
-  {
-    node: h("main", {}, [h("main", {}, "bar")]),
-    html: `
-        <main>
-          <main>bar</main>
-        </main>
-      `
   }
 ])
 
@@ -130,168 +307,7 @@ testTrees("remove text node", [
   }
 ])
 
-testTrees("replace keyed", [
-  {
-    node: h("main", {}, [
-      h(
-        "div",
-        {
-          key: "a",
-          oncreate(e) {
-            e.id = "a"
-          }
-        },
-        "A"
-      )
-    ]),
-    html: `
-        <main>
-          <div id="a">A</div>
-        </main>
-      `
-  },
-  {
-    node: h("main", {}, [
-      h(
-        "div",
-        {
-          key: "b",
-          oncreate(e) {
-            e.id = "b"
-          }
-        },
-        "B"
-      )
-    ]),
-    html: `
-        <main>
-          <div id="b">B</div>
-        </main>
-      `
-  }
-])
-
-testTrees("reorder keyed", [
-  {
-    node: h("main", {}, [
-      h(
-        "div",
-        {
-          key: "a",
-          oncreate(e) {
-            e.id = "a"
-          }
-        },
-        "A"
-      ),
-      h(
-        "div",
-        {
-          key: "b",
-          oncreate(e) {
-            e.id = "b"
-          }
-        },
-        "B"
-      ),
-      h(
-        "div",
-        {
-          key: "c",
-          oncreate(e) {
-            e.id = "c"
-          }
-        },
-        "C"
-      ),
-      h(
-        "div",
-        {
-          key: "d",
-          oncreate(e) {
-            e.id = "d"
-          }
-        },
-        "D"
-      ),
-      h(
-        "div",
-        {
-          key: "e",
-          oncreate(e) {
-            e.id = "e"
-          }
-        },
-        "E"
-      )
-    ]),
-    html: `
-        <main>
-          <div id="a">A</div>
-          <div id="b">B</div>
-          <div id="c">C</div>
-          <div id="d">D</div>
-          <div id="e">E</div>
-        </main>
-      `
-  },
-  {
-    node: h("main", {}, [
-      h("div", { key: "e" }, "E"),
-      h("div", { key: "a" }, "A"),
-      h("div", { key: "b" }, "B"),
-      h("div", { key: "c" }, "C"),
-      h("div", { key: "d" }, "D")
-    ]),
-    html: `
-        <main>
-          <div id="e">E</div>
-          <div id="a">A</div>
-          <div id="b">B</div>
-          <div id="c">C</div>
-          <div id="d">D</div>
-        </main>
-      `
-  },
-  {
-    node: h("main", {}, [
-      h("div", { key: "e" }, "E"),
-      h("div", { key: "d" }, "D"),
-      h("div", { key: "a" }, "A"),
-      h("div", { key: "c" }, "C"),
-      h("div", { key: "b" }, "B")
-    ]),
-    html: `
-        <main>
-          <div id="e">E</div>
-          <div id="d">D</div>
-          <div id="a">A</div>
-          <div id="c">C</div>
-          <div id="b">B</div>
-        </main>
-      `
-  },
-  {
-    node: h("main", {}, [
-      h("div", { key: "c" }, "C"),
-      h("div", { key: "e" }, "E"),
-      h("div", { key: "b" }, "B"),
-      h("div", { key: "a" }, "A"),
-      h("div", { key: "d" }, "D")
-    ]),
-    html: `
-        <main>
-          <div id="c">C</div>
-          <div id="e">E</div>
-          <div id="b">B</div>
-          <div id="a">A</div>
-          <div id="d">D</div>
-        </main>
-      `
-  }
-])
-
-testTrees("grow/shrink keyed", [
+testTrees("keyed", [
   {
     node: h("main", {}, [
       h(
@@ -572,17 +588,6 @@ testTrees("styles", [
   }
 ])
 
-testTrees("update element data", [
-  {
-    node: h("div", { id: "foo", class: "bar" }),
-    html: `<div id="foo" class="bar"></div>`
-  },
-  {
-    node: h("div", { id: "foo", class: "baz" }),
-    html: `<div id="foo" class="baz"></div>`
-  }
-])
-
 testTrees("removeAttribute", [
   {
     node: h("div", { id: "foo", class: "bar" }),
@@ -632,84 +637,6 @@ testTrees("update element with dynamic props", [
       }
     }),
     html: `<input type="text">`
-  }
-])
-
-testTrees("don't touch textnodes if equal", [
-  {
-    node: h(
-      "main",
-      {
-        oncreate(element) {
-          element.childNodes[0].textContent = "foobar"
-        }
-      },
-      "foo"
-    ),
-    html: `<main>foobar</main>`
-  },
-  {
-    node: h("main", {}, "foobar"),
-    html: `<main>foobar</main>`
-  }
-])
-
-testTrees("a list with empty text nodes", [
-  {
-    node: h("ul", {}, [h("li", {}, ""), h("div", {}, "foo")]),
-    html: `<ul><li></li><div>foo</div></ul>`
-  },
-  {
-    node: h("ul", {}, [h("li", {}, ""), h("li", {}, ""), h("div", {}, "foo")]),
-    html: `<ul><li></li><li></li><div>foo</div></ul>`
-  },
-  {
-    node: h("ul", {}, [
-      h("li", {}, ""),
-      h("li", {}, ""),
-      h("li", {}, ""),
-      h("div", {}, "foo")
-    ]),
-    html: `<ul><li></li><li></li><li></li><div>foo</div></ul>`
-  }
-])
-
-testTrees("elements with falsey values", [
-  {
-    node: h("div", {
-      "data-test": "foo"
-    }),
-    html: `<div data-test="foo"></div>`
-  },
-  {
-    node: h("div", {
-      "data-test": "0"
-    }),
-    html: `<div data-test="0"></div>`
-  },
-  {
-    node: h("div", {
-      "data-test": 0
-    }),
-    html: `<div data-test="0"></div>`
-  },
-  {
-    node: h("div", {
-      "data-test": null
-    }),
-    html: `<div></div>`
-  },
-  {
-    node: h("div", {
-      "data-test": false
-    }),
-    html: `<div></div>`
-  },
-  {
-    node: h("div", {
-      "data-test": undefined
-    }),
-    html: `<div></div>`
   }
 ])
 

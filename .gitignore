@@ -1,14 +1,9 @@
-# Artifacts
-dist
+ultradom.js*
 example*
 .gz
 coverage
 test/typings/**/*.js
-
-# Dependencies
 node_modules
 package-lock.json
 yarn.lock
-
-# Editors
 .vscode

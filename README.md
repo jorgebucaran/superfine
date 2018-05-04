@@ -5,26 +5,30 @@
 [![npm](https://img.shields.io/npm/v/ultradom.svg)](https://www.npmjs.org/package/ultradom)
 [![Slack](https://hyperappjs.herokuapp.com/badge.svg)](https://hyperappjs.herokuapp.com "#ultradom")
 
-Ultradom is a minimal (1 kB) view layer for building declarative web user interfaces. Includes a virtual DOM diff algorithm, keyed-based node [reconciliation](#keys), element-level [lifecycle](#lifecycle-events) events and browser support all the way back to IE9. Mix it with your favorite state management library or use it standalone for maximum flexibility.
+Ultradom is a minimal (1 kB) view layer for building declarative web user interfaces. Mix it with your favorite state management library or use it standalone for maximum flexibility.
 
-<h2>Table of Contents</h2>
-<!-- TOC -->
+Let's walkthrough a simple ticking clock. You can [try it online](https://codepen.io/jorgebucaran/pen/wjvEBj?editors=0010) to see what it looks like.
 
-* [Installation](#installation)
-* [Getting Started](#getting-started)
-* [Supported Attributes](#supported-attributes)
-  * [Styles](#styles)
-  * [Lifecycle Events](#lifecycle-events)
-    * [oncreate](#oncreate)
-    * [onupdate](#onupdate)
-    * [onremove](#onremove)
-    * [ondestroy](#ondestroy)
-  * [Keys](#keys)
-* [JSX](#jsx)
-* [Community](#community)
-* [License](#license)
+```js
+import { h, render } from "ultradom"
 
-<!-- /TOC -->
+setInterval(
+  () =>
+    render(
+      h("div", {}, [
+        h("h1", {}, `The time is: ${new Date().toLocaleTimeString()}`)
+      ]),
+      document.body
+    ),
+  1000
+)
+```
+
+Ultradom consists of a two-function API. <samp>ultradom.h</samp> creates a new virtual DOM node and <samp>ultradom.render</samp> renders it into a supplied container.
+
+A virtual DOM is a description of what a DOM should look like using a tree of nested JavaScript objects known as virtual nodes. It allows us to write code as if the entire document is rebuilt every time we render a node, while we only update the parts of the DOM that actually changed.
+
+We try to do this in the least number of steps possible, by comparing the new virtual DOM against the previous one. This leads to high efficiency, since typically only a small percentage of nodes need to change, and changing real DOM nodes is costly compared to recalculating the virtual DOM.
 
 ## Installation
 
@@ -38,52 +42,30 @@ Don't want to set up a build environment? Download Ultradom from a CDN such as [
 <script src="https://unpkg.com/ultradom"></script>
 ```
 
-## Getting Started
-
-Let's walkthrough a simple ticking clock. You can [try it online](https://codepen.io/jorgebucaran/pen/wjvEBj?editors=0010) to see what it looks like.
-
-```js
-import { h, render } from "ultradom"
-
-setInterval(
-  () =>
-    render(
-      h("div", {}, [
-        h("h1", {}, "Hello World!"),
-        h("h2", {}, `The time is: ${new Date().toLocaleTimeString()}`)
-      ]),
-      document.body
-    ),
-  1000
-)
-```
-
-Ultradom consists of a two-function API. <samp>ultradom.h</samp> creates a new virtual DOM node and <samp>ultradom.render</samp> renders it into the supplied container.
-
-A virtual DOM is a description of what a DOM should look like using a tree of nested JavaScript objects known as virtual nodes. It allows us to write code as if the entire document is rebuilt every time we render a node, while we only update the parts of the DOM that actually changed.
-
-We try to do this in the least number of steps possible, by comparing the new virtual DOM against the previous one. This leads to high efficiency, since typically only a small percentage of nodes need to change, and changing real DOM nodes is costly compared to recalculating the virtual DOM.
-
 ## Supported Attributes
 
-Ultradom elements support the standard [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute) and [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events). Some attributes like [Styles](#styles) are handled specially. Non-standard attributes include [Lifecycle Events](#lifecycle-events) and [Keys](#keys).
+* [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes)
+* [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute)
+* [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events)
+* [Styles](#styles)
+* [Lifecycle Events](#lifecycle-events)
+* [Keys](#keys)
 
 ### Styles
 
-The <samp>style</samp> attribute expects a plain object rather than a string as in HTML.
-Each declaration consists of a style name property written in <samp>camelCase</samp> and a value.
+The <samp>style</samp> attribute expects a plain object rather than a string as in HTML. Each declaration consists of a style name property written in <samp>camelCase</samp> and a value.
 
 ```jsx
 import { h } from "ultradom"
 
-export const Banner = text =>
+export const Banner = ({ text, imgUrl }) =>
   h(
     "div",
     {
       style: {
         color: "white",
         fontSize: "32px",
-        textAlign: center,
+        textAlign: "center",
         backgroundImage: `url(${imgUrl})`
       }
     },
@@ -178,23 +160,6 @@ export const ImageGallery = images =>
       })
     ])
   )
-```
-
-## JSX
-
-[JSX](https://facebook.github.io/jsx/) is an optional language syntax extension that lets you write HTML tags interspersed with JavaScript. Because browsers don't understand JSX, we use a compiler like [Babel](https://babeljs.io) to transform it into <samp>ultradom.h</samp> function calls. To use JSX install the JSX [transform plugin](https://babeljs.io/docs/plugins/transform-react-jsx) and add the pragma option to your <samp>.babelrc</samp> file.
-
-```json
-{
-  "plugins": [
-    [
-      "transform-react-jsx",
-      {
-        "pragma": "h"
-      }
-    ]
-  ]
-}
 ```
 
 ## Community
