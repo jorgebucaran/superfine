@@ -7,6 +7,20 @@
 
 Ultradom is a minimal (1 kB) view layer for building declarative web user interfaces. Mix it with your favorite state management library or use it standalone for maximum flexibility.
 
+## Installation
+
+<pre>
+npm i <a href=https://www.npmjs.com/package/ultradom>ultradom</a>
+</pre>
+
+Don't want to set up a build environment? Download Ultradom from a CDN such as [unpkg.com](https://unpkg.com/ultradom) and it will be globally available through the <samp>window.ultradom</samp> object.
+
+```html
+<script src="https://unpkg.com/ultradom"></script>
+```
+
+## Usage
+
 Let's walkthrough a simple ticking clock. You can [try it online](https://codepen.io/jorgebucaran/pen/wjvEBj?editors=0010) to see what it looks like.
 
 ```js
@@ -24,32 +38,11 @@ setInterval(
 )
 ```
 
-Ultradom consists of a two-function API. <samp>ultradom.h</samp> creates a new virtual DOM node and <samp>ultradom.render</samp> renders it into a supplied container.
+Ultradom consists of a two-function API. <samp>ultradom.h</samp> creates a new virtual DOM node and <samp>ultradom.render</samp> renders it into a supplied container. Ultradom nodes support [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute), [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events), [styles](#styles), [lifecycle events](#lifecycle-events) and [keys](#keys).
 
 A virtual DOM is a description of what a DOM should look like using a tree of nested JavaScript objects known as virtual nodes. It allows us to write code as if the entire document is rebuilt every time we render a node, while we only update the parts of the DOM that actually changed.
 
 We try to do this in the least number of steps possible, by comparing the new virtual DOM against the previous one. This leads to high efficiency, since typically only a small percentage of nodes need to change, and changing real DOM nodes is costly compared to recalculating the virtual DOM.
-
-## Installation
-
-<pre>
-npm i <a href=https://www.npmjs.com/package/ultradom>ultradom</a>
-</pre>
-
-Don't want to set up a build environment? Download Ultradom from a CDN such as [unpkg.com](https://unpkg.com/ultradom) and it will be globally available through the <samp>window.ultradom</samp> object.
-
-```html
-<script src="https://unpkg.com/ultradom"></script>
-```
-
-## Supported Attributes
-
-* [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes)
-* [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute)
-* [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events)
-* [Styles](#styles)
-* [Lifecycle Events](#lifecycle-events)
-* [Keys](#keys)
 
 ### Styles
 
@@ -162,10 +155,11 @@ export const ImageGallery = images =>
   )
 ```
 
-## Community
+## Links
 
+* [Examples](https://codepen.io/search/pens?q=ultradom&page=1&order=popularity&depth=everything&show_forks=false)
 * [Slack#ultradom](https://hyperappjs.herokuapp.com)
-* [Twitter/hashtag/ultradom](https://twitter.com/hashtag/ultradom)
+* [Twitter/#/ultradom](https://twitter.com/hashtag/ultradom)
 * [/r/ultradom](https://www.reddit.com/r/ultradom)
 
 ## License
