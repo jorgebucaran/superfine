@@ -1,10 +1,4 @@
-<<<<<<< HEAD:test.js
-import { h, render } from "./ultradom.mjs"
-
-console.log(h, render)
-=======
-import { h, render } from "./src"
->>>>>>> 5fdbd3c69a77a26ff9283d2169650466d36dcdc8:test.js
+import { h, render } from "./ultradom.m.js"
 
 function testTrees(name, trees) {
   test(name, done => {

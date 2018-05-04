@@ -7,7 +7,7 @@
   "license": "MIT",
   "repository": "jorgebucaran/ultradom",
   "files": [
-    "ultradom.mjs",
+    "ultradom.m.js",
     "ultradom.d.ts",
     "ultradom.js",
     "ultradom.js.map",
@@ -23,7 +23,7 @@
   "scripts": {
     "test": "jest --coverage --no-cache",
     "build": "npm run bundle && npm run minify",
-    "bundle": "rollup -i ultradom.mjs -o ultradom.js -m -f iife -n ultradom",
+    "bundle": "rollup -i ultradom.m.js -o ultradom.js -m -f iife -n ultradom",
     "minify": "uglifyjs ultradom.js -o ultradom.js -mc pure_funcs=['Object.defineProperty'] --source-map includeSources,url=ultradom.js.map",
     "prepare": "npm run build",
     "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
