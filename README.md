@@ -7,13 +7,15 @@
 
 Ultradom is a minimal (1 kB) view layer for building declarative web user interfaces. Mix it with your favorite state management library or use it standalone for maximum flexibility.
 
+What's in the bundle? A virtual DOM diff engine, keyed-based node [reconciliation](#keys), element-level [lifecycle events](#lifecycle-events) and browser support all the way back to IE9 — no polyfills required.
+
 ## Installation
 
 <pre>
 npm i <a href=https://www.npmjs.com/package/ultradom>ultradom</a>
 </pre>
 
-Don't want to set up a build environment? Download Ultradom from a CDN such as [unpkg.com](https://unpkg.com/ultradom) and it will be globally available through the <samp>window.ultradom</samp> object.
+Don't want to set up a build environment? Download Ultradom from a CDN like [unpkg.com](https://unpkg.com/ultradom) and it will be globally available through the <samp>window.ultradom</samp> object.
 
 ```html
 <script src="https://unpkg.com/ultradom"></script>
