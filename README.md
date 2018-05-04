@@ -5,9 +5,9 @@
 [![npm](https://img.shields.io/npm/v/ultradom.svg)](https://www.npmjs.org/package/ultradom)
 [![Slack](https://hyperappjs.herokuapp.com/badge.svg)](https://hyperappjs.herokuapp.com "#ultradom")
 
-Ultradom is a minimal (1 kB) view layer for building declarative web user interfaces. Mix it with your favorite state management library or use it standalone for maximum flexibility.
+Ultradom is a minimal view layer for building declarative web user interfaces.
 
-What's in the bundle? A virtual DOM diff engine, keyed-based node [reconciliation](#keys), element-level [lifecycle events](#lifecycle-events) and browser support all the way back to IE9 — no polyfills required.
+What's in the bundle? A virtual DOM diff engine, keyed-based node [reconciliation](#keys), element-level [lifecycle events](#lifecycle-events) and browser support all the way back to IE9 — no polyfills required. Mix it with your favorite state management library or use it standalone for maximum flexibility.
 
 ## Installation
 
@@ -40,32 +40,47 @@ setInterval(
 )
 ```
 
-Ultradom consists of a two-function API. <samp>ultradom.h</samp> creates a new virtual DOM node and <samp>ultradom.render</samp> renders it into a supplied container. Ultradom nodes support [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute), [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events), [styles](#styles), [lifecycle events](#lifecycle-events) and [keys](#keys).
+Ultradom consists of a two-function API: <samp>ultradom.h</samp> creates a virtual DOM node and <samp>ultradom.render</samp> renders it into a supplied container. Nodes created with Ultradom support [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute), [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events), [keys](#keys), [lifecycle events](#lifecycle-events) and [styles](#styles).
 
-A virtual DOM is a description of what a DOM should look like using a tree of nested JavaScript objects known as virtual nodes. It allows us to write code as if the entire document is rebuilt every time we render a node, while we only update the parts of the DOM that actually changed.
+A virtual DOM is a description of what a DOM should look like using a tree of nested JavaScript objects known as virtual nodes.
+
+```js
+{
+  name: "div",
+  attributes: {},
+  children: [
+    {
+      name: "h1",
+      attributes: {},
+      children: `The time is: ${new Date().toLocaleTimeString()}`
+    }
+  ]
+}
+```
+
+A virtual DOM allows us to write code as if the entire document is rebuilt every time we render a node, while we only update the parts of the DOM that actually changed.
 
 We try to do this in the least number of steps possible, by comparing the new virtual DOM against the previous one. This leads to high efficiency, since typically only a small percentage of nodes need to change, and changing real DOM nodes is costly compared to recalculating the virtual DOM.
 
-### Styles
+In the next example the DOM is updated based on user input. Notice we can express the entire application as a function of the state and encapsulate the <samp>render</samp> call. You can [try it online](https://codepen.io/jorgebucaran/pen/KoqxGW) too.
 
-The <samp>style</samp> attribute expects a plain object rather than a string as in HTML. Each declaration consists of a style name property written in <samp>camelCase</samp> and a value.
+```js
+import { h, render } from "ultradom"
 
-```jsx
-import { h } from "ultradom"
+const view = state =>
+  h("div", {}, [
+    h("h1", {}, state),
+    h("input", {
+      autofocus: true,
+      type: "text",
+      value: state,
+      oninput: e => app(e.target.value)
+    })
+  ])
 
-export const Banner = ({ text, imgUrl }) =>
-  h(
-    "div",
-    {
-      style: {
-        color: "white",
-        fontSize: "32px",
-        textAlign: "center",
-        backgroundImage: `url(${imgUrl})`
-      }
-    },
-    text
-  )
+const app = state => render(view(state), document.body)
+
+app("Hello!")
 ```
 
 ### Lifecycle Events
@@ -154,6 +169,28 @@ export const ImageGallery = images =>
         alt: description
       })
     ])
+  )
+```
+
+### Styles
+
+The <samp>style</samp> attribute expects a plain object rather than a string as in HTML. Each declaration consists of a style name property written in <samp>camelCase</samp> and a value.
+
+```jsx
+import { h } from "ultradom"
+
+export const Banner = ({ text, imgUrl }) =>
+  h(
+    "div",
+    {
+      style: {
+        color: "white",
+        fontSize: "32px",
+        textAlign: "center",
+        backgroundImage: `url(${imgUrl})`
+      }
+    },
+    text
   )
 ```
 
