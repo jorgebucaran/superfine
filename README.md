@@ -15,7 +15,7 @@ What's in the bundle? A virtual DOM diff engine, keyed-based node [reconciliatio
 npm i <a href=https://www.npmjs.com/package/ultradom>ultradom</a>
 </pre>
 
-Don't want to set up a build environment? Download Ultradom from a CDN like [unpkg.com](https://unpkg.com/ultradom) and it will be globally available through the <samp>window.ultradom</samp> object.
+Don't want to set up a build environment? Download Ultradom from a CDN like [unpkg.com](https://unpkg.com/ultradom) and it will be globally available through the `window.ultradom` object.
 
 ```html
 <script src="https://unpkg.com/ultradom"></script>
@@ -40,7 +40,7 @@ setInterval(
 )
 ```
 
-Ultradom consists of a two-function API: <samp>ultradom.h</samp> creates a virtual DOM node and <samp>ultradom.render</samp> renders it into a supplied container. Nodes created with Ultradom support [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute), [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events), [keys](#keys), [lifecycle events](#lifecycle-events) and [styles](#styles).
+Ultradom consists of a two-function API: `ultradom.h` creates a virtual DOM node and `ultradom.render` renders it into a supplied container. Ultradom nodes support [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute), [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events), [keys](#keys), [lifecycle events](#lifecycle-events) and [styles](#styles).
 
 A virtual DOM is a description of what a DOM should look like using a tree of nested JavaScript objects known as virtual nodes.
 
@@ -62,7 +62,7 @@ A virtual DOM allows us to write code as if the entire document is rebuilt every
 
 We try to do this in the least number of steps possible, by comparing the new virtual DOM against the previous one. This leads to high efficiency, since typically only a small percentage of nodes need to change, and changing real DOM nodes is costly compared to recalculating the virtual DOM.
 
-In the next example the DOM is updated based on user input. Notice we can express the entire application as a function of the state and encapsulate the <samp>render</samp> call. You can [try it online](https://codepen.io/jorgebucaran/pen/KoqxGW) too.
+In the next example the DOM is updated based on user input. Notice we can express the entire application as a function of the state and encapsulate the `render` call. You can [try it online](https://codepen.io/jorgebucaran/pen/KoqxGW) too.
 
 ```js
 import { h, render } from "ultradom"
@@ -104,7 +104,7 @@ export const Textbox = placeholder =>
 
 #### onupdate
 
-This event is fired every time we update the element attributes. Use <samp>oldAttributes</samp> inside the event handler to check if any attributes changed or not.
+This event is fired every time we update the element attributes. Use `oldAttributes` inside the event handler to check if any attributes changed or not.
 
 ```jsx
 import { h } from "ultradom"
@@ -123,7 +123,7 @@ export const Textbox = placeholder =>
 
 #### onremove
 
-This event is fired before the element is removed from the DOM. Use it to create slide/fade out animations. Call <samp>done</samp> inside the function to remove the element. This event is not called in its child elements.
+This event is fired before the element is removed from the DOM. Use it to create slide/fade out animations. Call `done` inside the function to remove the element. This event is not called in its child elements.
 
 ```jsx
 import { h } from "ultradom"
@@ -156,7 +156,7 @@ export const Camera = onerror =>
 
 ### Keys
 
-Keys helps identify nodes every time we update the DOM. By setting the <samp>key</samp> property on a virtual node, you declare that the node should correspond to a particular DOM element. This allow us to re-order the element into its new position, if the position changed, rather than risk destroying it. Note that keys must be unique among sibling-nodes.
+Keys helps identify nodes every time we update the DOM. By setting the `key` property on a virtual node, you declare that the node should correspond to a particular DOM element. This allow us to re-order the element into its new position, if the position changed, rather than risk destroying it. Note that keys must be unique among sibling-nodes.
 
 ```jsx
 import { h } from "ultradom"
@@ -174,7 +174,7 @@ export const ImageGallery = images =>
 
 ### Styles
 
-The <samp>style</samp> attribute expects a plain object rather than a string as in HTML. Each declaration consists of a style name property written in <samp>camelCase</samp> and a value.
+The `style` attribute expects a plain object rather than a string as in HTML. Each declaration consists of a style name property written in `camelCase` and a value.
 
 ```jsx
 import { h } from "ultradom"
