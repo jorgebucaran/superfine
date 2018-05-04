@@ -1,7 +1,7 @@
 {
   "name": "ultradom",
   "description": "Minimal view layer for building declarative web user interfaces.",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "main": "ultradom.js",
   "module": "ultradom.m.js",
   "license": "MIT",
@@ -10,8 +10,7 @@
     "ultradom.m.js",
     "ultradom.d.ts",
     "ultradom.js",
-    "ultradom.js.map",
-    ""
+    "ultradom.js.map"
   ],
   "author": "Jorge Bucaran",
   "keywords": [
