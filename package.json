@@ -6,6 +6,7 @@
   "module": "ultradom.m.js",
   "license": "MIT",
   "repository": "jorgebucaran/ultradom",
+  "types": "ultradom.d.ts",
   "files": [
     "ultradom.m.js",
     "ultradom.d.ts",
