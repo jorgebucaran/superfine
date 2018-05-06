@@ -191,7 +191,7 @@ function patch(parent, element, oldNode, node, lifecycle, isSVG) {
         continue
       }
 
-      if (newKey == null || oldNode.recycled) {
+      if (newKey == null) {
         if (oldKey == null) {
           patch(
             element,
