@@ -44,23 +44,9 @@ Ultradom consists of a two-function API: `ultradom.h` creates a virtual DOM node
 
 A virtual DOM is a description of what a DOM should look like using a tree of nested JavaScript objects known as virtual nodes. It allows us to write our application as if the entire document is rebuilt every time we render a node, while we only update the parts of the DOM that actually changed.
 
-```js
-{
-  name: "div",
-  attributes: {},
-  children: [
-    {
-      name: "h1",
-      attributes: {},
-      children: `The time is: ${new Date().toLocaleTimeString()}`
-    }
-  ]
-}
-```
-
 We try to do this in the least number of steps possible, by comparing the new virtual DOM against the previous one. This leads to high efficiency, since typically only a small percentage of nodes need to change, and changing real DOM nodes is costly compared to recalculating the virtual DOM.
 
-In the next example the DOM is updated based on user input. Notice we can express the entire application as a function of the state by encapsulating the `render` call. You can [try it online](https://codepen.io/jorgebucaran/pen/KoqxGW) too.
+In the next example the DOM is updated based on user input. Notice how we express the entire program as a function of the state and encapsulate the `render` call. You can [try it online](https://codepen.io/jorgebucaran/pen/KoqxGW) too.
 
 ```js
 import { h, render } from "ultradom"
