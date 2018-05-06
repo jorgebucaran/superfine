@@ -2,7 +2,6 @@ ultradom.js*
 example*
 .gz
 coverage
-test/typings/**/*.js
 node_modules
 package-lock.json
 yarn.lock
