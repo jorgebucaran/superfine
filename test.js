@@ -1,6 +1,6 @@
 import { h, render } from "./ultradom.m.js"
 
-const testTrees = (name, trees) =>
+const testVDOMToHtml = (name, trees) =>
   test(name, () => {
     trees.map(tree => {
       render(tree.node, document.body)
@@ -30,7 +30,7 @@ beforeEach(() => {
   document.body.innerHTML = ""
 })
 
-testTrees("replace element", [
+testVDOMToHtml("replace element", [
   {
     node: h("main", {}),
     html: `<main></main>`
@@ -41,7 +41,7 @@ testTrees("replace element", [
   }
 ])
 
-testTrees("insert children on top", [
+testVDOMToHtml("insert children on top", [
   {
     node: h("main", {}, [divWithId("a")]),
     html: `
@@ -75,7 +75,7 @@ testTrees("insert children on top", [
   }
 ])
 
-testTrees("remove text node", [
+testVDOMToHtml("remove text node", [
   {
     node: h("main", {}, [h("div", {}, ["foo"]), "bar"]),
     html: `
@@ -95,7 +95,7 @@ testTrees("remove text node", [
   }
 ])
 
-testTrees("keyed", [
+testVDOMToHtml("keyed", [
   {
     node: h("main", {}, [
       divWithId("a"),
@@ -172,7 +172,7 @@ testTrees("keyed", [
   }
 ])
 
-testTrees("mixed keyed/non-keyed", [
+testVDOMToHtml("mixed keyed/non-keyed", [
   {
     node: h("main", {}, [
       divWithId("a"),
@@ -245,7 +245,7 @@ testTrees("mixed keyed/non-keyed", [
   }
 ])
 
-testTrees("styles", [
+testVDOMToHtml("styles", [
   {
     node: h("div"),
     html: `<div></div>`
@@ -268,7 +268,7 @@ testTrees("styles", [
   }
 ])
 
-testTrees("removeAttribute", [
+testVDOMToHtml("removeAttribute", [
   {
     node: h("div", { id: "foo", class: "bar" }),
     html: `<div id="foo" class="bar"></div>`
@@ -279,21 +279,21 @@ testTrees("removeAttribute", [
   }
 ])
 
-testTrees("skip setAttribute for functions", [
+testVDOMToHtml("skip setAttribute for functions", [
   {
     node: h("div", { onclick: () => {} }),
     html: `<div></div>`
   }
 ])
 
-testTrees("setAttribute true", [
+testVDOMToHtml("setAttribute true", [
   {
     node: h("div", { enabled: true }),
     html: `<div enabled="true"></div>`
   }
 ])
 
-testTrees("update element with dynamic props", [
+testVDOMToHtml("update element with dynamic props", [
   {
     node: h("input", {
       type: "text",
@@ -316,7 +316,7 @@ testTrees("update element with dynamic props", [
   }
 ])
 
-testTrees("input list attribute", [
+testVDOMToHtml("input list attribute", [
   {
     node: h("input", { list: "foobar" }),
     html: `<input list="foobar">`
