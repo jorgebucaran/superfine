@@ -7,7 +7,7 @@
 
 Ultradom is a minimal view layer for building declarative web user interfaces.
 
-What's in the bundle? A virtual DOM diff engine, keyed-based node [reconciliation](#keys), element-level [lifecycle events](#lifecycle-events) and browser support all the way back to IE9 — no polyfills required. Mix it with your favorite state management library or use it standalone for maximum flexibility.
+What's in the bundle? A virtual DOM diff engine, keyed-based node [reconciliation](#keys), element-level [lifecycle events](#lifecycle-events) and browser support all the way back to IE9. Mix it with your favorite state management library or use it standalone for maximum flexibility.
 
 ## Installation
 
@@ -42,7 +42,7 @@ setInterval(
 
 Ultradom consists of a two-function API: `ultradom.h` creates a virtual DOM node and `ultradom.render` renders it into a supplied container. Ultradom nodes support [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute), [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events), [keys](#keys), [lifecycle events](#lifecycle-events) and [styles](#styles).
 
-A virtual DOM is a description of what a DOM should look like using a tree of nested JavaScript objects known as virtual nodes.
+A virtual DOM is a description of what a DOM should look like using a tree of nested JavaScript objects known as virtual nodes. It allows us to write our application as if the entire document is rebuilt every time we render a node, while we only update the parts of the DOM that actually changed.
 
 ```js
 {
@@ -58,11 +58,9 @@ A virtual DOM is a description of what a DOM should look like using a tree of ne
 }
 ```
 
-A virtual DOM allows us to write code as if the entire document is rebuilt every time we render a node, while we only update the parts of the DOM that actually changed.
-
 We try to do this in the least number of steps possible, by comparing the new virtual DOM against the previous one. This leads to high efficiency, since typically only a small percentage of nodes need to change, and changing real DOM nodes is costly compared to recalculating the virtual DOM.
 
-In the next example the DOM is updated based on user input. Notice we can express the entire application as a function of the state and encapsulate the `render` call. You can [try it online](https://codepen.io/jorgebucaran/pen/KoqxGW) too.
+In the next example the DOM is updated based on user input. Notice we can express the entire application as a function of the state by encapsulating the `render` call. You can [try it online](https://codepen.io/jorgebucaran/pen/KoqxGW) too.
 
 ```js
 import { h, render } from "ultradom"
