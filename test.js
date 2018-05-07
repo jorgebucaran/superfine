@@ -245,29 +245,6 @@ testVDOMToHtml("mixed keyed/non-keyed", [
   }
 ])
 
-testVDOMToHtml("styles", [
-  {
-    node: h("div"),
-    html: `<div></div>`
-  },
-  {
-    node: h("div", {
-      style: { color: "red", fontSize: "1em", "--foo": "red" }
-    }),
-    html: `<div style="color: red; font-size: 1em;"></div>`
-  },
-  {
-    node: h("div", {
-      style: { color: "blue", float: "left", "--foo": "blue" }
-    }),
-    html: `<div style="color: blue; float: left;"></div>`
-  },
-  {
-    node: h("div"),
-    html: `<div style=""></div>`
-  }
-])
-
 testVDOMToHtml("removeAttribute", [
   {
     node: h("div", { id: "foo", class: "bar" }),

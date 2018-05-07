@@ -13,15 +13,6 @@ function eventListener(event) {
 
 function updateAttribute(element, name, value, oldValue, isSVG) {
   if (name === "key") {
-  } else if (name === "style") {
-    for (var i in clone(oldValue, value)) {
-      var style = value == null || value[i] == null ? "" : value[i]
-      if (i[0] === "-") {
-        element[name].setProperty(i, style)
-      } else {
-        element[name][i] = style
-      }
-    }
   } else {
     if (name[0] === "o" && name[1] === "n") {
       if (!element.events) {
