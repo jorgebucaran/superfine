@@ -23,30 +23,7 @@ Don't want to set up a build environment? Download Ultradom from a CDN like [unp
 
 ## Usage
 
-Let's walkthrough a simple ticking clock. You can [try it online](https://codepen.io/jorgebucaran/pen/wjvEBj?editors=0010) to see what it looks like.
-
-```js
-import { h, render } from "ultradom"
-
-setInterval(
-  () =>
-    render(
-      h("div", {}, [
-        h("h1", {}, `The time is: ${new Date().toLocaleTimeString()}`)
-      ]),
-      document.body
-    ),
-  1000
-)
-```
-
-Ultradom consists of a two-function API: `ultradom.h` creates a virtual DOM node and `ultradom.render` renders it into a supplied container. Ultradom nodes support [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute), [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events), [keys](#keys) and [lifecycle events](#lifecycle-events).
-
-A virtual DOM is a description of what a DOM should look like using a tree of nested JavaScript objects known as virtual nodes. It allows us to write our application as if the entire document is rebuilt every time we render a node, while we only update the parts of the DOM that actually changed.
-
-We try to do this in the least number of steps possible, by comparing the new virtual DOM against the previous one. This leads to high efficiency, since typically only a small percentage of nodes need to change, and changing real DOM nodes is costly compared to recalculating the virtual DOM.
-
-In the following example the DOM is updated based on user input. Notice how we express the entire program as a function of the state and encapsulate the `render` call. Go ahead and [try it online](https://codepen.io/jorgebucaran/pen/KoqxGW).
+Let's walkthrough a simple example that displays the contents of a text field. You can [try it online](https://codepen.io/jorgebucaran/pen/KoqxGW) to see what it looks like.
 
 ```js
 import { h, render } from "ultradom"
@@ -67,9 +44,15 @@ const app = state => render(view(state), document.body)
 app("Hello!")
 ```
 
+Ultradom consists of a two-function API: `ultradom.h` creates a virtual DOM node and `ultradom.render` renders it into a DOM element container. Ultradom nodes support [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute), [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events), [keys](#keys) and [lifecycle events](#lifecycle-events).
+
+A virtual DOM is a description of what a DOM should look like using a tree of nested JavaScript objects known as virtual nodes. It allows us to write our application as if the entire document is rebuilt every time we render a node, while we only update the parts of the DOM that actually changed.
+
+We try to do this in the least number of steps possible, by comparing the new virtual DOM against the previous one. This leads to high efficiency, since typically only a small percentage of nodes need to change, and changing real DOM nodes is costly compared to recalculating the virtual DOM.
+
 ### Keys
 
-Keys helps identify nodes every time we update the DOM. By setting the `key` property on a virtual node, you declare that the node should correspond to a particular DOM element. This allow us to re-order the element into its new position, if the position changed, rather than risk destroying it. Note that keys must be unique among sibling-nodes.
+Keys help identify nodes every time we update the DOM. By setting the `key` property on a virtual node, you declare that the node should correspond to a particular DOM element. This allow us to re-order the element into its new position, if the position changed, rather than risk destroying it. Keys must be unique among sibling-nodes.
 
 ```jsx
 import { h } from "ultradom"
