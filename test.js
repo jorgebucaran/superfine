@@ -1,12 +1,16 @@
 import { h, render } from "./ultradom.m.js"
 
-const testVDOMToHtml = (name, trees) =>
-  test(name, () => {
-    trees.map(tree => {
-      render(tree.node, document.body)
-      expect(document.body.innerHTML).toBe(tree.html.replace(/\s{2,}/g, ""))
-    })
-  })
+beforeEach(() => {
+  document.body.innerHTML = ""
+})
+
+expect.extend({
+  toMatchDOM(node, html) {
+    render(node, document.body)
+    expect(document.body.innerHTML).toBe(html.replace(/\s{2,}/g, ""))
+    return { pass: true }
+  }
+})
 
 const divWithId = id =>
   h(
@@ -26,279 +30,255 @@ const deepExpectNS = (element, ns) =>
     deepExpectNS(child, ns)
   })
 
-beforeEach(() => {
-  document.body.innerHTML = ""
+test("replace element", () => {
+  expect(h("main", {})).toMatchDOM(`<main></main>`)
+  expect(h("div", {})).toMatchDOM(`<div></div>`)
 })
 
-testVDOMToHtml("replace element", [
-  {
-    node: h("main", {}),
-    html: `<main></main>`
-  },
-  {
-    node: h("div", {}),
-    html: `<div></div>`
-  }
-])
+test("insert children on top", () => {
+  expect(h("main", {}, [divWithId("a")])).toMatchDOM(`
+    <main>
+      <div id="a">A</div>
+    </main>
+  `)
 
-testVDOMToHtml("insert children on top", [
-  {
-    node: h("main", {}, [divWithId("a")]),
-    html: `
-        <main>
-          <div id="a">A</div>
-        </main>
-      `
-  },
-  {
-    node: h("main", {}, [divWithId("b"), h("div", { key: "a" }, "A")]),
-    html: `
-        <main>
-          <div id="b">B</div>
-          <div id="a">A</div>
-        </main>
-      `
-  },
-  {
-    node: h("main", {}, [
+  expect(h("main", {}, [divWithId("b"), h("div", { key: "a" }, "A")]))
+    .toMatchDOM(`
+    <main>
+      <div id="b">B</div>
+      <div id="a">A</div>
+    </main>
+  `)
+
+  expect(
+    h("main", {}, [
       divWithId("c"),
       h("div", { key: "b" }, "B"),
       h("div", { key: "a" }, "A")
-    ]),
-    html: `
-        <main>
-          <div id="c">C</div>
-          <div id="b">B</div>
-          <div id="a">A</div>
-        </main>
-      `
-  }
-])
+    ])
+  ).toMatchDOM(`
+    <main>
+      <div id="c">C</div>
+      <div id="b">B</div>
+      <div id="a">A</div>
+    </main>
+  `)
+})
 
-testVDOMToHtml("remove text node", [
-  {
-    node: h("main", {}, [h("div", {}, ["foo"]), "bar"]),
-    html: `
-        <main>
-          <div>foo</div>
-          bar
-        </main>
-      `
-  },
-  {
-    node: h("main", {}, [h("div", {}, ["foo"])]),
-    html: `
-        <main>
-          <div>foo</div>
-        </main>
-      `
-  }
-])
+test("remove text node", () => {
+  expect(h("main", {}, [h("div", {}, ["foo"]), "bar"])).toMatchDOM(`
+    <main>
+      <div>foo</div>
+      bar
+    </main>
+  `)
 
-testVDOMToHtml("keyed", [
-  {
-    node: h("main", {}, [
+  expect(h("main", {}, [h("div", {}, ["foo"])])).toMatchDOM(`
+    <main>
+      <div>foo</div>
+    </main>
+  `)
+})
+
+test("keyed nodes", () => {
+  expect(
+    h("main", {}, [
       divWithId("a"),
       divWithId("b"),
       divWithId("c"),
       divWithId("d"),
       divWithId("e")
-    ]),
-    html: `
-        <main>
-          <div id="a">A</div>
-          <div id="b">B</div>
-          <div id="c">C</div>
-          <div id="d">D</div>
-          <div id="e">E</div>
-        </main>
-      `
-  },
-  {
-    node: h("main", {}, [
+    ])
+  ).toMatchDOM(`
+    <main>
+      <div id="a">A</div>
+      <div id="b">B</div>
+      <div id="c">C</div>
+      <div id="d">D</div>
+      <div id="e">E</div>
+    </main>
+  `)
+
+  expect(
+    h("main", {}, [
       h("div", { key: "a" }, "A"),
       h("div", { key: "c" }, "C"),
       h("div", { key: "d" }, "D")
-    ]),
-    html: `
-        <main>
-          <div id="a">A</div>
-          <div id="c">C</div>
-          <div id="d">D</div>
-        </main>
-      `
-  },
-  {
-    node: h("main", {}, [h("div", { key: "d" }, "D")]),
-    html: `
-        <main>
-          <div id="d">D</div>
-        </main>
-      `
-  },
-  {
-    node: h("main", {}, [
+    ])
+  ).toMatchDOM(`
+    <main>
+      <div id="a">A</div>
+      <div id="c">C</div>
+      <div id="d">D</div>
+    </main>
+  `)
+
+  expect(h("main", {}, [h("div", { key: "d" }, "D")])).toMatchDOM(`
+    <main>
+      <div id="d">D</div>
+    </main>
+  `)
+
+  expect(
+    h("main", {}, [
       divWithId("a"),
       divWithId("b"),
       divWithId("c"),
       h("div", { key: "d" }, "D"),
       divWithId("e")
-    ]),
-    html: `
-        <main>
-          <div id="a">A</div>
-          <div id="b">B</div>
-          <div id="c">C</div>
-          <div id="d">D</div>
-          <div id="e">E</div>
-        </main>
-      `
-  },
-  {
-    node: h("main", {}, [
+    ])
+  ).toMatchDOM(`
+    <main>
+      <div id="a">A</div>
+      <div id="b">B</div>
+      <div id="c">C</div>
+      <div id="d">D</div>
+      <div id="e">E</div>
+    </main>
+  `)
+
+  expect(
+    h("main", {}, [
       h("div", { key: "d" }, "D"),
       h("div", { key: "c" }, "C"),
       h("div", { key: "b" }, "B"),
       h("div", { key: "a" }, "A")
-    ]),
-    html: `
-        <main>
-          <div id="d">D</div>
-          <div id="c">C</div>
-          <div id="b">B</div>
-          <div id="a">A</div>
-        </main>
-      `
-  }
-])
+    ])
+  ).toMatchDOM(`
+    <main>
+      <div id="d">D</div>
+      <div id="c">C</div>
+      <div id="b">B</div>
+      <div id="a">A</div>
+    </main>
+  `)
+})
 
-testVDOMToHtml("mixed keyed/non-keyed", [
-  {
-    node: h("main", {}, [
+test("mixed keyed/non-keyed nodes", () => {
+  expect(
+    h("main", {}, [
       divWithId("a"),
       h("div", {}, "B"),
       h("div", {}, "C"),
       divWithId("d"),
       divWithId("e")
-    ]),
-    html: `
-        <main>
-          <div id="a">A</div>
-          <div>B</div>
-          <div>C</div>
-          <div id="d">D</div>
-          <div id="e">E</div>
-        </main>
-      `
-  },
-  {
-    node: h("main", {}, [
+    ])
+  ).toMatchDOM(`
+    <main>
+      <div id="a">A</div>
+      <div>B</div>
+      <div>C</div>
+      <div id="d">D</div>
+      <div id="e">E</div>
+    </main>
+  `)
+
+  expect(
+    h("main", {}, [
       h("div", { key: "e" }, "E"),
       h("div", {}, "C"),
       h("div", {}, "B"),
       h("div", { key: "d" }, "D"),
       h("div", { key: "a" }, "A")
-    ]),
-    html: `
-        <main>
-          <div id="e">E</div>
-          <div>C</div>
-          <div>B</div>
-          <div id="d">D</div>
-          <div id="a">A</div>
-        </main>
-      `
-  },
-  {
-    node: h("main", {}, [
+    ])
+  ).toMatchDOM(`
+    <main>
+      <div id="e">E</div>
+      <div>C</div>
+      <div>B</div>
+      <div id="d">D</div>
+      <div id="a">A</div>
+    </main>
+  `)
+
+  expect(
+    h("main", {}, [
       h("div", {}, "C"),
       h("div", { key: "d" }, "D"),
       h("div", { key: "a" }, "A"),
       h("div", { key: "e" }, "E"),
       h("div", {}, "B")
-    ]),
-    html: `
-        <main>
-          <div>C</div>
-          <div id="d">D</div>
-          <div id="a">A</div>
-          <div id="e">E</div>
-          <div>B</div>
-        </main>
-      `
-  },
-  {
-    node: h("main", {}, [
+    ])
+  ).toMatchDOM(`
+    <main>
+      <div>C</div>
+      <div id="d">D</div>
+      <div id="a">A</div>
+      <div id="e">E</div>
+      <div>B</div>
+    </main>
+  `)
+
+  expect(
+    h("main", {}, [
       h("div", { key: "e" }, "E"),
       h("div", { key: "d" }, "D"),
       h("div", {}, "B"),
       h("div", {}, "C")
-    ]),
-    html: `
-        <main>
-          <div id="e">E</div>
-          <div id="d">D</div>
-          <div>B</div>
-          <div>C</div>
-        </main>
-      `
-  }
-])
+    ])
+  ).toMatchDOM(`
+    <main>
+      <div id="e">E</div>
+      <div id="d">D</div>
+      <div>B</div>
+      <div>C</div>
+    </main>
+  `)
+})
 
-testVDOMToHtml("removeAttribute", [
-  {
-    node: h("div", { id: "foo", class: "bar" }),
-    html: `<div id="foo" class="bar"></div>`
-  },
-  {
-    node: h("div"),
-    html: `<div></div>`
-  }
-])
+test("remove attribute", () => {
+  expect(h("div", { id: "foo", class: "bar" })).toMatchDOM(
+    `<div id="foo" class="bar"></div>`
+  )
 
-testVDOMToHtml("skip setAttribute for functions", [
-  {
-    node: h("div", { onclick: () => {} }),
-    html: `<div></div>`
-  }
-])
+  expect(h("div")).toMatchDOM(`<div></div>`)
+})
 
-testVDOMToHtml("setAttribute true", [
-  {
-    node: h("div", { enabled: true }),
-    html: `<div enabled="true"></div>`
-  }
-])
+test("skip setAttribute for functions", () => {
+  expect(h("div", { onclick: () => {} })).toMatchDOM(`<div></div>`)
+})
 
-testVDOMToHtml("update element with dynamic props", [
-  {
-    node: h("input", {
+test("setAttribute true", () => {
+  expect(h("div", { enabled: true })).toMatchDOM(`<div enabled="true"></div>`)
+})
+
+test("update element with dynamic props", () => {
+  expect(
+    h("input", {
       type: "text",
       value: "foo",
       oncreate(element) {
         expect(element.value).toBe("foo")
       }
-    }),
-    html: `<input type="text">`
-  },
-  {
-    node: h("input", {
+    })
+  ).toMatchDOM(`<input type="text">`)
+
+  expect(
+    h("input", {
       type: "text",
       value: "bar",
       onupdate(element) {
         expect(element.value).toBe("bar")
       }
-    }),
-    html: `<input type="text">`
-  }
-])
+    })
+  ).toMatchDOM(`<input type="text">`)
+})
 
-testVDOMToHtml("input list attribute", [
-  {
-    node: h("input", { list: "foobar" }),
-    html: `<input list="foobar">`
+test("input list attribute", () => {
+  expect(h("input", { list: "foobar" })).toMatchDOM(`<input list="foobar">`)
+})
+
+test("skip null and boolean children", () => {
+  const expected = {
+    name: "div",
+    attributes: {},
+    children: []
   }
-])
+
+  expect(h("div", {}, true)).toEqual(expected)
+  expect(h("div", {}, false)).toEqual(expected)
+  expect(h("div", {}, null)).toEqual(expected)
+})
 
 test("event handlers", done => {
   render(
@@ -486,16 +466,4 @@ test("event bubbling", done => {
 
   render(view(), document.body)
   render(view(), document.body)
-})
-
-test("skip null and boolean children", () => {
-  const expected = {
-    name: "div",
-    attributes: {},
-    children: []
-  }
-
-  expect(h("div", {}, true)).toEqual(expected)
-  expect(h("div", {}, false)).toEqual(expected)
-  expect(h("div", {}, null)).toEqual(expected)
 })
