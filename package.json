@@ -1,7 +1,7 @@
 {
   "name": "ultradom",
   "description": "Minimal view layer for building declarative web user interfaces.",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "main": "ultradom.js",
   "module": "ultradom.m.js",
   "license": "MIT",
