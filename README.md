@@ -15,7 +15,7 @@ What's in the bundle? A virtual DOM diff engine, keyed-based node [reconciliatio
 npm i <a href=https://www.npmjs.com/package/ultradom>ultradom</a>
 </pre>
 
-Don't want to set up a build environment? Download Ultradom from a CDN like [unpkg.com](https://unpkg.com/ultradom) and it will be globally available through the `window.ultradom` object.
+Don't want to set up a build environment? Download Ultradom from a CDN like [unpkg](https://unpkg.com/ultradom/ultradom.js) or [jsdelivr](https://cdn.jsdelivr.net/npm/ultradom/ultradom.js) and it will be globally available through the `window.ultradom` object.
 
 ```html
 <script src="https://unpkg.com/ultradom"></script>
@@ -23,7 +23,7 @@ Don't want to set up a build environment? Download Ultradom from a CDN like [unp
 
 ## Usage
 
-Let's walkthrough a simple example that displays the contents of a text field. You can [try it online](https://codepen.io/jorgebucaran/pen/KoqxGW) to see what it looks like.
+Let's walkthrough a simple example that displays the contents of a text field. Go ahead and [try it online](https://codepen.io/jorgebucaran/pen/KoqxGW) to see what it looks like.
 
 ```js
 import { h, render } from "ultradom"
