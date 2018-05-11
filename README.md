@@ -89,19 +89,25 @@ export const Textbox = placeholder =>
 
 #### onupdate
 
-This event is fired every time we update the element attributes. Use `oldAttributes` inside the event handler to check if any attributes changed or not.
+This event is fired every time we try to update the element attributes. Use the `old` attributes inside the event handler to check if any attributes changed or not.
 
 ```jsx
 import { h } from "ultradom"
+import { RichEditor } from "richeditor"
 
-export const Textbox = placeholder =>
-  h("input", {
-    type: "text",
-    placeholder,
-    onupdate: (element, oldAttributes) => {
-      if (oldAttributes.placeholder !== placeholder) {
-        // Handle changes here!
+export const Editor = value =>
+  h("div", {
+    key: "editor",
+    oncreate: element => {
+      element.editor = new RichEditor({ text: value })
+    },
+    onupdate: (element, old) => {
+      if (old.value !== value) {
+        element.editor.update({ text: value })
       }
+    },
+    ondestroy: element => {
+      delete element.editor
     }
   })
 ```
@@ -112,11 +118,16 @@ This event is fired before the element is removed from the DOM. Use it to create
 
 ```jsx
 import { h } from "ultradom"
+import { fadeout } from "dom-fade-fx"
 
 export const MessageWithFadeout = title =>
-  h("div", { onremove: (element, done) => fadeout(element).then(done) }, [
-    h("h1", {}, title)
-  ])
+  h(
+    "div",
+    {
+      onremove: (element, done) => fadeout(element).then(done)
+    },
+    [h("h1", {}, title)]
+  )
 ```
 
 #### ondestroy
