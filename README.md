@@ -150,6 +150,23 @@ export const Camera = onerror =>
   })
 ```
 
+## JSX
+
+[JSX](https://facebook.github.io/jsx/) is an optional language syntax extension that lets you write HTML tags interspersed with JavaScript. To use JSX install the JSX [transform plugin](https://babeljs.io/docs/plugins/transform-react-jsx) and add the pragma option to your `.babelrc` file.
+
+```json
+{
+  "plugins": [
+    [
+      "transform-react-jsx",
+      {
+        "pragma": "h"
+      }
+    ]
+  ]
+}
+```
+
 ## Links
 
 * [Examples](https://codepen.io/search/pens?q=ultradom&page=1&order=popularity&depth=everything&show_forks=false)
