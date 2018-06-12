@@ -24,7 +24,7 @@ Don't want to set up a build environment? Download Ultradom from a CDN like [unp
 
 ## Usage
 
-Let's walkthrough an example that mirrors the contents of a text field. Go ahead and [try it online](https://codepen.io/jorgebucaran/pen/KoqxGW) to see what it looks like.
+Let's walkthrough an example that mirrors the text of an `<input>` element. Go ahead and [try it online](https://codepen.io/jorgebucaran/pen/KoqxGW) to see what it looks like.
 
 ```js
 import { h, render } from "ultradom"
