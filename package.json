@@ -1,7 +1,7 @@
 {
   "name": "ultradom",
   "description": "Minimal view layer for building declarative web user interfaces.",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "main": "ultradom.js",
   "module": "ultradom.m.js",
   "license": "MIT",
@@ -33,8 +33,8 @@
   },
   "devDependencies": {
     "babel-env": "2.4.1",
-    "jest": "^22.4.3",
-    "rollup": "^0.59.0",
-    "uglify-js": "^3.3.25"
+    "jest": "^23.1.0",
+    "rollup": "^0.61.1",
+    "uglify-js": "^3.4.1"
   }
 }
