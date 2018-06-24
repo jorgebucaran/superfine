@@ -2,7 +2,7 @@
 
 [![Travis CI](https://img.shields.io/travis/jorgebucaran/ultraDOM/master.svg)](https://travis-ci.org/jorgebucaran/ultraDOM)
 [![Codecov](https://img.shields.io/codecov/c/github/jorgebucaran/ultraDOM/master.svg)](https://codecov.io/gh/jorgebucaran/ultraDOM)
-[![Gzip Size](https://img.badgesize.io/https://unpkg.com/ultradom/ultraDOM.js?compression=gzip)](https://unpkg.com/ultradom/ultraDOM.js)
+[![Gzip Size](https://img.badgesize.io/https://unpkg.com/ultradom/ultraDOM.js?compression=gzip)](https://unpkg.com/ultradom)
 [![npm](https://img.shields.io/npm/v/ultradom.svg)](https://www.npmjs.org/package/ultradom)
 [![Slack](https://hyperappjs.herokuapp.com/badge.svg)](https://hyperappjs.herokuapp.com "#ultraDOM")
 
@@ -173,7 +173,6 @@ export const Camera = onerror =>
 ## Links
 
 - [Examples](https://codepen.io/search/pens?q=ultraDOM&page=1&order=popularity&depth=everything&show_forks=false)
-- [Slack#ultraDOM](https://hyperappjs.herokuapp.com)
 - [Twitter/#/ultraDOM](https://twitter.com/hashtag/ultraDOM)
 - [/r/ultraDOM](https://www.reddit.com/r/ultraDOM)
 

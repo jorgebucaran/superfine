@@ -1,4 +1,4 @@
-import { h, render } from "./ultradom.m.js"
+import { h, render } from "./ultraDOM.m.js"
 
 beforeEach(() => {
   document.body.innerHTML = ""
