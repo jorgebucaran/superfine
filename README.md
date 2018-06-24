@@ -1,12 +1,12 @@
-# UltraDOM
+# ultraDOM
 
-[![Travis CI](https://img.shields.io/travis/jorgebucaran/ultradom/master.svg)](https://travis-ci.org/jorgebucaran/ultradom)
-[![Codecov](https://img.shields.io/codecov/c/github/jorgebucaran/ultradom/master.svg)](https://codecov.io/gh/jorgebucaran/ultradom)
-[![Gzip Size](https://img.badgesize.io/https://unpkg.com/ultradom/ultradom.js?compression=gzip)](https://unpkg.com/ultradom/ultradom.js)
+[![Travis CI](https://img.shields.io/travis/jorgebucaran/ultraDOM/master.svg)](https://travis-ci.org/jorgebucaran/ultraDOM)
+[![Codecov](https://img.shields.io/codecov/c/github/jorgebucaran/ultraDOM/master.svg)](https://codecov.io/gh/jorgebucaran/ultraDOM)
+[![Gzip Size](https://img.badgesize.io/https://unpkg.com/ultradom/ultraDOM.js?compression=gzip)](https://unpkg.com/ultradom/ultraDOM.js)
 [![npm](https://img.shields.io/npm/v/ultradom.svg)](https://www.npmjs.org/package/ultradom)
-[![Slack](https://hyperappjs.herokuapp.com/badge.svg)](https://hyperappjs.herokuapp.com "#ultradom")
+[![Slack](https://hyperappjs.herokuapp.com/badge.svg)](https://hyperappjs.herokuapp.com "#ultraDOM")
 
-UltraDOM is a minimal view layer for building declarative web user interfaces.
+ultraDOM is a minimal view layer for building declarative web user interfaces.
 
 What's in the bundle? A virtual DOM diff engine, keyed-based node [reconciliation](#keys), element-level [lifecycle events](#lifecycle-events) and browser support all the way back to IE9. Mix it with your favorite state management library or use it standalone for maximum flexibility.
 
@@ -16,7 +16,7 @@ What's in the bundle? A virtual DOM diff engine, keyed-based node [reconciliatio
 npm i <a href=https://www.npmjs.com/package/ultradom>ultradom</a>
 </pre>
 
-Don't want to set up a build environment? Download UltraDOM from a CDN like [unpkg](https://unpkg.com/ultradom/ultradom.js) or [jsdelivr](https://cdn.jsdelivr.net/npm/ultradom/ultradom.js) and it will be globally available through the `window.ultradom` object.
+Don't want to set up a build environment? Download ultraDOM from [unpkg](https://unpkg.com/ultradom/ultradom.js) (or [jsdelivr](https://cdn.jsdelivr.net/npm/ultradom/ultraDOM.js)) and it will be globally available through the `window.ultraDOM` object.
 
 ```html
 <script src="https://unpkg.com/ultradom"></script>
@@ -24,7 +24,7 @@ Don't want to set up a build environment? Download UltraDOM from a CDN like [unp
 
 ## Usage
 
-Let's walkthrough an example that mirrors the text of an `<input>` element. Go ahead and [try it online](https://codepen.io/jorgebucaran/pen/KoqxGW) to see what it looks like.
+Here is a basic example that mirrors the text of an [input](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input) element. Go ahead and [try it online](https://codepen.io/jorgebucaran/pen/KoqxGW) to see what it looks like.
 
 ```js
 import { h, render } from "ultradom"
@@ -45,11 +45,13 @@ const app = state => render(view(state), document.body)
 app("Hello!")
 ```
 
-UltraDOM consists of a two-function API: `ultradom.h` creates a virtual DOM node and `ultradom.render` renders it into a DOM element container. UltraDOM nodes support [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute), [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events), [keys](#keys) and [lifecycle events](#lifecycle-events).
+ultraDOM consists of a two-function API: `ultraDOM.h` creates virtual nodes and `ultraDOM.render` renders them into a DOM container.
+
+We try to do this in the least number of steps possible, by comparing the new virtual DOM against the previous one. This leads to high efficiency, since typically only a small percentage of nodes need to change, and changing real DOM nodes is costly compared to recalculating the virtual DOM.
 
 A virtual DOM is a description of what a DOM should look like using a tree of nested JavaScript objects known as virtual nodes. It allows us to write our application as if the entire document is rebuilt every time we render a node, while we only update the parts of the DOM that actually changed.
 
-We try to do this in the least number of steps possible, by comparing the new virtual DOM against the previous one. This leads to high efficiency, since typically only a small percentage of nodes need to change, and changing real DOM nodes is costly compared to recalculating the virtual DOM.
+ultraDOM nodes support [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute), [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events), [keys](#keys) and [lifecycle events](#lifecycle-events).
 
 ### Keys
 
@@ -170,11 +172,11 @@ export const Camera = onerror =>
 
 ## Links
 
-* [Examples](https://codepen.io/search/pens?q=ultraDOM&page=1&order=popularity&depth=everything&show_forks=false)
-* [Slack#ultradom](https://hyperappjs.herokuapp.com)
-* [Twitter/#/ultraDOM](https://twitter.com/hashtag/ultraDOM)
-* [/r/ultradom](https://www.reddit.com/r/ultradom)
+- [Examples](https://codepen.io/search/pens?q=ultraDOM&page=1&order=popularity&depth=everything&show_forks=false)
+- [Slack#ultraDOM](https://hyperappjs.herokuapp.com)
+- [Twitter/#/ultraDOM](https://twitter.com/hashtag/ultraDOM)
+- [/r/ultraDOM](https://www.reddit.com/r/ultraDOM)
 
 ## License
 
-UltraDOM is MIT licensed. See [LICENSE](/LICENSE.md).
+ultraDOM is MIT licensed. See [LICENSE](/LICENSE.md).

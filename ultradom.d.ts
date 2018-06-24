@@ -1,4 +1,4 @@
-export as namespace ultradom
+export as namespace ultraDOM
 
 export type Children = VNode | string | number | null
 

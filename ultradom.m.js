@@ -1,17 +1,17 @@
-function clone(target, source) {
-  var obj = {}
+var clone = function(target, source) {
+  var out = []
 
-  for (var i in target) obj[i] = target[i]
-  for (var i in source) obj[i] = source[i]
+  for (var i in target) out[i] = target[i]
+  for (var i in source) out[i] = source[i]
 
-  return obj
+  return out
 }
 
-function eventListener(event) {
+var eventProxy = function(event) {
   return event.currentTarget.events[event.type](event)
 }
 
-function updateAttribute(element, name, value, oldValue, isSVG) {
+var updateAttribute = function(element, name, value, oldValue, isSvg) {
   if (name === "key") {
   } else {
     if (name[0] === "o" && name[1] === "n") {
@@ -22,12 +22,12 @@ function updateAttribute(element, name, value, oldValue, isSVG) {
 
       if (value) {
         if (!oldValue) {
-          element.addEventListener(name, eventListener)
+          element.addEventListener(name, eventProxy)
         }
       } else {
-        element.removeEventListener(name, eventListener)
+        element.removeEventListener(name, eventProxy)
       }
-    } else if (name in element && name !== "list" && !isSVG) {
+    } else if (name in element && name !== "list" && !isSvg) {
       element[name] = value == null ? "" : value
     } else if (value != null && value !== false) {
       element.setAttribute(name, value)
@@ -39,11 +39,11 @@ function updateAttribute(element, name, value, oldValue, isSVG) {
   }
 }
 
-function createElement(node, lifecycle, isSVG) {
+var createElement = function(node, lifecycle, isSvg) {
   var element =
     typeof node === "string" || typeof node === "number"
       ? document.createTextNode(node)
-      : (isSVG = isSVG || node.name === "svg")
+      : (isSvg = isSvg || node.name === "svg")
         ? document.createElementNS("http://www.w3.org/2000/svg", node.name)
         : document.createElement(node.name)
 
@@ -56,43 +56,35 @@ function createElement(node, lifecycle, isSVG) {
     }
 
     for (var i = 0; i < node.children.length; i++) {
-      element.appendChild(createElement(node.children[i], lifecycle, isSVG))
+      element.appendChild(createElement(node.children[i], lifecycle, isSvg))
     }
 
     for (var name in attributes) {
-      updateAttribute(element, name, attributes[name], null, isSVG)
+      updateAttribute(element, name, attributes[name], null, isSvg)
     }
   }
 
   return element
 }
 
-function updateElement(element, oldAttributes, attributes, lifecycle, isSVG) {
-  for (var name in clone(oldAttributes, attributes)) {
+var updateElement = function(element, oldAttrs, attributes, lifecycle, isSvg) {
+  for (var name in clone(oldAttrs, attributes)) {
     if (
       attributes[name] !==
-      (name === "value" || name === "checked"
-        ? element[name]
-        : oldAttributes[name])
+      (name === "value" || name === "checked" ? element[name] : oldAttrs[name])
     ) {
-      updateAttribute(
-        element,
-        name,
-        attributes[name],
-        oldAttributes[name],
-        isSVG
-      )
+      updateAttribute(element, name, attributes[name], oldAttrs[name], isSvg)
     }
   }
 
   if (attributes.onupdate) {
     lifecycle.push(function() {
-      attributes.onupdate(element, oldAttributes)
+      attributes.onupdate(element, oldAttrs)
     })
   }
 }
 
-function removeChildren(element, node) {
+var removeChildren = function(element, node) {
   var attributes = node.attributes
   if (attributes) {
     for (var i = 0; i < node.children.length; i++) {
@@ -106,12 +98,12 @@ function removeChildren(element, node) {
   return element
 }
 
-function removeElement(parent, element, node) {
-  function done() {
+var removeElement = function(parent, element, node) {
+  var done = function() {
     parent.removeChild(removeChildren(element, node))
   }
-
   var cb = node.attributes && node.attributes.onremove
+
   if (cb) {
     cb(element, done)
   } else {
@@ -119,15 +111,15 @@ function removeElement(parent, element, node) {
   }
 }
 
-function getKey(node) {
+var getKey = function(node) {
   return node ? node.key : null
 }
 
-function patch(parent, element, oldNode, node, lifecycle, isSVG) {
+var patchElement = function(parent, element, oldNode, node, lifecycle, isSvg) {
   if (node === oldNode) {
   } else if (oldNode == null || oldNode.name !== node.name) {
     var newElement = parent.insertBefore(
-      createElement(node, lifecycle, isSVG),
+      createElement(node, lifecycle, isSvg),
       element
     )
 
@@ -144,7 +136,7 @@ function patch(parent, element, oldNode, node, lifecycle, isSVG) {
       oldNode.attributes,
       node.attributes,
       lifecycle,
-      (isSVG = isSVG || node.name === "svg")
+      (isSvg = isSvg || node.name === "svg")
     )
 
     var oldKeyed = {}
@@ -184,13 +176,13 @@ function patch(parent, element, oldNode, node, lifecycle, isSVG) {
 
       if (newKey == null) {
         if (oldKey == null) {
-          patch(
+          patchElement(
             element,
             oldElements[i],
             oldChildren[i],
             children[k],
             lifecycle,
-            isSVG
+            isSvg
           )
           k++
         }
@@ -199,19 +191,33 @@ function patch(parent, element, oldNode, node, lifecycle, isSVG) {
         var keyed = oldKeyed[newKey] || []
 
         if (oldKey === newKey) {
-          patch(element, keyed[0], keyed[1], children[k], lifecycle, isSVG)
+          patchElement(
+            element,
+            keyed[0],
+            keyed[1],
+            children[k],
+            lifecycle,
+            isSvg
+          )
           i++
         } else if (keyed[0]) {
-          patch(
+          patchElement(
             element,
             element.insertBefore(keyed[0], oldElements[i]),
             keyed[1],
             children[k],
             lifecycle,
-            isSVG
+            isSvg
           )
         } else {
-          patch(element, oldElements[i], null, children[k], lifecycle, isSVG)
+          patchElement(
+            element,
+            oldElements[i],
+            null,
+            children[k],
+            lifecycle,
+            isSvg
+          )
         }
 
         newKeyed[newKey] = children[k]
@@ -235,7 +241,23 @@ function patch(parent, element, oldNode, node, lifecycle, isSVG) {
   return element
 }
 
-export function h(name, attributes) {
+export var render = function(node, container) {
+  var lifecycle = []
+  var element = container.children[0]
+
+  patchElement(
+    container,
+    element,
+    element && element.node,
+    node,
+    lifecycle
+  ).node = node
+
+  while (lifecycle.length) lifecycle.pop()()
+}
+
+export var h = function(name, attributes) {
+  var node
   var rest = []
   var children = []
   var length = arguments.length
@@ -243,7 +265,7 @@ export function h(name, attributes) {
   while (length-- > 2) rest.push(arguments[length])
 
   while (rest.length) {
-    var node = rest.pop()
+    node = rest.pop()
     if (node && node.pop) {
       for (length = node.length; length--; ) {
         rest.push(node[length])
@@ -259,19 +281,4 @@ export function h(name, attributes) {
     children: children,
     key: attributes && attributes.key
   }
-}
-
-export function render(node, container) {
-  var lifecycle = []
-  var element = container.children[0]
-
-  patch(
-    container,
-    element,
-    element && element.node,
-    node,
-    lifecycle
-  ).node = node
-
-  while (lifecycle.length) lifecycle.pop()()
 }
