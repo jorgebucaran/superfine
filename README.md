@@ -1,3 +1,5 @@
+> **Note:** ultraDOM was rebranded as Superfine! See the [Release Notes](https://github.com/jorgebucaran/superfine/releases/tag/5.0.0) for more information. 👋
+
 # Superfine
 
 [![Travis CI](https://img.shields.io/travis/jorgebucaran/superfine/master.svg)](https://travis-ci.org/jorgebucaran/superfine)
