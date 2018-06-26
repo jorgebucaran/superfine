@@ -22,7 +22,7 @@ Don't want to set up a build environment? Download Superfine from [unpkg](https:
 
 ## Usage
 
-Here is the first example to get you started. Go ahead and [try it online]() or find [more examples](https://codepen.io/search/pens?q=superfine&page=1&order=superviewularity&depth=everything&show_forks=false).
+Here is the first example to get you started. Go ahead and [try it online](https://codepen.io/jorgebucaran/pen/wXEBYO) or find [more examples](https://codepen.io/search/pens?q=superfine&page=1&order=superviewularity&depth=everything&show_forks=false).
 
 ```jsx
 import { h, render } from "superfine"
