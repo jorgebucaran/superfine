@@ -14,7 +14,7 @@ Superfine is a minimal view layer for creating declarative web user interfaces. 
 npm i <a href=https://www.npmjs.com/package/superfine>superfine</a>
 </pre>
 
-Don't want to set up a build environment? Download Superfine from [unpkg](https://unpkg.com/superfine/superfine.js)—or [jsdelivr](https://cdn.jsdelivr.net/npm/superfine/superfine.js)—and it will be globally available through the `window.superfine` object. Works in ES5-friendly browsers >=IE9.
+Don't want to set up a build environment? Download Superfine from [unpkg](https://unpkg.com/superfine/superfine.js) (or [jsdelivr](https://cdn.jsdelivr.net/npm/superfine/superfine.js)) and it will be globally available through the `window.superfine` object. Works in ES5-friendly browsers >=IE9.
 
 ```html
 <script src="https://unpkg.com/superfine"></script>
