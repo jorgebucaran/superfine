@@ -30,7 +30,7 @@ export function h<Attributes>(
  * @param {VNode} oldNode The last virtual DOM node.
  * @param {VNode} nextNode The next virtual DOM node.
  * @param {Element?} container A DOM element where the new virtual DOM will be rendered.
- * @returns {VNode} returns nextNode
+ * @returns {VNode} Returns nextNode.
  **/
 export function render(
   lastNode: VNode,
