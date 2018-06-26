@@ -1,4 +1,4 @@
-export as namespace ultraDOM
+export as namespace superfine
 
 export type Children = VNode | string | number | null
 
@@ -13,7 +13,7 @@ export interface VNode<Attributes = {}> {
 }
 
 /**
- * Create a new virtual DOM node. A virtual DOM is a description of what a DOM should look like using a tree of nested JavaScript objects known as virtual nodes.
+ * Create a new virtual DOM node. A virtual DOM is a description of what a DOM should look like using a tree of virtual nodes.
  * @param name The name of an Element or a function that returns a virtual DOM node.
  * @param attributes HTML attributes, SVG attributes, DOM events, Lifecycle Events, and Keys.
  * @param children The element's child nodes.
@@ -27,10 +27,15 @@ export function h<Attributes>(
 /**
  * Render a virtual DOM node into a DOM element container.
  *
- * @param {VNode} node The virtual DOM node to render.
- * @param {Element?} container A DOM element to render the virtual node into.
+ * @param {VNode} oldNode The last virtual DOM node.
+ * @param {VNode} nextNode The next virtual DOM node.
+ * @param {Element?} container A DOM element where the new virtual DOM will be rendered.
  **/
-export function render(node: VNode, container: Element): void
+export function render(
+  lastNode: VNode,
+  nextNode: VNode,
+  container: Element
+): void
 
 declare global {
   namespace JSX {

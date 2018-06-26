@@ -115,35 +115,42 @@ var getKey = function(node) {
   return node ? node.key : null
 }
 
-var patchElement = function(parent, element, oldNode, node, lifecycle, isSvg) {
-  if (node === oldNode) {
-  } else if (oldNode == null || oldNode.name !== node.name) {
+var patchElement = function(
+  parent,
+  element,
+  lastNode,
+  nextNode,
+  lifecycle,
+  isSvg
+) {
+  if (nextNode === lastNode) {
+  } else if (lastNode == null || lastNode.name !== nextNode.name) {
     var newElement = parent.insertBefore(
-      createElement(node, lifecycle, isSvg),
+      createElement(nextNode, lifecycle, isSvg),
       element
     )
 
-    if (oldNode != null) {
-      removeElement(parent, element, oldNode)
+    if (lastNode != null) {
+      removeElement(parent, element, lastNode)
     }
 
     element = newElement
-  } else if (oldNode.name == null) {
-    element.nodeValue = node
+  } else if (lastNode.name == null) {
+    element.nodeValue = nextNode
   } else {
     updateElement(
       element,
-      oldNode.attributes,
-      node.attributes,
+      lastNode.attributes,
+      nextNode.attributes,
       lifecycle,
-      (isSvg = isSvg || node.name === "svg")
+      (isSvg = isSvg || nextNode.name === "svg")
     )
 
     var oldKeyed = {}
     var newKeyed = {}
     var oldElements = []
-    var oldChildren = oldNode.children
-    var children = node.children
+    var oldChildren = lastNode.children
+    var children = nextNode.children
 
     for (var i = 0; i < oldChildren.length; i++) {
       oldElements[i] = element.childNodes[i]
@@ -241,19 +248,15 @@ var patchElement = function(parent, element, oldNode, node, lifecycle, isSvg) {
   return element
 }
 
-export var render = function(node, container) {
+export var render = function(lastNode, nextNode, container) {
   var lifecycle = []
   var element = container.children[0]
 
-  patchElement(
-    container,
-    element,
-    element && element.node,
-    node,
-    lifecycle
-  ).node = node
+  patchElement(container, element, lastNode, nextNode, lifecycle)
 
   while (lifecycle.length) lifecycle.pop()()
+
+  return nextNode
 }
 
 export var h = function(name, attributes) {
