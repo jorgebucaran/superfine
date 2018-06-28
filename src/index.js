@@ -242,9 +242,9 @@ var patchElement = function(
       i++
     }
 
-    for (var i in lastKeyed) {
-      if (!nextKeyed[i]) {
-        removeElement(element, lastKeyed[i][0], lastKeyed[i][1])
+    for (var j in lastKeyed) {
+      if (!nextKeyed[j]) {
+        removeElement(element, lastKeyed[j][0], lastKeyed[j][1])
       }
     }
   }
