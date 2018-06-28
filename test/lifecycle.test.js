@@ -40,25 +40,6 @@ test("onupdate", done => {
   render(node, view("bar"), document.body)
 })
 
-test("onremove", done => {
-  const view = state =>
-    state
-      ? h("ul", {}, [
-          h("li"),
-          h("li", {
-            onremove(element, remove) {
-              remove()
-              expect(document.body.innerHTML).toBe("<ul><li></li></ul>")
-              done()
-            }
-          })
-        ])
-      : h("ul", {}, [h("li")])
-
-  let node = render(node, view(true), document.body)
-  render(node, view(false), document.body)
-})
-
 test("ondestroy", done => {
   const view = state =>
     state
@@ -77,31 +58,6 @@ test("ondestroy", done => {
               }
             })
           ])
-        ])
-      : h("ul", {}, [h("li")])
-
-  let node = render(node, view(true), document.body)
-  render(node, view(false), document.body)
-})
-
-test("onremove/ondestroy", done => {
-  let destroyed = false
-
-  const view = state =>
-    state
-      ? h("ul", {}, [
-          h("li"),
-          h("li", {
-            ondestroy() {
-              destroyed = true
-            },
-            onremove(element, remove) {
-              expect(destroyed).toBe(false)
-              remove()
-              expect(destroyed).toBe(true)
-              done()
-            }
-          })
         ])
       : h("ul", {}, [h("li")])
 

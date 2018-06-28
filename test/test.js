@@ -263,18 +263,6 @@ test("input list attribute", () => {
   expect(h("input", { list: "foobar" })).toMatchDOM(`<input list="foobar">`)
 })
 
-test("skip null and boolean children", () => {
-  const expected = {
-    name: "div",
-    attributes: {},
-    children: []
-  }
-
-  expect(h("div", {}, true)).toEqual(expected)
-  expect(h("div", {}, false)).toEqual(expected)
-  expect(h("div", {}, null)).toEqual(expected)
-})
-
 test("event handlers", done => {
   render(
     null,
