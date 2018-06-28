@@ -1,11 +1,11 @@
-import { h, render, recycle } from "../src/index.js"
+import { h, patch, recycle } from "../src/index.js"
 
 test("recycling", done => {
   const container = document.body
 
   container.innerHTML = `<div><p id="foo">Foo</p></div>`
 
-  render(
+  patch(
     recycle(container),
     h("div", {}, [
       h("p", {

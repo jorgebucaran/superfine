@@ -25,7 +25,7 @@ Don't want to set up a build environment? Download Superfine from [unpkg](https:
 Here is the first example to get you started. Go ahead and [try it online](https://codepen.io/jorgebucaran/pen/LdLJXX) or find [more examples here](https://codepen.io/search/pens?q=superfine&page=1&order=superviewularity&depth=everything&show_forks=false).
 
 ```jsx
-import { h, render } from "superfine"
+import { h, patch } from "superfine"
 
 const view = count =>
   h("div", {}, [
@@ -35,16 +35,16 @@ const view = count =>
   ])
 
 const app = (lastNode => nextNode => {
-  lastNode = render(lastNode, nextNode, document.body)
+  lastNode = patch(lastNode, nextNode, document.body)
 })()
 
 app(view(0))
 ```
 
-Every time something needs to change in our application, we create a new virtual DOM using `superfine.h`, then patch the actual DOM with `superfine.render`.
+Every time something needs to change in our application, we create a new virtual DOM using `superfine.h`, then patch the actual DOM with `superfine.patch`.
 
 ```js
-render(null, h("h1", {}, "Hello"), document.body)
+patch(lastNode, nextNode, container)
 ```
 
 What's a virtual DOM? A virtual DOM is a description of what a DOM should look like using a tree of plain JavaScript objects called virtual nodes. By comparing the old and new virtual DOM we can update the parts of the DOM that actually changed instead of rendering the entire document from scratch.
@@ -52,10 +52,10 @@ What's a virtual DOM? A virtual DOM is a description of what a DOM should look l
 The [next example](https://codepen.io/jorgebucaran/pen/KoqxGW) shows how to use regular HTML attributes to synchronize the text of an input with a heading element. Superfine nodes support [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute), [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events), [keys](#keys) and [lifecycle events](#lifecycle-events).
 
 ```js
-import { h, render } from "superfine"
+import { h, patch } from "superfine"
 
 const app = (lastNode => state => {
-  lastNode = render(lastNode, view(state), document.body)
+  lastNode = patch(lastNode, view(state), document.body)
 })()
 
 const view = state =>
@@ -74,14 +74,36 @@ app("Hello!")
 
 ## Recycling
 
-Superfine can patch over your server-side rendered HTML to enable SEO optimizations and improve your sites time-to-interactive. All you need to do is create a virtual DOM out of your container with `superfine.recycle`, then instead of throwing away the existing content, `superfine.render` will turn it into an interactive application.
+Superfine can patch over your server-side rendered HTML to enable SEO optimizations and improve your sites time-to-interactive. All you need to is create a virtual DOM out of your container with `superfine.recycle`, then instead of throwing away the existing content, `superfine.patch` will turn it into an interactive application.
 
 ```jsx
-import { h, render, recycle } from "superfine"
+import { h, patch, recycle } from "superfine"
 
 const container = document.body
 
-let lastNode = render(recycle(container), nextNode, container)
+let lastNode = patch(recycle(container), nextNode, container)
+```
+
+## Styles
+
+The `style` attribute expects a plain object rather than a string as in HTML. Each declaration consists of a style name property written in `camelCase` and a value. CSS variables are supported too.
+
+```jsx
+import { h } from "hyperapp"
+
+export const Jumbotron = text =>
+  h(
+    "div",
+    {
+      style: {
+        color: "white",
+        fontSize: "32px",
+        textAlign: center,
+        backgroundImage: `url(${imgUrl})`
+      }
+    },
+    text
+  )
 ```
 
 ## Keys
@@ -146,6 +168,26 @@ export const Editor = value =>
   })
 ```
 
+### `onremove`
+
+This event is fired before the element is removed from the DOM. Use it to create slide/fade out animations. Call done inside the function to remove the element. This event is not called in its child elements.
+
+```jsx
+import { h } from "superfine"
+
+export const MessageWithFadeout = message =>
+  h(
+    "div",
+    {
+      onremove: (element, done) => {
+        e.classList.add("fade-out")
+        setTimeout(done, 1000)
+      }
+    },
+    [h("h1", {}, message)]
+  )
+```
+
 ### `ondestroy`
 
 This event is fired after the element has been removed from the DOM, either directly or as a result of a parent being removed. Use it for invalidating timers, canceling a network request, removing global events listeners, etc.
@@ -183,20 +225,20 @@ export const Camera = onerror =>
 }
 ```
 
-### Pure Components
+### Components
 
-Superfine has built-in support for pure components. A pure component is a function that returns a virtual node. The function takes a `props` argument that consists of the component attributes and its children.
+Superfine supports the JSX component syntax. A component is a function that returns a virtual node. Unlike React, Inferno, etc., Superfine components are stateless — class based components can't be created. Everything the component needs to work must be passed on via the `props` argument, which consists of the component attributes and children.
 
 ```jsx
-import { h, render } from "superfine"
+import { h, patch } from "superfine"
 
 const ClickMe = props => (
   <a href={props.url}>
-    <h1>{children}</h1>
+    <h1>{props.children}</h1>
   </a>
 )
 
-let lastNode = render(
+let lastNode = patch(
   null,
   <ClickMe url="/">Click Here!</ClickMe>,
   document.body
