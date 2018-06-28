@@ -22,27 +22,34 @@ Don't want to set up a build environment? Download Superfine from [unpkg](https:
 
 ## Usage
 
-Here is the first example to get you started. Go ahead and [try it online](https://codepen.io/jorgebucaran/pen/wXEBYO) or find [more examples](https://codepen.io/search/pens?q=superfine&page=1&order=superviewularity&depth=everything&show_forks=false).
+Here is the first example to get you started. Go ahead and [try it online](https://codepen.io/jorgebucaran/pen/LdLJXX) or find [more examples here](https://codepen.io/search/pens?q=superfine&page=1&order=superviewularity&depth=everything&show_forks=false).
 
 ```jsx
 import { h, render } from "superfine"
 
-const view = state => h("h1", {}, state)
-const app = (container => (lastNode, nextNode) =>
-  render(lastNode, nextNode, container))(document.body)
+const view = count =>
+  h("div", {}, [
+    h("h1", {}, count),
+    h("button", { onclick: () => app(view(count - 1)) }, "-"),
+    h("button", { onclick: () => app(view(count + 1)) }, "+")
+  ])
 
-let node = app(null, view("Hey!"))
-setTimeout(() => {
-  node = app(node, view("Ho!"))
-  setTimeout(() => {
-    node = app(node, view("Let's go!"))
-  }, 500)
-}, 500)
+const app = (lastNode => nextNode => {
+  lastNode = render(lastNode, nextNode, document.body)
+})()
+
+app(view(0))
 ```
 
-Superfine consists of two functions: `superfine.h` creates a virtual DOM tree and `superfine.render` renders it into the DOM. A virtual DOM is a description of what a DOM should look like using a tree of plain JavaScript objects called virtual nodes. By comparing the old and new virtual DOM we can update the parts of the DOM that actually changed instead of rendering the entire document from scratch.
+Every time something needs to change in our application, we create a new virtual DOM using `superfine.h`, then patch the actual DOM with `superfine.render`.
 
-The [next example](https://codepen.io/jorgebucaran/pen/KoqxGW) shows how to use regular HTML attributes to synchronize the text of an input element to a heading element. Superfine nodes support [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute), [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events), [keys](#keys) and [lifecycle events](#lifecycle-events).
+```js
+render(null, h("h1", {}, "Hello"), document.body)
+```
+
+What's a virtual DOM? A virtual DOM is a description of what a DOM should look like using a tree of plain JavaScript objects called virtual nodes. By comparing the old and new virtual DOM we can update the parts of the DOM that actually changed instead of rendering the entire document from scratch.
+
+The [next example](https://codepen.io/jorgebucaran/pen/KoqxGW) shows how to use regular HTML attributes to synchronize the text of an input with a heading element. Superfine nodes support [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute), [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events), [keys](#keys) and [lifecycle events](#lifecycle-events).
 
 ```js
 import { h, render } from "superfine"
@@ -63,6 +70,18 @@ const view = state =>
   ])
 
 app("Hello!")
+```
+
+## Recycling
+
+Superfine can patch over your server-side rendered HTML to enable SEO optimizations and improve your sites time-to-interactive. All you need to do is create a virtual DOM out of your container with `superfine.recycle`, then instead of throwing away the existing content, `superfine.render` will turn it into an interactive application.
+
+```jsx
+import { h, render, recycle } from "superfine"
+
+const container = document.body
+
+let lastNode = render(recycle(container), nextNode, container)
 ```
 
 ## Keys
@@ -89,7 +108,7 @@ You can be notified when elements managed by the virtual DOM are created, update
 
 ### `oncreate`
 
-This event is fired after the element is created and attached to the DOM. Use it to manipulate the DOM node directly, make a network request, create a slide/fade in animation, etc.
+This event is fired after the element is created and attached to the DOM. Use it to manipulate the DOM node directly, make a network request, etc.
 
 ```jsx
 import { h } from "superfine"
@@ -104,7 +123,7 @@ export const Textbox = placeholder =>
 
 ### `onupdate`
 
-This event is fired every time we try to update the element attributes. Use the `old` attributes inside the event handler to check if any attributes changed or not.
+This event is fired every time we try to update the element attributes. Use the `lastProps` attributes inside the event handler to check if any attributes changed or not.
 
 ```jsx
 import { h } from "superfine"
@@ -116,8 +135,8 @@ export const Editor = value =>
     oncreate: element => {
       element.editor = new RichEditor({ text: value })
     },
-    onupdate: (element, old) => {
-      if (old.value !== value) {
+    onupdate: (element, lastProps) => {
+      if (lastProps.value !== value) {
         element.editor.update({ text: value })
       }
     },
@@ -125,24 +144,6 @@ export const Editor = value =>
       delete element.editor
     }
   })
-```
-
-### `onremove`
-
-This event is fired before the element is removed from the DOM. Use it to create slide/fade out animations. Call `done` inside the function to remove the element. This event is not called in its child elements.
-
-```jsx
-import { h } from "superfine"
-import { fadeout } from "some-fadeout-fx"
-
-export const MessageWithFadeout = title =>
-  h(
-    "div",
-    {
-      onremove: (element, done) => fadeout(element).then(done)
-    },
-    [h("h1", {}, title)]
-  )
 ```
 
 ### `ondestroy`
@@ -180,6 +181,26 @@ export const Camera = onerror =>
     ]
   ]
 }
+```
+
+### Pure Components
+
+Superfine has built-in support for pure components. A pure component is a function that returns a virtual node. The function takes a `props` argument that consists of the component attributes and its children.
+
+```jsx
+import { h, render } from "superfine"
+
+const ClickMe = props => (
+  <a href={props.url}>
+    <h1>{children}</h1>
+  </a>
+)
+
+let lastNode = render(
+  null,
+  <ClickMe url="/">Click Here!</ClickMe>,
+  document.body
+)
 ```
 
 ## License
