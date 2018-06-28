@@ -190,7 +190,7 @@ Superfine has built-in support for pure components. A pure component is a functi
 ```jsx
 import { h, render } from "superfine"
 
-const ClickMe = props => (
+const ClickMe = (props, children) => (
   <a href={props.url}>
     <h1>{children}</h1>
   </a>
