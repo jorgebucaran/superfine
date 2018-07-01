@@ -1,11 +1,11 @@
-import { h, render } from "../src/index.js"
+import { h, patch } from "../src/index.js"
 
 beforeEach(() => {
   document.body.innerHTML = ""
 })
 
 test("oncreate", () => {
-  render(
+  patch(
     null,
     h(
       "div",
@@ -36,8 +36,27 @@ test("onupdate", done => {
       state
     )
 
-  let node = render(node, view("foo"), document.body)
-  render(node, view("bar"), document.body)
+  let node = patch(node, view("foo"), document.body)
+  patch(node, view("bar"), document.body)
+})
+
+test("onremove", done => {
+  const view = state =>
+    state
+      ? h("ul", {}, [
+          h("li"),
+          h("li", {
+            onremove(element, remove) {
+              remove()
+              expect(document.body.innerHTML).toBe("<ul><li></li></ul>")
+              done()
+            }
+          })
+        ])
+      : h("ul", {}, [h("li")])
+
+  let node = patch(null, view(true), document.body)
+  patch(node, view(false), document.body)
 })
 
 test("ondestroy", done => {
@@ -61,8 +80,33 @@ test("ondestroy", done => {
         ])
       : h("ul", {}, [h("li")])
 
-  let node = render(node, view(true), document.body)
-  render(node, view(false), document.body)
+  let node = patch(null, view(true), document.body)
+  patch(node, view(false), document.body)
+})
+
+test("onremove/ondestroy", done => {
+  let destroyed = false
+
+  const view = state =>
+    state
+      ? h("ul", {}, [
+          h("li"),
+          h("li", {
+            ondestroy() {
+              destroyed = true
+            },
+            onremove(element, remove) {
+              expect(destroyed).toBe(false)
+              remove()
+              expect(destroyed).toBe(true)
+              done()
+            }
+          })
+        ])
+      : h("ul", {}, [h("li")])
+
+  let node = patch(node, view(true), document.body)
+  patch(node, view(false), document.body)
 })
 
 test("event bubbling", done => {
@@ -108,6 +152,6 @@ test("event bubbling", done => {
       ]
     )
 
-  let node = render(node, view(), document.body)
-  render(node, view(), document.body)
+  let node = patch(node, view(), document.body)
+  patch(node, view(), document.body)
 })

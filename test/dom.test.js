@@ -1,15 +1,15 @@
-import { h, render } from "../src/index.js"
+import { h, patch } from "../src/index.js"
 
 let lastNode
 
 beforeEach(() => {
-  document.body.innerHTML = ""
   lastNode = null
+  document.body.innerHTML = ""
 })
 
 expect.extend({
   toMatchDOM(node, html) {
-    lastNode = render(lastNode, node, document.body)
+    lastNode = patch(lastNode, node, document.body)
     expect(document.body.innerHTML).toBe(html.replace(/\s{2,}/g, ""))
     return { pass: true }
   }
@@ -17,13 +17,86 @@ expect.extend({
 
 const divWithId = id =>
   h(
-    "div",
+    "div", // <div id="a" key="a">A</div>
     {
       key: id,
       oncreate: e => (e.id = id)
     },
     id.toUpperCase()
   )
+
+test("skip equal nodes", () => {
+  const node = h("h1", {}, "foo")
+
+  patch(node, node, document.body)
+
+  expect(document.body.innerHTML).toBe("")
+})
+
+test("remove attribute", () => {
+  expect(h("div", { id: "foo", class: "bar" })).toMatchDOM(
+    `<div id="foo" class="bar"></div>`
+  )
+
+  expect(h("div")).toMatchDOM(`<div></div>`)
+})
+
+test("skip setAttribute for functions", () => {
+  expect(h("div", { onclick: () => {} })).toMatchDOM(`<div></div>`)
+})
+
+test("setAttribute true", () => {
+  expect(h("div", { enabled: true })).toMatchDOM(`<div enabled="true"></div>`)
+})
+
+test("styles", () => {
+  expect(
+    h("div", { style: { color: "red", fontSize: "1em", "--foo": "red" } })
+  ).toMatchDOM(`<div style="color: red; font-size: 1em;"></div>`)
+
+  expect(
+    h("div", { style: { color: "blue", float: "left", "--foo": "blue" } })
+  ).toMatchDOM(`<div style="color: blue; float: left;"></div>`)
+
+  expect(h("div")).toMatchDOM(`<div style=""></div>`)
+})
+
+test("update element with dynamic props", () => {
+  expect(
+    h("input", {
+      type: "text",
+      value: "foo",
+      oncreate(element) {
+        expect(element.value).toBe("foo")
+      }
+    })
+  ).toMatchDOM(`<input type="text">`)
+
+  expect(
+    h("input", {
+      type: "text",
+      value: "bar",
+      onupdate(element) {
+        expect(element.value).toBe("bar")
+      }
+    })
+  ).toMatchDOM(`<input type="text">`)
+})
+
+test("input list attribute", () => {
+  expect(h("input", { list: "foobar" })).toMatchDOM(`<input list="foobar">`)
+})
+
+test("event handlers", done => {
+  patch(
+    null,
+    h("button", {
+      oncreate: el => el.dispatchEvent(new Event("click")),
+      onclick: () => done()
+    }),
+    document.body
+  )
+})
 
 test("replace element", () => {
   expect(h("main", {})).toMatchDOM(`<main></main>`)
@@ -221,59 +294,78 @@ test("mixed keyed/non-keyed nodes", () => {
   `)
 })
 
-test("remove attribute", () => {
-  expect(h("div", { id: "foo", class: "bar" })).toMatchDOM(
-    `<div id="foo" class="bar"></div>`
-  )
-
-  expect(h("div")).toMatchDOM(`<div></div>`)
-})
-
-test("skip setAttribute for functions", () => {
-  expect(h("div", { onclick: () => {} })).toMatchDOM(`<div></div>`)
-})
-
-test("setAttribute true", () => {
-  expect(h("div", { enabled: true })).toMatchDOM(`<div enabled="true"></div>`)
-})
-
-test("update element with dynamic props", () => {
+test("trim prefix/suffix", () => {
   expect(
-    h("input", {
-      type: "text",
-      value: "foo",
-      oncreate(element) {
-        expect(element.value).toBe("foo")
-      }
-    })
-  ).toMatchDOM(`<input type="text">`)
+    h("main", {}, [
+      divWithId("a"),
+      divWithId("b"),
+      divWithId("c"),
+      divWithId("foo"),
+      divWithId("bar"),
+      divWithId("baz"),
+      divWithId("x"),
+      divWithId("y"),
+      divWithId("z")
+    ])
+  ).toMatchDOM(`
+    <main>
+      <div id="a">A</div>
+      <div id="b">B</div>
+      <div id="c">C</div>
+      <div id="foo">FOO</div>
+      <div id="bar">BAR</div>
+      <div id="baz">BAZ</div>
+      <div id="x">X</div>
+      <div id="y">Y</div>
+      <div id="z">Z</div>
+    </main>
+  `)
 
   expect(
-    h("input", {
-      type: "text",
-      value: "bar",
-      onupdate(element) {
-        expect(element.value).toBe("bar")
-      }
-    })
-  ).toMatchDOM(`<input type="text">`)
-})
+    h("main", {}, [
+      h("div", { key: "a" }, "A"),
+      h("div", { key: "b" }, "B"),
+      h("div", { key: "c" }, "C"),
+      h("div", { key: "bar" }, "BAR"),
+      h("div", { key: "baz" }, "BAZ"),
+      h("div", { key: "foo" }, "FOO"),
+      h("div", { key: "x" }, "X"),
+      h("div", { key: "y" }, "Y"),
+      h("div", { key: "z" }, "Z")
+    ])
+  ).toMatchDOM(`
+    <main>
+      <div id="a">A</div>
+      <div id="b">B</div>
+      <div id="c">C</div>
+      <div id="bar">BAR</div>
+      <div id="baz">BAZ</div>
+      <div id="foo">FOO</div>
+      <div id="x">X</div>
+      <div id="y">Y</div>
+      <div id="z">Z</div>
+    </main>
+  `)
 
-test("input list attribute", () => {
-  expect(h("input", { list: "foobar" })).toMatchDOM(`<input list="foobar">`)
-})
+  // expect(h("main", {}, [divWithId("b"), h("div", { key: "a" }, "A")]))
+  //   .toMatchDOM(`
+  //   <main>
+  //     <div id="b">B</div>
+  //     <div id="a">A</div>
+  //   </main>
+  // `)
 
-test("event handlers", done => {
-  render(
-    null,
-    h("button", {
-      oncreate(el) {
-        el.dispatchEvent(new Event("click"))
-      },
-      onclick(event) {
-        done()
-      }
-    }),
-    document.body
-  )
+  // expect(
+  //   h("main", {}, [
+  //     divWithId("c"),
+  //     h("div", { key: "b" }, "B"),
+  //     h("div", { key: "a" }, "A")
+  //   ])
+  // ).toMatchDOM(`
+  //   <main>
+  //     <div id="c">C</div>
+  //     <div id="b">B</div>
+  //     <div id="a">A</div>
+  //   </main>
+  // `)
 })
