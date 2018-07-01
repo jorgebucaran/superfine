@@ -67,20 +67,18 @@ var createElement = function(node, lifecycle, isSvg) {
         : document.createElement(node.name)
 
   var props = node.props
-  if (props) {
-    if (props.oncreate) {
-      lifecycle.push(function() {
-        props.oncreate(element)
-      })
-    }
+  if (props.oncreate) {
+    lifecycle.push(function() {
+      props.oncreate(element)
+    })
+  }
 
-    for (var i = 0; i < node.children.length; i++) {
-      element.appendChild(createElement(node.children[i], lifecycle, isSvg))
-    }
+  for (var i = 0, length = node.children.length; i < length; i++) {
+    element.appendChild(createElement(node.children[i], lifecycle, isSvg))
+  }
 
-    for (var name in props) {
-      updateProperty(element, name, null, props[name], isSvg)
-    }
+  for (var name in props) {
+    updateProperty(element, name, null, props[name], isSvg)
   }
 
   return (node.element = element)
@@ -113,16 +111,14 @@ var updateElement = function(
 }
 
 var removeChildren = function(node) {
-  var props = node.props
-  if (props) {
-    for (var i = 0; i < node.children.length; i++) {
-      removeChildren(node.children[i])
-    }
-
-    if (props.ondestroy) {
-      props.ondestroy(node.element)
-    }
+  for (var i = 0, length = node.children.length; i < length; i++) {
+    removeChildren(node.children[i])
   }
+
+  if (node.props.ondestroy) {
+    node.props.ondestroy(node.element)
+  }
+
   return node.element
 }
 
@@ -139,7 +135,19 @@ var removeElement = function(parent, node) {
 }
 
 var getKey = function(node) {
-  return node ? node.key : null
+  return isNull(node) ? null : node.key
+}
+
+var createKeyMap = function(children, start, end) {
+  var out = {}
+  var node
+  var key
+  for (; start <= end; start++) {
+    node = children[start]
+    key = node.key
+    if (!isNull(key)) out[key] = node
+  }
+  return out
 }
 
 var patchElement = function(
@@ -178,17 +186,21 @@ var patchElement = function(
       lastNode.flags & IS_RECYCLED
     )
 
-    var child
+    var childNode
+
+    var lastKey
     var lastCh = lastNode.children
     var lastChStart = 0
-    var nextChStart = 0
-    var nextCh = nextNode.children
     var lastChEnd = lastCh.length - 1
+
+    var nextKey
+    var nextCh = nextNode.children
+    var nextChStart = 0
     var nextChEnd = nextCh.length - 1
 
     while (nextChStart <= nextChEnd && lastChStart <= lastChEnd) {
-      var lastKey = getKey(lastCh[lastChStart])
-      var nextKey = getKey(nextCh[nextChStart])
+      lastKey = getKey(lastCh[lastChStart])
+      nextKey = getKey(nextCh[nextChStart])
 
       if (isNull(lastKey) || lastKey !== nextKey) break
 
@@ -206,8 +218,8 @@ var patchElement = function(
     }
 
     while (nextChStart <= nextChEnd && lastChStart <= lastChEnd) {
-      var lastKey = getKey(lastCh[lastChEnd])
-      var nextKey = getKey(nextCh[nextChEnd])
+      lastKey = getKey(lastCh[lastChEnd])
+      nextKey = getKey(nextCh[nextChEnd])
 
       if (isNull(lastKey) || lastKey !== nextKey) break
 
@@ -227,42 +239,32 @@ var patchElement = function(
     if (lastChStart > lastChEnd) {
       while (nextChStart <= nextChEnd) {
         element.insertBefore(
-          createElement(nextCh[nextChStart], lifecycle, isSvg),
-          isNull((child = lastCh[lastChStart])) ? null : child.element
+          createElement(nextCh[nextChStart++], lifecycle, isSvg),
+          (childNode = lastCh[lastChStart]) && childNode.element
         )
-        nextChStart++
       }
     } else if (nextChStart > nextChEnd) {
       while (lastChStart <= lastChEnd) {
         removeElement(element, lastCh[lastChStart++])
       }
     } else {
-      var lastKeyed = {}
+      var lastKeyed = createKeyMap(lastCh, lastChStart, lastChEnd)
       var nextKeyed = {}
 
-      for (var i = lastChStart, key; i <= lastChEnd; i++) {
-        if (!isNull((key = getKey((child = lastCh[i]))))) {
-          lastKeyed[key] = child
-        }
-      }
-
-      var i = lastChStart
-      var k = nextChStart
-
-      while (k <= nextChEnd) {
-        var lastKey = getKey((child = lastCh[i]))
-        var nextKey = getKey(nextCh[k])
+      while (nextChStart <= nextChEnd) {
+        lastKey = getKey((childNode = lastCh[lastChStart]))
+        nextKey = getKey(nextCh[nextChStart])
 
         if (nextKeyed[lastKey]) {
-          i++
+          lastChStart++
           continue
         }
 
-        if (!isNull(nextKey) && nextKey === getKey(lastCh[i + 1])) {
+        if (!isNull(nextKey) && nextKey === getKey(lastCh[lastChStart + 1])) {
           if (isNull(lastKey)) {
-            removeElement(element, child)
+            removeElement(element, childNode)
           }
-          i++
+          lastChStart++
           continue
         }
 
@@ -270,15 +272,15 @@ var patchElement = function(
           if (isNull(lastKey)) {
             patchElement(
               element,
-              child && child.element,
-              child,
-              nextCh[k],
+              childNode && childNode.element,
+              childNode,
+              nextCh[nextChStart],
               lifecycle,
               isSvg
             )
-            k++
+            nextChStart++
           }
-          i++
+          lastChStart++
         } else {
           var foundNode = lastKeyed[nextKey]
 
@@ -287,39 +289,42 @@ var patchElement = function(
               element,
               foundNode.element,
               foundNode,
-              nextCh[k],
+              nextCh[nextChStart],
               lifecycle,
               isSvg
             )
-            i++
+            lastChStart++
           } else if (foundNode && foundNode.element) {
             patchElement(
               element,
-              element.insertBefore(foundNode.element, child && child.element),
+              element.insertBefore(
+                foundNode.element,
+                childNode && childNode.element
+              ),
               foundNode,
-              nextCh[k],
+              nextCh[nextChStart],
               lifecycle,
               isSvg
             )
           } else {
             patchElement(
               element,
-              child && child.element,
+              childNode && childNode.element,
               null,
-              nextCh[k],
+              nextCh[nextChStart],
               lifecycle,
               isSvg
             )
           }
 
-          nextKeyed[nextKey] = nextCh[k]
-          k++
+          nextKeyed[nextKey] = nextCh[nextChStart]
+          nextChStart++
         }
       }
 
-      while (i <= lastChEnd) {
-        if (isNull(getKey((child = lastCh[i++])))) {
-          removeElement(element, child)
+      while (lastChStart <= lastChEnd) {
+        if (isNull(getKey((childNode = lastCh[lastChStart++])))) {
+          removeElement(element, childNode)
         }
       }
 
