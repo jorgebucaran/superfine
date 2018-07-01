@@ -328,16 +328,10 @@ var patchElement = function(
         }
       }
 
-<<<<<<< HEAD
-    for (var j in lastKeyed) {
-      if (!nextKeyed[j]) {
-        removeElement(element, lastKeyed[j][0], lastKeyed[j][1])
-=======
       for (var key in lastKeyed) {
         if (isNull(nextKeyed[key])) {
           removeElement(element, lastKeyed[key])
         }
->>>>>>> upstream/master
       }
     }
   }
