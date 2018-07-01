@@ -232,7 +232,7 @@ Superfine supports the JSX component syntax. A component is a function that retu
 ```jsx
 import { h, patch } from "superfine"
 
-const ClickMe = props => (
+const ClickMe = (props, children) => (
   <a href={props.url}>
     <h1>{props.children}</h1>
   </a>
