@@ -7,18 +7,13 @@ test("skip null and Boolean children", () => {
 })
 
 test("name as a function (JSX component syntax)", () => {
-  const expected = h("div", { key: "key" }, ["foo", "bar"])
+  const Title = props => h("div", { key: props.key }, props.children)
 
-  const Title = props =>
-    h(
-      "div",
-      {
-        key: props.key,
-        children: "foo"
-      },
-      props.children
-    )
+  expect(h(Title, { key: "key", children: "foo" })).toEqual(
+    h("div", { key: "key" }, ["foo"])
+  )
 
-  expect(h(Title, { key: "key" }, "bar")).toEqual(expected)
-  // <Title key="key">foo</Title>
+  expect(h(Title, { key: "key", children: "foo" }, "bar")).toEqual(
+    h("div", { key: "key" }, ["bar"])
+  )
 })
