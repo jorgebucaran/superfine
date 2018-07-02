@@ -401,7 +401,7 @@ export var h = function(name, props) {
   while (length-- > 2) rest.push(arguments[length])
 
   if (!isNull((props = props || {}).children)) {
-    rest.push(props.children)
+    if (rest.length <= 0) rest.push(props.children)
     delete props.children
   }
 
