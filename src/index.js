@@ -13,7 +13,7 @@ var isNull = function(any) {
 }
 
 var merge = function(a, b) {
-  var target = []
+  var target = {}
 
   for (var i in a) target[i] = a[i]
   for (var i in b) target[i] = b[i]
