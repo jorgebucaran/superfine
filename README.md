@@ -180,7 +180,7 @@ export const MessageWithFadeout = message =>
     "div",
     {
       onremove: (element, done) => {
-        e.classList.add("fade-out")
+        element.classList.add("fade-out")
         setTimeout(done, 1000)
       }
     },
