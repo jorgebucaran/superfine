@@ -6,7 +6,7 @@
 [![npm](https://img.shields.io/npm/v/superfine.svg)](https://www.npmjs.org/package/superfine)
 [![Slack](https://hyperappjs.herokuapp.com/badge.svg)](https://hyperappjs.herokuapp.com "#superfine")
 
-Superfine is a minimal view layer for creating declarative web user interfaces. Mix it with your favorite state container library or use it standalone for maximum flexibility.
+Superfine is a minimal view layer for creating declarative web user interfaces. Mix it with your favorite state container or use it standalone for maximum flexibility.
 
 ## Installation
 
@@ -30,15 +30,17 @@ import { h, patch } from "superfine"
 const view = count =>
   h("div", {}, [
     h("h1", {}, count),
-    h("button", { onclick: () => app(view(count - 1)) }, "-"),
-    h("button", { onclick: () => app(view(count + 1)) }, "+")
+    h("button", { onclick: () => render(count - 1) }, "-"),
+    h("button", { onclick: () => render(count + 1) }, "+")
   ])
 
-const app = (lastNode => nextNode => {
-  lastNode = patch(lastNode, nextNode, document.body)
-})()
+const app = (view, container, node) => state => {
+  node = patch(node, view(state), container)
+}
 
-app(view(0))
+const render = app(view, document.body)
+
+render(0)
 ```
 
 Every time something needs to change in our application, we create a new virtual DOM using `superfine.h`, then patch the actual DOM with `superfine.patch`.
@@ -47,16 +49,12 @@ Every time something needs to change in our application, we create a new virtual
 patch(lastNode, nextNode, container)
 ```
 
-What's a virtual DOM? A virtual DOM is a description of what a DOM should look like using a tree of plain JavaScript objects called virtual nodes. By comparing the old and new virtual DOM we can update the parts of the DOM that actually changed instead of rendering the entire document from scratch.
+So, what's a virtual DOM? A virtual DOM is a description of what a DOM should look like using a tree of plain JavaScript objects called virtual nodes. By comparing the old and new virtual DOM we can update the parts of the DOM that actually changed instead of rendering the entire document from scratch.
 
-The [next example](https://codepen.io/jorgebucaran/pen/KoqxGW) shows how to use regular HTML attributes to synchronize the text of an input with a heading element. Superfine nodes support [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute), [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events), [keys](#keys) and [lifecycle events](#lifecycle-events).
+The [next example](https://codepen.io/jorgebucaran/pen/KoqxGW) shows how to use HTML attributes to synchronize the text of an input with a heading element. Superfine nodes support [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute), [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events), [keys](#keys) and [lifecycle events](#lifecycle-events).
 
 ```js
 import { h, patch } from "superfine"
-
-const app = (lastNode => state => {
-  lastNode = patch(lastNode, view(state), document.body)
-})()
 
 const view = state =>
   h("div", {}, [
@@ -65,16 +63,22 @@ const view = state =>
       autofocus: true,
       type: "text",
       value: state,
-      oninput: e => app(e.target.value)
+      oninput: e => render(e.target.value)
     })
   ])
 
-app("Hello!")
+const app = (view, container, node) => state => {
+  node = patch(node, view(state), container)
+}
+
+const render = app(view, document.body)
+
+render("Hello!")
 ```
 
 ## Recycling
 
-Superfine can patch over your server-side rendered HTML to enable SEO optimizations and improve your sites time-to-interactive. All you need to is create a virtual DOM out of your container with `superfine.recycle`, then instead of throwing away the existing content, `superfine.patch` will turn it into an interactive application.
+Superfine can patch over your server-side rendered HTML to enable SEO optimizations and improve your sites time-to-interactive. All you need to is create a virtual DOM out of your container using `superfine.recycle`, then instead of throwing away the existing content, `superfine.patch` will turn it into an interactive application.
 
 ```jsx
 import { h, patch, recycle } from "superfine"
@@ -170,7 +174,7 @@ export const Editor = value =>
 
 ### `onremove`
 
-This event is fired before the element is removed from the DOM. Use it to create slide/fade out animations. Call done inside the function to remove the element. This event is not called in its child elements.
+This event is fired before the element is removed from the DOM. Use it to create slide/fade out animations. Call `done` inside the function to remove the element. This event is not called in its child elements. See [`ondestroy`](#ondestroy) for that.
 
 ```jsx
 import { h } from "superfine"
@@ -225,9 +229,9 @@ export const Camera = onerror =>
 }
 ```
 
-### Components
+### Functional Components
 
-Superfine supports the JSX component syntax. A component is a function that returns a virtual node. Unlike React, Inferno, etc., Superfine components are stateless — class based components can't be created. Everything the component needs to work must be passed on via the `props` argument, which consists of the component attributes and children.
+A functional component is a function that returns a virtual node. Unlike React, Inferno, etc., Superfine components are stateless — class based components can't be created. Everything the component needs to work must be passed on via the `props` argument, which consists of the component attributes and children.
 
 ```jsx
 import { h, patch } from "superfine"
