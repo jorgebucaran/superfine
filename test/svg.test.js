@@ -35,3 +35,26 @@ test("svg", () => {
   expect(baz.namespaceURI).toBe(SVG_NS)
   expectDeepNS(baz, SVG_NS)
 })
+
+test("xlink:href", () => {
+  const NS_XLINK = "http://www.w3.org/1999/xlink"
+
+  let lastNode = patch(
+    null,
+    h("svg", { viewBox: "0 0 10 10" }, [
+      h("use", { id: "use", "xlink:href": "about:blank" })
+    ]),
+    document.body
+  )
+
+  const use = document.getElementById("use")
+  expect(use.getAttributeNS(NS_XLINK, "href")).toBe("about:blank")
+
+  patch(
+    lastNode,
+    h("svg", { viewBox: "0 0 10 10" }, [h("use", { id: "use" })]),
+    document.body
+  )
+
+  expect(use.getAttributeNS(NS_XLINK, "href")).toBe(null)
+})
