@@ -32,8 +32,8 @@
   },
   "devDependencies": {
     "babel-env": "2.4.1",
-    "jest": "^23.2.0",
+    "jest": "^23.3.0",
     "rollup": "^0.62.0",
-    "uglify-js": "^3.4.2"
+    "uglify-js": "^3.4.3"
   }
 }
