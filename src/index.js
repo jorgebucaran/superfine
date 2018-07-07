@@ -65,9 +65,9 @@ var updateProperty = function(element, name, lastValue, nextValue, isSvg) {
         var ns = isSvg && name !== (name = name.replace(/^xlink:?/, ""))
         if (ns) {
           if (nullOrFalse) {
-            element.removeAttributeNS(XLINK, name)
+            element.removeAttributeNS(XLINK_NS, name)
           } else {
-            element.setAttributeNS(XLINK, name, nextValue)
+            element.setAttributeNS(XLINK_NS, name, nextValue)
           }
         } else {
           if (nullOrFalse) {
