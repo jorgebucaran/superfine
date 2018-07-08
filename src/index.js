@@ -197,7 +197,7 @@ var patchElement = function(
   } else if (lastNode == null || lastNode.name !== nextNode.name) {
     var newElement = parent.insertBefore(
       createElement(nextNode, lifecycle, isSvg),
-      element
+      element || null
     )
 
     if (lastNode != null) removeElement(parent, lastNode)
@@ -268,7 +268,7 @@ var patchElement = function(
       while (nextChStart <= nextChEnd) {
         element.insertBefore(
           createElement(nextChildren[nextChStart++], lifecycle, isSvg),
-          (childNode = lastChildren[lastChStart]) && childNode.element
+          (childNode = lastChildren[lastChStart]) && childNode.element || null
         )
       }
     } else if (nextChStart > nextChEnd) {
@@ -325,7 +325,7 @@ var patchElement = function(
                 element,
                 element.insertBefore(
                   savedNode.element,
-                  childNode && childNode.element
+                  childNode && childNode.element || null
                 ),
                 savedNode,
                 nextChildren[nextChStart],
