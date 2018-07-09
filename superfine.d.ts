@@ -32,7 +32,7 @@ export function h<Props>(
  * @param {Element?} container A DOM element where the new virtual DOM will be rendered.
  * @returns {VNode} Returns nextNode.
  **/
-export function render(
+export function patch(
   lastNode: VNode,
   nextNode: VNode,
   container: Element
