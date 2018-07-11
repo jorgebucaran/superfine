@@ -9,7 +9,7 @@ export interface VNode<Props = {}> {
   name: string,
   props: Props,
   children: Array<VNode>,
-  element: Element | undefined,
+  element: Element | null,
   key: string | null,
   type: number
 }
