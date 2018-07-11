@@ -6,10 +6,12 @@ export type Children = VNode | string | number | null
  * The virtual DOM representation of an Element.
  */
 export interface VNode<Props = {}> {
-  name: string
-  props?: Props
-  children: Array<VNode>
-  key: string
+  name: string,
+  props: Props,
+  children: Array<VNode>,
+  element: Element | undefined,
+  key: string | null,
+  type: number
 }
 
 /**
