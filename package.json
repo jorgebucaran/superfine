@@ -1,7 +1,7 @@
 {
   "name": "superfine",
   "description": "Minimal view layer for creating declarative web user interfaces.",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "main": "dist/superfine.js",
   "module": "src/index.js",
   "license": "MIT",
