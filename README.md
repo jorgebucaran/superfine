@@ -128,6 +128,10 @@ export const ImageGallery = images =>
   )
 ```
 
+### Top-Level Nodes
+
+Keys are not registered on the top-level node of your view. If you are toggling the top-level view, and you must use keys, wrap them in an unchanging node.
+
 ## Lifecycle Events
 
 You can be notified when elements managed by the virtual DOM are created, updated or removed via lifecycle events. Use them for animation, wrapping third party libraries, cleaning up resources, etc.
