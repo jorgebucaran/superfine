@@ -10,6 +10,7 @@ var EMPTY_ARRAY = []
 
 var map = EMPTY_ARRAY.map
 var isArray = Array.isArray
+var keys = Object.keys
 
 var merge = function(a, b) {
   var target = {}
@@ -371,7 +372,7 @@ var createVNode = function(name, props, children, element, key, type) {
     props: props,
     children: children,
     element: element,
-    key: key,
+    key: key ? key : (keys(props).length > 0 ? name + keys(props) : null),
     type: type
   }
 }
