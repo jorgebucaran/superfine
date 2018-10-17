@@ -391,3 +391,28 @@ test("name as a function (JSX component syntax)", () => {
     h("div", { key: "key" }, ["bar"])
   )
 })
+
+test("reuses element on prepend", () => {
+
+  let lastNode = patch(
+    null,
+    h('div', {}, [
+      h('div', { class: 'then' }),
+    ]),
+    document.body
+  )
+
+  const div = document.querySelector("div.then")
+
+  patch(
+    lastNode,
+    h('div', {}, [
+      h('div', {}),
+      h('div', { class: 'now' }),
+    ]),
+    document.body
+  )
+
+  expect(div.classList.contains("now")).toBe(true)
+})
+
