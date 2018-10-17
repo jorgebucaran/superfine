@@ -216,7 +216,9 @@ test("xlink:href", () => {
 
   patch(
     lastNode,
-    svg({ viewBox: "0 0 10 10" }, [h("use", { id: "use" })]),
+    svg({ viewBox: "0 0 10 10" }, [
+      h("use", { id: "use", "xlink:href": null })
+    ]),
     document.body
   )
 
