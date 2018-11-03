@@ -1,33 +1,33 @@
-import { h, patch, recycle } from "../src/index.js"
+import { h, patch, recycle } from "../";
 
 beforeEach(() => {
-  document.body.innerHTML = ""
-})
+  document.body.innerHTML = "";
+});
 
 expect.extend({
   toMatchDOM(nodes, results) {
     nodes.reduce((lastNode, nextNode, i) => {
-      const node = patch(lastNode, nextNode, document.body)
-      expect(document.body.innerHTML).toBe(results[i].replace(/\s{2,}/g, ""))
-      return node
-    }, null)
+      const node = patch(lastNode, nextNode, document.body);
+      expect(document.body.innerHTML).toBe(results[i].replace(/\s{2,}/g, ""));
+      return node;
+    }, null);
 
-    return { pass: true }
+    return { pass: true };
   }
-})
+});
 
 const expectDeepNS = (el, ns) =>
   Array.from(el.childNodes).map(child => {
-    expect(child.namespaceURI).toBe(ns)
-    expectDeepNS(child, ns)
-  })
+    expect(child.namespaceURI).toBe(ns);
+    expectDeepNS(child, ns);
+  });
 
 const tag = name => (props, children) =>
   h(
     name,
     Array.isArray(props) ? {} : props,
     Array.isArray(props) ? props : children
-  )
+  );
 
 const { div, main, input, ul, li, svg, use } = [
   "div",
@@ -36,35 +36,36 @@ const { div, main, input, ul, li, svg, use } = [
   "ul",
   "li",
   "svg"
-].reduce((fns, name) => ({ ...fns, [name]: tag(name) }), {})
+].reduce((fns, name) => ({ ...fns, [name]: tag(name) }), {});
 
-const fake = key => div({ key, oncreate: e => (e.id = key) }, key.toUpperCase())
+const fake = key =>
+  div({ key, oncreate: e => (e.id = key) }, key.toUpperCase());
 
 test("skip null and Boolean children", () => {
-  expect(div([true]).children).toEqual([])
-  expect(div([false]).children).toEqual([])
-  expect(div([null]).children).toEqual([])
-})
+  expect(div([true]).children).toEqual([]);
+  expect(div([false]).children).toEqual([]);
+  expect(div([null]).children).toEqual([]);
+});
 
 test("name as a function (JSX component syntax)", () => {
-  const Title = props => div({ key: props.key }, props.children)
+  const Title = props => div({ key: props.key }, props.children);
 
   expect(h(Title, { key: "key", children: "foo" })).toEqual(
     div({ key: "key" }, ["foo"])
-  )
+  );
 
   expect(h(Title, { key: "key", children: "foo" }, "bar")).toEqual(
     div({ key: "key" }, ["bar"])
-  )
-})
+  );
+});
 
 test("skip equal nodes", () => {
-  const node = div(["foo"])
+  const node = div(["foo"]);
 
-  patch(node, node, document.body)
+  patch(node, node, document.body);
 
-  expect(document.body.innerHTML).toBe("")
-})
+  expect(document.body.innerHTML).toBe("");
+});
 
 test("remove attribute", () => {
   expect([
@@ -73,8 +74,8 @@ test("remove attribute", () => {
       class: "bar"
     }),
     div()
-  ]).toMatchDOM([`<div id="foo" class="bar"></div>`, `<div></div>`])
-})
+  ]).toMatchDOM([`<div id="foo" class="bar"></div>`, `<div></div>`]);
+});
 
 test("styles", () => {
   expect([
@@ -85,8 +86,8 @@ test("styles", () => {
     `<div style="color: red; font-size: 1em;"></div>`,
     `<div style="color: blue; float: left;"></div>`,
     `<div style=""></div>`
-  ])
-})
+  ]);
+});
 
 test("update element with dynamic props", () => {
   expect([
@@ -100,12 +101,12 @@ test("update element with dynamic props", () => {
       value: "bar",
       onupdate: el => expect(el.value).toBe("bar")
     })
-  ]).toMatchDOM([`<input type="text">`, `<input type="text">`])
-})
+  ]).toMatchDOM([`<input type="text">`, `<input type="text">`]);
+});
 
 test("input list attribute", () => {
-  expect([input({ list: "foobar" })]).toMatchDOM([`<input list="foobar">`])
-})
+  expect([input({ list: "foobar" })]).toMatchDOM([`<input list="foobar">`]);
+});
 
 test("event handlers", done => {
   patch(
@@ -115,12 +116,12 @@ test("event handlers", done => {
       oncreate: el => el.dispatchEvent(new Event("click"))
     }),
     document.body
-  )
-})
+  );
+});
 
 test("replace element", () => {
-  expect([main(), div()]).toMatchDOM([`<main></main>`, `<div></div>`])
-})
+  expect([main(), div()]).toMatchDOM([`<main></main>`, `<div></div>`]);
+});
 
 test("keyed nodes", () => {
   expect([
@@ -135,8 +136,8 @@ test("keyed nodes", () => {
     `<main><div id="b">B</div></main>`,
     `<main><div id="a">A</div><div id="b">B</div><div id="c">C</div></main>`,
     `<main><div id="b">B</div><div id="a">A</div></main>`
-  ])
-})
+  ]);
+});
 
 test("mixed keyed/non-keyed nodes", () => {
   expect([
@@ -152,8 +153,8 @@ test("mixed keyed/non-keyed nodes", () => {
     `<main><div id="a">A</div><div>B</div><div>C</div><div id="d">D</div></main>`,
     `<main><div>C</div><div id="d">D</div><div id="a">A</div><div>B</div></main>`,
     `<main><div id="d">D</div><div>B</div><div>C</div></main>`
-  ])
-})
+  ]);
+});
 
 test("trim prefix/suffix", () => {
   expect([
@@ -171,37 +172,37 @@ test("trim prefix/suffix", () => {
     `<main><div id="a">A</div><div id="q">Q</div><div id="p">P</div><div id="z">Z</div></main>`,
     `<main><div id="a">A</div></main>`,
     `<main><div id="c">C</div><div id="a">A</div></main>`
-  ])
-})
+  ]);
+});
 
 test("svg", () => {
-  const SVG_NS = "http://www.w3.org/2000/svg"
+  const SVG_NS = "http://www.w3.org/2000/svg";
 
   const view = state =>
     div([
       div({ id: "foo" }, "foo"),
       svg({ id: state, viewBox: "0 0 10 10" }, [h(state)])
-    ])
+    ]);
 
-  let node = patch(null, view("bar"), document.body)
+  let node = patch(null, view("bar"), document.body);
 
-  const foo = document.getElementById("foo")
-  const bar = document.getElementById("bar")
+  const foo = document.getElementById("foo");
+  const bar = document.getElementById("bar");
 
-  expect(foo.namespaceURI).not.toBe(SVG_NS)
-  expect(bar.namespaceURI).toBe(SVG_NS)
-  expect(bar.getAttribute("viewBox")).toBe("0 0 10 10")
-  expectDeepNS(bar, SVG_NS)
+  expect(foo.namespaceURI).not.toBe(SVG_NS);
+  expect(bar.namespaceURI).toBe(SVG_NS);
+  expect(bar.getAttribute("viewBox")).toBe("0 0 10 10");
+  expectDeepNS(bar, SVG_NS);
 
-  patch(node, view("baz"), document.body)
+  patch(node, view("baz"), document.body);
 
-  const baz = document.getElementById("baz")
-  expect(baz.namespaceURI).toBe(SVG_NS)
-  expectDeepNS(baz, SVG_NS)
-})
+  const baz = document.getElementById("baz");
+  expect(baz.namespaceURI).toBe(SVG_NS);
+  expectDeepNS(baz, SVG_NS);
+});
 
 test("xlink:href", () => {
-  const NS_XLINK = "http://www.w3.org/1999/xlink"
+  const NS_XLINK = "http://www.w3.org/1999/xlink";
 
   let lastNode = patch(
     null,
@@ -209,19 +210,19 @@ test("xlink:href", () => {
       h("use", { id: "use", "xlink:href": "about:blank" })
     ]),
     document.body
-  )
+  );
 
-  const use = document.getElementById("use")
-  expect(use.getAttributeNS(NS_XLINK, "href")).toBe("about:blank")
+  const use = document.getElementById("use");
+  expect(use.getAttributeNS(NS_XLINK, "href")).toBe("about:blank");
 
   patch(
     lastNode,
     svg({ viewBox: "0 0 10 10" }, [h("use", { id: "use" })]),
     document.body
-  )
+  );
 
-  expect(use.getAttributeNS(NS_XLINK, "href")).toBe(null)
-})
+  expect(use.getAttributeNS(NS_XLINK, "href")).toBe(null);
+});
 
 test("oncreate", () => {
   patch(
@@ -229,15 +230,15 @@ test("oncreate", () => {
     div(
       {
         oncreate: el => {
-          el.className = "foo"
-          expect(document.body.innerHTML).toBe(`<div class="foo">foo</div>`)
+          el.className = "foo";
+          expect(document.body.innerHTML).toBe(`<div class="foo">foo</div>`);
         }
       },
       "foo"
     ),
     document.body
-  )
-})
+  );
+});
 
 test("onupdate", done => {
   const view = state =>
@@ -245,17 +246,17 @@ test("onupdate", done => {
       {
         class: state,
         onupdate: (el, old) => {
-          expect(el.textContent).toBe("bar")
-          expect(old.class).toBe("foo")
-          done()
+          expect(el.textContent).toBe("bar");
+          expect(old.class).toBe("foo");
+          done();
         }
       },
       state
-    )
+    );
 
-  let node = patch(node, view("foo"), document.body)
-  patch(node, view("bar"), document.body)
-})
+  let node = patch(node, view("foo"), document.body);
+  patch(node, view("bar"), document.body);
+});
 
 test("onremove", done => {
   const view = state =>
@@ -264,17 +265,17 @@ test("onremove", done => {
           h("li"),
           h("li", {
             onremove(_, remove) {
-              remove()
-              expect(document.body.innerHTML).toBe("<ul><li></li></ul>")
-              done()
+              remove();
+              expect(document.body.innerHTML).toBe("<ul><li></li></ul>");
+              done();
             }
           })
         ])
-      : h("ul", {}, [h("li")])
+      : h("ul", {}, [h("li")]);
 
-  let node = patch(null, view(true), document.body)
-  patch(node, view(false), document.body)
-})
+  let node = patch(null, view(true), document.body);
+  patch(node, view(false), document.body);
+});
 
 test("ondestroy", done => {
   const view = state =>
@@ -286,23 +287,23 @@ test("ondestroy", done => {
               ondestroy() {
                 expect(document.body.innerHTML).toBe(
                   "<ul><li></li><li><div></div></li></ul>"
-                )
+                );
                 setTimeout(() => {
-                  expect(document.body.innerHTML).toBe("<ul><li></li></ul>")
-                  done()
-                })
+                  expect(document.body.innerHTML).toBe("<ul><li></li></ul>");
+                  done();
+                });
               }
             })
           ])
         ])
-      : ul([li()])
+      : ul([li()]);
 
-  let node = patch(null, view(true), document.body)
-  patch(node, view(false), document.body)
-})
+  let node = patch(null, view(true), document.body);
+  patch(node, view(false), document.body);
+});
 
 test("onremove/ondestroy", done => {
-  let destroyed = false
+  let destroyed = false;
 
   const view = state =>
     state
@@ -310,32 +311,32 @@ test("onremove/ondestroy", done => {
           li(),
           li({
             ondestroy() {
-              destroyed = true
+              destroyed = true;
             },
             onremove(_, remove) {
-              expect(destroyed).toBe(false)
-              remove()
-              expect(destroyed).toBe(true)
-              done()
+              expect(destroyed).toBe(false);
+              remove();
+              expect(destroyed).toBe(true);
+              done();
             }
           })
         ])
-      : ul([li()])
+      : ul([li()]);
 
-  let node = patch(node, view(true), document.body)
-  patch(node, view(false), document.body)
-})
+  let node = patch(node, view(true), document.body);
+  patch(node, view(false), document.body);
+});
 
 test("event bubbling", done => {
-  let count = 0
+  let count = 0;
 
   const view = state =>
     main(
       {
         oncreate: () => expect(count++).toBe(3),
         onupdate: () => {
-          expect(count++).toBe(7)
-          done()
+          expect(count++).toBe(7);
+          done();
         }
       },
       [
@@ -352,16 +353,16 @@ test("event bubbling", done => {
           onupdate: () => expect(count++).toBe(4)
         })
       ]
-    )
+    );
 
-  let node = patch(node, view(), document.body)
-  patch(node, view(), document.body)
-})
+  let node = patch(node, view(), document.body);
+  patch(node, view(), document.body);
+});
 
 test("recycling", done => {
-  const container = document.body
+  const container = document.body;
 
-  container.innerHTML = `<div><p id="foo">Foo</p></div>`
+  container.innerHTML = `<div><p id="foo">Foo</p></div>`;
 
   patch(
     recycle(container),
@@ -369,23 +370,23 @@ test("recycling", done => {
       h("p", {
         key: "foo",
         oncreate: el => {
-          expect(el.id).toBe("foo")
-          done()
+          expect(el.id).toBe("foo");
+          done();
         }
       })
     ]),
     container
-  )
-})
+  );
+});
 
 test("name as a function (JSX component syntax)", () => {
-  const Title = props => h("div", { key: props.key }, props.children)
+  const Title = props => h("div", { key: props.key }, props.children);
 
   expect(h(Title, { key: "key", children: "foo" })).toEqual(
     h("div", { key: "key" }, ["foo"])
-  )
+  );
 
   expect(h(Title, { key: "key", children: "foo" }, "bar")).toEqual(
     h("div", { key: "key" }, ["bar"])
-  )
-})
+  );
+});

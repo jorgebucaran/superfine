@@ -3,14 +3,12 @@
   "description": "Minimal view layer for creating declarative web user interfaces.",
   "version": "6.0.1",
   "main": "dist/superfine.js",
-  "module": "src/index.js",
   "license": "MIT",
   "repository": "jorgebucaran/superfine",
-  "types": "superfine.d.ts",
+  "types": "dist/superfine.d.ts",
   "files": [
     "src",
-    "dist",
-    "superfine.d.ts"
+    "dist"
   ],
   "author": "Jorge Bucaran",
   "keywords": [
@@ -21,19 +19,25 @@
   ],
   "scripts": {
     "test": "jest --coverage --no-cache",
-    "build": "npm run bundle && npm run minify",
-    "bundle": "rollup -i src/index.js -o dist/superfine.js -m -f umd -n superfine",
-    "minify": "uglifyjs dist/superfine.js -o dist/superfine.js -mc pure_funcs=['Object.defineProperty'] --source-map includeSources,url=superfine.js.map",
     "prepare": "npm run build",
-    "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
+    "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish",
+    "build": "npm-run-all build:pre-clean build:types build:tsickle build:gcc build:gzip build:post-clean",
+    "build:pre-clean": "rm -rf dist && mkdir dist",
+    "build:types": "tsc -d && cp src/index.d.ts dist/superfine.d.ts",
+    "build:tsickle": "tsickle --externs externs/index.js",
+    "build:gcc": "java -jar ./node_modules/google-closure-compiler/compiler.jar --externs externs/index.js --output_wrapper '(function(){var self=typeof module!=\"undefined\"?module.exports:(this.superfine={});%output%})()' --use_types_for_optimization --assume_function_wrapper --formatting SINGLE_QUOTES --module_resolution WEBPACK --language_in=ECMASCRIPT_NEXT --language_out=ECMASCRIPT5 --compilation_level ADVANCED_OPTIMIZATIONS --js_output_file=dist/superfine.js 'src/**.js'",
+    "build:gzip": "gzip -k -f dist/*.js",
+    "build:post-clean": "rm src/**.js src/**.d.ts && rm -rf externs",
+    "size": "wc -c dist/*.js && wc -c dist/*.js.gz"
   },
   "babel": {
     "presets": "env"
   },
   "devDependencies": {
     "babel-env": "2.4.1",
+    "google-closure-compiler": "^20181008.0.0",
     "jest": "^23.3.0",
-    "rollup": "^0.62.0",
-    "uglify-js": "^3.4.3"
+    "tsickle": "^0.33.1",
+    "typescript": "^3.1.6"
   }
 }
