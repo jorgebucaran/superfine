@@ -1,4 +1,4 @@
-import { h, patch, recycle } from "../src/index.js"
+import { h, patch, recycle } from "../src/superfine"
 
 beforeEach(() => {
   document.body.innerHTML = ""
@@ -12,12 +12,12 @@ expect.extend({
       return node
     }, null)
 
-    return { pass: true }
+    return { pass: true, message: "DOM Nodes match" }
   }
 })
 
 const expectDeepNS = (el, ns) =>
-  Array.from(el.childNodes).map(child => {
+  Array.from(el.childNodes).map((child: any) => {
     expect(child.namespaceURI).toBe(ns)
     expectDeepNS(child, ns)
   })
@@ -29,7 +29,7 @@ const tag = name => (props, children) =>
     Array.isArray(props) ? props : children
   )
 
-const { div, main, input, ul, li, svg, use } = [
+const { div, main, input, ul, li, svg, use }: any = [
   "div",
   "main",
   "input",
@@ -240,6 +240,7 @@ test("oncreate", () => {
 })
 
 test("onupdate", done => {
+  let node
   const view = state =>
     div(
       {
@@ -253,7 +254,7 @@ test("onupdate", done => {
       state
     )
 
-  let node = patch(node, view("foo"), document.body)
+  node = patch(node, view("foo"), document.body)
   patch(node, view("bar"), document.body)
 })
 
@@ -303,6 +304,7 @@ test("ondestroy", done => {
 
 test("onremove/ondestroy", done => {
   let destroyed = false
+  let node
 
   const view = state =>
     state
@@ -322,14 +324,15 @@ test("onremove/ondestroy", done => {
         ])
       : ul([li()])
 
-  let node = patch(node, view(true), document.body)
+  node = patch(node, view(true), document.body)
   patch(node, view(false), document.body)
 })
 
 test("event bubbling", done => {
   let count = 0
+  let node
 
-  const view = state =>
+  const view = (state?) =>
     main(
       {
         oncreate: () => expect(count++).toBe(3),
@@ -354,7 +357,7 @@ test("event bubbling", done => {
       ]
     )
 
-  let node = patch(node, view(), document.body)
+  node = patch(node, view(), document.body)
   patch(node, view(), document.body)
 })
 

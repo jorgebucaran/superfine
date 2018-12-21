@@ -6,3 +6,5 @@ node_modules
 package-lock.json
 yarn.lock
 .vscode
+.rpt2_cache
+dist

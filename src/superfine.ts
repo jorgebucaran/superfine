@@ -86,8 +86,8 @@ var createElement = function(node, lifecycle, isSvg) {
     node.type === TEXT_NODE
       ? document.createTextNode(node.name)
       : (isSvg = isSvg || node.name === "svg")
-        ? document.createElementNS(SVG_NS, node.name)
-        : document.createElement(node.name)
+      ? document.createElementNS(SVG_NS, node.name)
+      : document.createElement(node.name)
 
   var props = node.props
   if (props.oncreate) {
@@ -183,7 +183,7 @@ var patchElement = function(
   lastNode,
   nextNode,
   lifecycle,
-  isSvg
+  isSvg?
 ) {
   if (nextNode === lastNode) {
   } else if (
@@ -376,7 +376,7 @@ var createVNode = function(name, props, children, element, key, type) {
   }
 }
 
-var createTextVNode = function(text, element) {
+var createTextVNode = function(text, element?) {
   return createVNode(text, EMPTY_OBJECT, EMPTY_ARRAY, element, null, TEXT_NODE)
 }
 
@@ -411,13 +411,10 @@ export var patch = function(lastNode, nextNode, container) {
   return nextNode
 }
 
-export var h = function(name, props) {
+export var h = function(name, props?, ...rest) {
   var node
-  var rest = []
   var children = []
   var length = arguments.length
-
-  while (length-- > 2) rest.push(arguments[length])
 
   if ((props = props == null ? {} : props).children != null) {
     if (rest.length <= 0) {

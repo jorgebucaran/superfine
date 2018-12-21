@@ -1,39 +1,41 @@
 {
   "name": "superfine",
-  "description": "Minimal view layer for creating declarative web user interfaces.",
   "version": "6.0.1",
-  "main": "dist/superfine.js",
-  "module": "src/index.js",
-  "license": "MIT",
-  "repository": "jorgebucaran/superfine",
-  "types": "superfine.d.ts",
-  "files": [
-    "src",
-    "dist",
-    "superfine.d.ts"
-  ],
-  "author": "Jorge Bucaran",
+  "description": "Minimal view layer for creating declarative web user interfaces.",
   "keywords": [
-    "superfine",
     "frontend",
-    "virtual dom",
-    "vdom"
+    "superfine",
+    "vdom",
+    "virtual dom"
   ],
+  "repository": "jorgebucaran/superfine",
+  "license": "MIT",
+  "author": "Jorge Bucaran",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/superfine.js",
+  "module": "dist/superfine.mjs",
+  "types": "dist/superfine.d.ts",
   "scripts": {
-    "test": "jest --coverage --no-cache",
-    "build": "npm run bundle && npm run minify",
-    "bundle": "rollup -i src/index.js -o dist/superfine.js -m -f umd -n superfine",
-    "minify": "terser dist/superfine.js -o dist/superfine.js -mc pure_funcs=['Object.defineProperty'] --source-map includeSources,url=superfine.js.map",
+    "build": "rollup -c",
     "prepare": "npm run build",
-    "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
+    "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish",
+    "test": "jest --coverage --no-cache"
   },
-  "babel": {
-    "presets": "env"
+  "prettier": {
+    "semi": false
   },
   "devDependencies": {
+    "@types/jest": "^23.3.10",
+    "@types/node": "^10.12.18",
     "jest": "^23.6.0",
-    "rollup": "^0.62.0",
-    "terser": "^3.13.1",
-    "babel-preset-env": "^1.7.0"
+    "rollup": "^0.68.1",
+    "rollup-plugin-filesize": "^5.0.1",
+    "rollup-plugin-terser": "^3.0.0",
+    "rollup-plugin-typescript2": "^0.18.1",
+    "ts-jest": "^23.10.5",
+    "tslib": "^1.9.3",
+    "typescript": "^3.2.2"
   }
 }
