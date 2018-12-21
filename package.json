@@ -31,9 +31,9 @@
     "presets": "env"
   },
   "devDependencies": {
-    "babel-env": "2.4.1",
-    "jest": "^23.3.0",
+    "jest": "^23.6.0",
     "rollup": "^0.62.0",
-    "terser": "^3.13.1"
+    "terser": "^3.13.1",
+    "babel-preset-env": "^1.7.0"
   }
 }
