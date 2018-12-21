@@ -1,3 +1,20 @@
+/**
+ * The vdom representation of an element.
+ */
+export interface VNode<Props = {}> {
+  name: string
+  props?: Props
+  children?: Array<VNode>
+  element?: Element | null
+  key?: string | null
+  type?: number
+}
+
+/**
+ * Children of a vdom node
+ */
+export type Children = VNode | string | number | null
+
 var DEFAULT = 0
 var RECYCLED_NODE = 1
 var TEXT_NODE = 2
@@ -397,11 +414,25 @@ var recycleElement = function(element) {
   )
 }
 
-export var recycle = function(container) {
+/**
+ * Superfine SSR: Create a virtual DOM from your container to patch it on client side
+ * @param container a DOM element
+ */
+export var recycle = function(container: Element): VNode {
   return recycleElement(container.children[0])
 }
 
-export var patch = function(lastNode, nextNode, container) {
+/**
+ * Render a vdom node in DOM element container
+ * @param lastNode the last vdom node
+ * @param nextNode the next vdom node
+ * @param container a DOM element where the new vdom will be rendered
+ */
+export var patch = function(
+  lastNode: VNode,
+  nextNode: VNode,
+  container: Element
+): VNode {
   var lifecycle = []
 
   patchElement(container, container.children[0], lastNode, nextNode, lifecycle)
@@ -411,7 +442,17 @@ export var patch = function(lastNode, nextNode, container) {
   return nextNode
 }
 
-export var h = function(name, props?, ...rest) {
+/**
+ * create a new vdom node. vdom is a description of what DOM should look like using a tree of virtual nodes.
+ * @param name name of an element or function that returns vdom node
+ * @param props HTML props, SVG props, DOM events, lifecycle events and keys
+ * @param rest child nodes for an element
+ */
+export var h = function(
+  name: string | Function,
+  props?: any,
+  ...rest: Array<Children | Children[]>
+): VNode {
   var node
   var children = []
   var length = arguments.length

@@ -9,7 +9,10 @@ export default [
       file: "dist/superfine.mjs",
       format: "es"
     },
-    plugins: [typescript(), filesize()]
+    plugins: [
+      typescript({ tsconfigOverride: { include: ["src"] } }),
+      filesize()
+    ]
   },
   {
     input: "src/superfine.ts",
@@ -18,6 +21,10 @@ export default [
       format: "umd",
       name: "superfine"
     },
-    plugins: [typescript(), terser(), filesize()]
+    plugins: [
+      typescript({ tsconfigOverride: { include: ["src"] } }),
+      terser(),
+      filesize()
+    ]
   }
 ]
