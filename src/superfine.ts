@@ -28,7 +28,7 @@ const EMPTY_ARRAY = []
 const map = EMPTY_ARRAY.map
 const isArray = Array.isArray
 
-const merge = function(a, b) {
+const merge = (a, b) => {
   let target = {}
 
   for (let i in a) target[i] = a[i]
@@ -37,11 +37,11 @@ const merge = function(a, b) {
   return target
 }
 
-const eventProxy = function(event) {
+const eventProxy = event => {
   return event.currentTarget.events[event.type](event)
 }
 
-const updateProperty = function(element, name, lastValue, nextValue, isSvg) {
+const updateProperty = (element, name, lastValue, nextValue, isSvg) => {
   if (name === "key") {
   } else if (name === "style") {
     for (let i in merge(lastValue, nextValue)) {
@@ -99,7 +99,7 @@ const updateProperty = function(element, name, lastValue, nextValue, isSvg) {
   }
 }
 
-const createElement = function(node, lifecycle, isSvg) {
+const createElement = (node, lifecycle, isSvg) => {
   const element =
     node.type === TEXT_NODE
       ? document.createTextNode(node.name)
@@ -109,7 +109,7 @@ const createElement = function(node, lifecycle, isSvg) {
 
   const props = node.props
   if (props.oncreate) {
-    lifecycle.push(function() {
+    lifecycle.push(() => {
       props.oncreate(element)
     })
   }
@@ -125,14 +125,14 @@ const createElement = function(node, lifecycle, isSvg) {
   return (node.element = element)
 }
 
-const updateElement = function(
+const updateElement = (
   element,
   lastProps,
   nextProps,
   lifecycle,
   isSvg,
   isRecycled
-) {
+) => {
   for (const name in merge(lastProps, nextProps)) {
     if (
       (name === "value" || name === "checked"
@@ -145,13 +145,13 @@ const updateElement = function(
 
   const cb = isRecycled ? nextProps.oncreate : nextProps.onupdate
   if (cb != null) {
-    lifecycle.push(function() {
+    lifecycle.push(() => {
       cb(element, lastProps)
     })
   }
 }
 
-const removeChildren = function(node) {
+const removeChildren = node => {
   for (let i = 0, length = node.children.length; i < length; i++) {
     removeChildren(node.children[i])
   }
@@ -164,8 +164,8 @@ const removeChildren = function(node) {
   return node.element
 }
 
-const removeElement = function(parent, node) {
-  const remove = function() {
+const removeElement = (parent, node) => {
+  const remove = () => {
     parent.removeChild(removeChildren(node))
   }
 
@@ -177,11 +177,11 @@ const removeElement = function(parent, node) {
   }
 }
 
-const getKey = function(node) {
+const getKey = node => {
   return node == null ? null : node.key
 }
 
-const createKeyMap = function(children, start, end) {
+const createKeyMap = (children, start, end) => {
   let out = {}
   let key
   let node
@@ -195,14 +195,14 @@ const createKeyMap = function(children, start, end) {
   return out
 }
 
-const patchElement = function(
+const patchElement = (
   parent,
   element,
   lastNode,
   nextNode,
   lifecycle,
   isSvg?
-) {
+) => {
   if (nextNode === lastNode) {
   } else if (
     lastNode != null &&
@@ -383,7 +383,7 @@ const patchElement = function(
   return (nextNode.element = element)
 }
 
-const createVNode = function(name, props, children, element, key, type) {
+const createVNode = (name, props, children, element, key, type) => {
   return {
     name: name,
     props: props,
@@ -394,17 +394,17 @@ const createVNode = function(name, props, children, element, key, type) {
   }
 }
 
-const createTextVNode = function(text, element?) {
+const createTextVNode = (text, element?) => {
   return createVNode(text, EMPTY_OBJECT, EMPTY_ARRAY, element, null, TEXT_NODE)
 }
 
-const recycleChild = function(element) {
+const recycleChild = element => {
   return element.nodeType === 3 // Node.TEXT_NODE
     ? createTextVNode(element.nodeValue, element)
     : recycleElement(element)
 }
 
-const recycleElement = function(element) {
+const recycleElement = element => {
   return createVNode(
     element.nodeName.toLowerCase(),
     EMPTY_OBJECT,
@@ -419,7 +419,7 @@ const recycleElement = function(element) {
  * Superfine SSR: Create a virtual DOM from your container to patch it on client side
  * @param container a DOM element
  */
-export const recycle = function(container: Element): VNode {
+export const recycle = (container: Element): VNode => {
   return recycleElement(container.children[0])
 }
 
