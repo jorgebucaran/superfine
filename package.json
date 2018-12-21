@@ -23,7 +23,7 @@
     "test": "jest --coverage --no-cache",
     "build": "npm run bundle && npm run minify",
     "bundle": "rollup -i src/index.js -o dist/superfine.js -m -f umd -n superfine",
-    "minify": "uglifyjs dist/superfine.js -o dist/superfine.js -mc pure_funcs=['Object.defineProperty'] --source-map includeSources,url=superfine.js.map",
+    "minify": "terser dist/superfine.js -o dist/superfine.js -mc pure_funcs=['Object.defineProperty'] --source-map includeSources,url=superfine.js.map",
     "prepare": "npm run build",
     "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
   },
@@ -31,9 +31,9 @@
     "presets": "env"
   },
   "devDependencies": {
-    "babel-env": "2.4.1",
-    "jest": "^23.3.0",
+    "jest": "^23.6.0",
     "rollup": "^0.62.0",
-    "uglify-js": "^3.4.3"
+    "terser": "^3.13.1",
+    "babel-preset-env": "^1.7.0"
   }
 }
