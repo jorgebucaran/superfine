@@ -15,37 +15,38 @@ export interface VNode<Props = {}> {
  */
 export type Children = VNode | string | number | null
 
-var DEFAULT = 0
-var RECYCLED_NODE = 1
-var TEXT_NODE = 2
+const DEFAULT = 0
+const RECYCLED_NODE = 1
+const TEXT_NODE = 2
 
-var XLINK_NS = "http://www.w3.org/1999/xlink"
-var SVG_NS = "http://www.w3.org/2000/svg"
+const XLINK_NS = "http://www.w3.org/1999/xlink"
+const SVG_NS = "http://www.w3.org/2000/svg"
 
-var EMPTY_OBJECT = {}
-var EMPTY_ARRAY = []
+const EMPTY_OBJECT = {}
+const EMPTY_ARRAY = []
 
-var map = EMPTY_ARRAY.map
-var isArray = Array.isArray
+const map = EMPTY_ARRAY.map
+const isArray = Array.isArray
 
-var merge = function(a, b) {
-  var target = {}
+const merge = function(a, b) {
+  let target = {}
 
-  for (var i in a) target[i] = a[i]
-  for (var i in b) target[i] = b[i]
+  for (let i in a) target[i] = a[i]
+  for (let i in b) target[i] = b[i]
 
   return target
 }
 
-var eventProxy = function(event) {
+const eventProxy = function(event) {
   return event.currentTarget.events[event.type](event)
 }
 
-var updateProperty = function(element, name, lastValue, nextValue, isSvg) {
+const updateProperty = function(element, name, lastValue, nextValue, isSvg) {
   if (name === "key") {
   } else if (name === "style") {
-    for (var i in merge(lastValue, nextValue)) {
-      var style = nextValue == null || nextValue[i] == null ? "" : nextValue[i]
+    for (let i in merge(lastValue, nextValue)) {
+      const style =
+        nextValue == null || nextValue[i] == null ? "" : nextValue[i]
       if (i[0] === "-") {
         element[name].setProperty(i, style)
       } else {
@@ -64,7 +65,7 @@ var updateProperty = function(element, name, lastValue, nextValue, isSvg) {
         element.addEventListener(name, eventProxy)
       }
     } else {
-      var nullOrFalse = nextValue == null || nextValue === false
+      const nullOrFalse = nextValue == null || nextValue === false
 
       if (
         name in element &&
@@ -79,7 +80,7 @@ var updateProperty = function(element, name, lastValue, nextValue, isSvg) {
           element.removeAttribute(name)
         }
       } else {
-        var ns = isSvg && name !== (name = name.replace(/^xlink:?/, ""))
+        const ns = isSvg && name !== (name = name.replace(/^xlink:?/, ""))
         if (ns) {
           if (nullOrFalse) {
             element.removeAttributeNS(XLINK_NS, name)
@@ -98,33 +99,33 @@ var updateProperty = function(element, name, lastValue, nextValue, isSvg) {
   }
 }
 
-var createElement = function(node, lifecycle, isSvg) {
-  var element =
+const createElement = function(node, lifecycle, isSvg) {
+  const element =
     node.type === TEXT_NODE
       ? document.createTextNode(node.name)
       : (isSvg = isSvg || node.name === "svg")
       ? document.createElementNS(SVG_NS, node.name)
       : document.createElement(node.name)
 
-  var props = node.props
+  const props = node.props
   if (props.oncreate) {
     lifecycle.push(function() {
       props.oncreate(element)
     })
   }
 
-  for (var i = 0, length = node.children.length; i < length; i++) {
+  for (let i = 0, length = node.children.length; i < length; i++) {
     element.appendChild(createElement(node.children[i], lifecycle, isSvg))
   }
 
-  for (var name in props) {
+  for (let name in props) {
     updateProperty(element, name, null, props[name], isSvg)
   }
 
   return (node.element = element)
 }
 
-var updateElement = function(
+const updateElement = function(
   element,
   lastProps,
   nextProps,
@@ -132,7 +133,7 @@ var updateElement = function(
   isSvg,
   isRecycled
 ) {
-  for (var name in merge(lastProps, nextProps)) {
+  for (const name in merge(lastProps, nextProps)) {
     if (
       (name === "value" || name === "checked"
         ? element[name]
@@ -142,7 +143,7 @@ var updateElement = function(
     }
   }
 
-  var cb = isRecycled ? nextProps.oncreate : nextProps.onupdate
+  const cb = isRecycled ? nextProps.oncreate : nextProps.onupdate
   if (cb != null) {
     lifecycle.push(function() {
       cb(element, lastProps)
@@ -150,12 +151,12 @@ var updateElement = function(
   }
 }
 
-var removeChildren = function(node) {
-  for (var i = 0, length = node.children.length; i < length; i++) {
+const removeChildren = function(node) {
+  for (let i = 0, length = node.children.length; i < length; i++) {
     removeChildren(node.children[i])
   }
 
-  var cb = node.props.ondestroy
+  const cb = node.props.ondestroy
   if (cb != null) {
     cb(node.element)
   }
@@ -163,12 +164,12 @@ var removeChildren = function(node) {
   return node.element
 }
 
-var removeElement = function(parent, node) {
-  var remove = function() {
+const removeElement = function(parent, node) {
+  const remove = function() {
     parent.removeChild(removeChildren(node))
   }
 
-  var cb = node.props && node.props.onremove
+  const cb = node.props && node.props.onremove
   if (cb != null) {
     cb(node.element, remove)
   } else {
@@ -176,14 +177,14 @@ var removeElement = function(parent, node) {
   }
 }
 
-var getKey = function(node) {
+const getKey = function(node) {
   return node == null ? null : node.key
 }
 
-var createKeyMap = function(children, start, end) {
-  var out = {}
-  var key
-  var node
+const createKeyMap = function(children, start, end) {
+  let out = {}
+  let key
+  let node
 
   for (; start <= end; start++) {
     if ((key = (node = children[start]).key) != null) {
@@ -194,7 +195,7 @@ var createKeyMap = function(children, start, end) {
   return out
 }
 
-var patchElement = function(
+const patchElement = function(
   parent,
   element,
   lastNode,
@@ -212,7 +213,7 @@ var patchElement = function(
       element.nodeValue = nextNode.name
     }
   } else if (lastNode == null || lastNode.name !== nextNode.name) {
-    var newElement = parent.insertBefore(
+    const newElement = parent.insertBefore(
       createElement(nextNode, lifecycle, isSvg),
       element
     )
@@ -230,18 +231,18 @@ var patchElement = function(
       lastNode.type === RECYCLED_NODE
     )
 
-    var savedNode
-    var childNode
+    let savedNode
+    let childNode
 
-    var lastKey
-    var lastChildren = lastNode.children
-    var lastChStart = 0
-    var lastChEnd = lastChildren.length - 1
+    let lastKey
+    const lastChildren = lastNode.children
+    let lastChStart = 0
+    let lastChEnd = lastChildren.length - 1
 
-    var nextKey
-    var nextChildren = nextNode.children
-    var nextChStart = 0
-    var nextChEnd = nextChildren.length - 1
+    let nextKey
+    const nextChildren = nextNode.children
+    let nextChStart = 0
+    let nextChEnd = nextChildren.length - 1
 
     while (nextChStart <= nextChEnd && lastChStart <= lastChEnd) {
       lastKey = getKey(lastChildren[lastChStart])
@@ -293,8 +294,8 @@ var patchElement = function(
         removeElement(element, lastChildren[lastChStart++])
       }
     } else {
-      var lastKeyed = createKeyMap(lastChildren, lastChStart, lastChEnd)
-      var nextKeyed = {}
+      const lastKeyed = createKeyMap(lastChildren, lastChStart, lastChEnd)
+      const nextKeyed = {}
 
       while (nextChStart <= nextChEnd) {
         lastKey = getKey((childNode = lastChildren[lastChStart]))
@@ -371,7 +372,7 @@ var patchElement = function(
         }
       }
 
-      for (var key in lastKeyed) {
+      for (let key in lastKeyed) {
         if (nextKeyed[key] == null) {
           removeElement(element, lastKeyed[key])
         }
@@ -382,7 +383,7 @@ var patchElement = function(
   return (nextNode.element = element)
 }
 
-var createVNode = function(name, props, children, element, key, type) {
+const createVNode = function(name, props, children, element, key, type) {
   return {
     name: name,
     props: props,
@@ -393,17 +394,17 @@ var createVNode = function(name, props, children, element, key, type) {
   }
 }
 
-var createTextVNode = function(text, element?) {
+const createTextVNode = function(text, element?) {
   return createVNode(text, EMPTY_OBJECT, EMPTY_ARRAY, element, null, TEXT_NODE)
 }
 
-var recycleChild = function(element) {
+const recycleChild = function(element) {
   return element.nodeType === 3 // Node.TEXT_NODE
     ? createTextVNode(element.nodeValue, element)
     : recycleElement(element)
 }
 
-var recycleElement = function(element) {
+const recycleElement = function(element) {
   return createVNode(
     element.nodeName.toLowerCase(),
     EMPTY_OBJECT,
@@ -418,7 +419,7 @@ var recycleElement = function(element) {
  * Superfine SSR: Create a virtual DOM from your container to patch it on client side
  * @param container a DOM element
  */
-export var recycle = function(container: Element): VNode {
+export const recycle = function(container: Element): VNode {
   return recycleElement(container.children[0])
 }
 
@@ -428,12 +429,12 @@ export var recycle = function(container: Element): VNode {
  * @param nextNode the next vdom node
  * @param container a DOM element where the new vdom will be rendered
  */
-export var patch = function(
+export const patch = function(
   lastNode: VNode,
   nextNode: VNode,
   container: Element
 ): VNode {
-  var lifecycle = []
+  let lifecycle = []
 
   patchElement(container, container.children[0], lastNode, nextNode, lifecycle)
 
@@ -448,14 +449,14 @@ export var patch = function(
  * @param props HTML props, SVG props, DOM events, lifecycle events and keys
  * @param rest child nodes for an element
  */
-export var h = function(
+export const h = function(
   name: string | Function,
   props?: any,
   ...rest: Array<Children | Children[]>
 ): VNode {
-  var node
-  var children = []
-  var length = arguments.length
+  let node
+  let children = []
+  let length = arguments.length
 
   if ((props = props == null ? {} : props).children != null) {
     if (rest.length <= 0) {
