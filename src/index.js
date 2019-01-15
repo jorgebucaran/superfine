@@ -82,12 +82,11 @@ var updateProperty = function(element, name, lastValue, nextValue, isSvg) {
 }
 
 var createElement = function(node, lifecycle, isSvg) {
-  var element =
-    node.type === TEXT_NODE
-      ? document.createTextNode(node.name)
-      : (isSvg = isSvg || node.name === "svg")
-        ? document.createElementNS(SVG_NS, node.name)
-        : document.createElement(node.name)
+  var element = node.element || (node.type === TEXT_NODE
+    ? document.createTextNode(node.name)
+    : (isSvg = isSvg || node.name === "svg")
+      ? document.createElementNS(SVG_NS, node.name)
+      : document.createElement(node.name))
 
   var props = node.props
   if (props.oncreate) {
@@ -437,7 +436,16 @@ export var h = function(name, props) {
     }
   }
 
+  const isElement = name instanceof HTMLElement
+
   return typeof name === "function"
     ? name(props, (props.children = children))
-    : createVNode(name, props, children, null, props.key, DEFAULT)
+    : createVNode(
+        isElement ? name.nodeName.toLowerCase() : name,
+        props,
+        children,
+        isElement ? name : null,
+        props.key,
+        DEFAULT
+      )
 }

@@ -389,3 +389,17 @@ test("name as a function (JSX component syntax)", () => {
     h("div", { key: "key" }, ["bar"])
   )
 })
+
+test("name as a HTMLElement", () => {
+
+  const element = document.createElement("input")
+  const view = name => h(element, { name }, "bar")
+  expect(view("foo")).toEqual(h(element, { name: "foo" }, ["bar"]))
+
+  let node = patch(null, view("foo"), document.body)
+  const input = document.querySelector("input")
+  expect(input).toEqual(element)
+  patch(node, view("bar"), document.body)
+  expect(input).toEqual(element)
+
+})
