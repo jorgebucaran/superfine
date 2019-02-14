@@ -2,7 +2,7 @@
 
 [![Travis CI](https://img.shields.io/travis/jorgebucaran/superfine/master.svg)](https://travis-ci.org/jorgebucaran/superfine)
 [![Codecov](https://img.shields.io/codecov/c/github/jorgebucaran/superfine/master.svg)](https://codecov.io/gh/jorgebucaran/superfine)
-[![Gzip Size](https://img.badgesize.io/https://unpkg.com/superfine?compression=gzip)](https://bundlephobia.com/result?p=superfine)
+[![Gzip Size](https://badgen.net/bundlephobia/minzip/superfine)](https://bundlephobia.com/result?p=superfine)
 [![npm](https://img.shields.io/npm/v/superfine.svg)](https://www.npmjs.org/package/superfine)
 [![Slack](https://hyperappjs.herokuapp.com/badge.svg)](https://hyperappjs.herokuapp.com "#superfine")
 
