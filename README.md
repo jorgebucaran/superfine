@@ -49,7 +49,7 @@ Every time something needs to change in our application, we create a new virtual
 patch(lastNode, nextNode, container)
 ```
 
-So, what's a virtual DOM? A virtual DOM is a description of what a DOM should look like using a tree of plain JavaScript objects called virtual nodes. By comparing the old and new virtual DOM we can update the parts of the DOM that actually changed instead of rendering the entire document from scratch.
+So, what's a virtual DOM? A virtual DOM is a description of what a DOM should look like using a tree of JavaScript objects called virtual nodes. By comparing the old and new virtual DOM we can update the parts of the DOM that changed instead of rendering the entire document from scratch.
 
 The [next example](https://codepen.io/jorgebucaran/pen/KoqxGW) shows how to use HTML attributes to synchronize the text of an input with a heading element. Superfine nodes support [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute), [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events), [keys](#keys) and [lifecycle events](#lifecycle-events).
 
@@ -112,7 +112,7 @@ export const Jumbotron = text =>
 
 ## Keys
 
-Keys help identify nodes every time we update the DOM. By setting the `key` property on a virtual node, you declare that the node should correspond to a particular DOM element. This allow us to re-order the element into its new position, if the position changed, rather than risk destroying it. Keys must be unique among sibling-nodes.
+Keys help identify nodes every time we update the DOM. By setting the `key` property on a virtual node, you declare that the node should correspond to a particular DOM element. This allows us to re-order the element into its new position, if the position changed, rather than risk destroying it. Keys must be unique among sibling nodes.
 
 ```jsx
 import { h } from "superfine"
@@ -134,11 +134,11 @@ Keys are not registered on the top-level node of your view. If you are toggling 
 
 ## Lifecycle Events
 
-You can be notified when elements managed by the virtual DOM are created, updated or removed via lifecycle events. Use them for animation, wrapping third party libraries, cleaning up resources, etc.
+You can be notified when elements managed by the virtual DOM are created, updated or removed via lifecycle events. Use them for animation, wrapping third-party libraries, cleaning up resources, etc.
 
 ### `oncreate`
 
-This event is fired after the element is created and attached to the DOM. Use it to manipulate the DOM node directly, make a network request, etc.
+This event fires after the element is created and attached to the DOM. Use it to manipulate the DOM node directly, make a network request, etc.
 
 ```jsx
 import { h } from "superfine"
@@ -153,7 +153,7 @@ export const Textbox = placeholder =>
 
 ### `onupdate`
 
-This event is fired every time we try to update the element attributes. Use the `lastProps` attributes inside the event handler to check if any attributes changed or not.
+This event fires every time we try to update the element attributes. Use the `lastProps` attributes inside the event handler to check if any attributes changed or not.
 
 ```jsx
 import { h } from "superfine"
@@ -178,7 +178,7 @@ export const Editor = value =>
 
 ### `onremove`
 
-This event is fired before the element is removed from the DOM. Use it to create slide/fade out animations. Call `done` inside the function to remove the element. This event is not called in its child elements. See [`ondestroy`](#ondestroy) for that.
+This event fires before the element is removed from the DOM. Use it to create slide/fade out animations. Call `done` inside the function to remove the element. This event is not called in its child elements. See [`ondestroy`](#ondestroy) for that.
 
 ```jsx
 import { h } from "superfine"
@@ -198,7 +198,7 @@ export const MessageWithFadeout = message =>
 
 ### `ondestroy`
 
-This event is fired after the element has been removed from the DOM, either directly or as a result of a parent being removed. Use it for invalidating timers, canceling a network request, removing global events listeners, etc.
+This event fires after the element has been removed from the DOM, either directly or as a result of a parent being removed. Use it for invalidating timers, canceling a network request, removing global events listeners, etc.
 
 ```jsx
 import { h } from "superfine"
@@ -235,7 +235,7 @@ export const Camera = onerror =>
 
 ### Functional Components
 
-A functional component is a function that returns a virtual node. Unlike React, Inferno, etc., Superfine components are stateless — class based components can't be created. Everything the component needs to work must be passed on via the `props` argument, which consists of the component attributes and children.
+A functional component is a function that returns a virtual node. Unlike React, Inferno, etc., Superfine components are stateless. Everything a component needs to operate must be passed on via the `props` argument, which consists of the component attributes and children.
 
 ```jsx
 import { h, patch } from "superfine"
@@ -255,4 +255,4 @@ let lastNode = patch(
 
 ## License
 
-Superfine is MIT licensed. See [LICENSE](/LICENSE.md).
+[MIT](/LICENSE.md)
