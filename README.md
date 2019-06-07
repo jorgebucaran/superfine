@@ -224,7 +224,7 @@ export const Camera = onerror =>
 {
   "plugins": [
     [
-      "transform-react-jsx",
+      "@babel/plugin-transform-react-jsx",
       {
         "pragma": "h"
       }
