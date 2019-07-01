@@ -1,11 +1,9 @@
 language: node_js
 node_js:
-  - "10"
-  - "9"
-  - "8"
-
-env:
-  - NODE_ENV=development
+  - 6
+  - 8
+  - 10
+  - 12
 
 before_install:
   - npm i -g codecov

@@ -1,12 +1,14 @@
 {
   "name": "superfine",
-  "description": "Minimal view layer for creating declarative web user interfaces.",
+  "description": "Minimal view layer for building web interfaces.",
   "version": "6.0.1",
   "main": "dist/superfine.js",
   "module": "src/index.js",
+  "unpkg": "src/index.js",
+  "browser": "src/index.js",
+  "typings": "superfine.d.ts",
   "license": "MIT",
   "repository": "jorgebucaran/superfine",
-  "types": "superfine.d.ts",
   "files": [
     "src",
     "dist",
@@ -20,20 +22,19 @@
     "vdom"
   ],
   "scripts": {
-    "test": "jest --coverage --no-cache",
-    "build": "npm run bundle && npm run minify",
-    "bundle": "rollup -i src/index.js -o dist/superfine.js -m -f umd -n superfine",
-    "minify": "terser dist/superfine.js -o dist/superfine.js -mc pure_funcs=['Object.defineProperty'] --source-map includeSources,url=superfine.js.map",
+    "test": "nyc -i esm -r lcov testmatrix test/*.test.js && nyc report",
+    "build": "export pkg=$npm_package_name; npm run bundle && npm run minify",
+    "bundle": "rollup -i src/index.js -o dist/$pkg.js --no-esModule -mf umd -n $pkg",
+    "minify": "terser dist/$pkg.js -o dist/$pkg.js -mc --source-map includeSources,url=$pkg.js.map",
     "prepare": "npm run build",
-    "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
-  },
-  "babel": {
-    "presets": "env"
+    "release": "v=$npm_package_version; npm run build && git commit -am $v && git tag -s $v -m $v && git push && git push --tags && npm publish"
   },
   "devDependencies": {
-    "jest": "^23.6.0",
-    "rollup": "^0.62.0",
-    "terser": "^3.13.1",
-    "babel-preset-env": "^1.7.0"
+    "esm": "^3.2.25",
+    "nyc": "^14.1.1",
+    "testmatrix": "^0.1.2",
+    "jsdom": "15.1.1",
+    "rollup": "*",
+    "terser": "*"
   }
 }
