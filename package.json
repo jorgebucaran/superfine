@@ -1,7 +1,7 @@
 {
   "name": "superfine",
   "description": "Minimal view layer for building web interfaces.",
-  "version": "6.0.1",
+  "version": "7.0.0",
   "main": "dist/superfine.js",
   "module": "src/index.js",
   "unpkg": "src/index.js",
