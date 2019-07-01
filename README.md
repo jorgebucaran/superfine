@@ -84,9 +84,7 @@ Taking it up a notch; the next example shows a heading syncronized to a text fie
 </script>
 ```
 
-This is the same approach as before with `setState`. Essentially, we want to hide the details of `patch` and make it easy to update the app. What's new here is that we're working with an input event rather than a click.
-
-Spend some time thinking about how the view reacts to changes in the state. How about a different approach where we dispatch messages to a central store to update the state a-la Elm/Redux? This example is also available to [try online](https://cdpn.io/vqRZmy).
+Spend some time thinking about how the view reacts to changes in the state. How about a different approach where dispatching messages to a central store updates the state a-la Elm/Redux? Let's work on that next (or [try it online](https://cdpn.io/vqRZmy)).
 
 ```html
 <script type="module">
@@ -121,7 +119,7 @@ Spend some time thinking about how the view reacts to changes in the state. How 
 
 Why `init` instead of `state`, or `update` rather than `actions` is beside the point. Moving `start` to a different module would be a good idea too, but having it all in the same file helps to see the big picture.
 
-Now it's your turn. You can find more examples [here](https://codepen.io/search/pens?q=superfine&page=1&order=superviewularity&depth=everything&show_forks=false). If you get stuck and need help, please file an issue, and we'll try to help you out. Good luck!
+Now it's your turn to take Superfine for a spin. If you get stuck and need help, please file an issue, and we'll try to help you out. Looking for more examples? [Here you go](https://codepen.io/search/pens?q=superfine&page=1&order=superviewularity&depth=everything&show_forks=false). Good luck!
 
 ## Attributes
 
