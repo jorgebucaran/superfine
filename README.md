@@ -24,7 +24,7 @@ Fear the build step? Import Superfine in a `<script>` tag as a module. Don't wor
 </script>
 ```
 
-How about we start with something simple: let's create a counter that can go up or down ([try it online](https://cdpn.io/LdLJXX)).
+How about we start with something simple: let's create a counter that can go up or down. You can copy and paste the following code in a new HTML file or go ahead and [try it here](https://cdpn.io/LdLJXX).
 
 ```html
 <!DOCTYPE html>
@@ -40,8 +40,8 @@ How about we start with something simple: let's create a counter that can go up 
           node,
           h("div", {}, [
             h("h1", {}, state),
-            h("button", { onClick: () => setState(state - 1) }, "-"),
-            h("button", { onClick: () => setState(state + 1) }, "+")
+            h("button", { onclick: () => setState(state - 1) }, "-"),
+            h("button", { onclick: () => setState(state + 1) }, "+")
           ])
         )
       }
@@ -55,9 +55,11 @@ How about we start with something simple: let's create a counter that can go up 
 </html>
 ```
 
-The `patch` function updates the DOM to match the view. When creating a view, we use the `h` function to describe a tree of nodes. The view isn't made out of real DOM nodes, but a virtual DOM: a representation of how the DOM should look using plain objects. By comparing the old and new virtual DOM we're able to patch only the parts of the DOM that changed instead of rendering the entire document from scratch.
+The hyperscript function `h` describes our view as a tree of nodes. The view isn't made out of real DOM nodes, but a virtual DOM: a representation of how the DOM should look using a plain object.
 
-Taking it up a notch; the next example shows a heading syncronized to a text field ([try it online](https://cdpn.io/KoqxGW)).
+The `patch` function updates the DOM to match our view. By comparing the old and new virtual DOM we can patch only the parts of the DOM that changed instead of rendering the entire document from scratch. Profit!
+
+The next example uses the same custom `setState` approach to show a heading syncronized to a text field ([try it here](https://cdpn.io/KoqxGW)).
 
 ```html
 <script type="module">
@@ -73,7 +75,7 @@ Taking it up a notch; the next example shows a heading syncronized to a text fie
         h("input", {
           type: "text",
           value: state,
-          onInput: e => setState(e.target.value),
+          oninput: e => setState(e.target.value),
           autofocus: true
         })
       ])
@@ -84,7 +86,7 @@ Taking it up a notch; the next example shows a heading syncronized to a text fie
 </script>
 ```
 
-Spend some time thinking about how the view reacts to changes in the state. How about a different approach where dispatching messages to a central store updates the state a-la Elm/Redux? Let's work on that next (or [try it online](https://cdpn.io/vqRZmy)).
+Spend some time thinking about how the view reacts to changes in the state. Rather than anonymous state updates, how about dispatching messages to a central store a-la Elm/Redux? Let's work on that next (or [try it here](https://cdpn.io/vqRZmy)).
 
 ```html
 <script type="module">
@@ -107,8 +109,8 @@ Spend some time thinking about how the view reacts to changes in the state. How 
     view: app =>
       h("div", {}, [
         h("h1", {}, app.getState()),
-        h("button", { onClick: () => app.dispatch("DOWN") }, "-"),
-        h("button", { onClick: () => app.dispatch("UP") }, "+")
+        h("button", { onclick: () => app.dispatch("DOWN") }, "-"),
+        h("button", { onclick: () => app.dispatch("UP") }, "+")
       ]),
     update: (state, msg) =>
       msg === "DOWN" ? state - 1 : msg === "UP" ? state + 1 : 0,
@@ -117,9 +119,9 @@ Spend some time thinking about how the view reacts to changes in the state. How 
 </script>
 ```
 
-Why `init` instead of `state`, or `update` rather than `actions` is beside the point. Moving `start` to a different module would be a good idea too, but having it all in the same file helps to see the big picture.
+Why `init` instead of `state`, or `update` rather than `actions` is not important. Moving `start` to a different module would be a good idea too, but having it all in the same file helps to see the big picture.
 
-Now it's your turn to take Superfine for a spin. If you get stuck and need help, please file an issue, and we'll try to help you out. Looking for more examples? [Here you go](https://codepen.io/search/pens?q=superfine&page=1&order=superviewularity&depth=everything&show_forks=false). Good luck!
+Now it's your turn to take Superfine for a spin. If you get stuck and need help, please file an issue, and we'll try to help you out. In particular, the [Hyperapp Slack](https://hyperappjs.herokuapp.com) is a great way to get help quickly. Looking for more examples? [Here you go](https://codepen.io/search/pens?q=superfine&page=1&order=superviewularity&depth=everything&show_forks=false).
 
 ## Attributes
 
@@ -143,6 +145,26 @@ export const ImageGallery = images =>
       })
     ])
   )
+```
+
+## API
+
+### `h(name, props, children)`
+
+Create virtual DOM nodes. `h` takes three arguments: a string that specifies the name of the node; an object of HTML or SVG properties, and array of child nodes (or a string for text nodes).
+
+```js
+const link = h("div", { class: "container" }, [
+  h("a", { href: "#" }, "Click Me")
+])
+```
+
+### `patch(node, vdom)`
+
+Render a virtual DOM. `patch` takes a DOM node, a virtual DOM, and returns the updated DOM node.
+
+```js
+const main = patch(document.getElementById("main"), h("h1", {}, "Superfine!"))
 ```
 
 ## License
