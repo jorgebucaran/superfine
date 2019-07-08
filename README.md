@@ -1,4 +1,4 @@
-# Superfine [![npm](https://img.shields.io/npm/v/superfine.svg?label=&color=0080FF)](https://github.com/jorgebucaran/superfine/releases/latest) [![Travis CI](https://img.shields.io/travis/jorgebucaran/superfine/master.svg?label=)](https://travis-ci.org/jorgebucaran/superfine)
+# Superfine [![npm](https://img.shields.io/npm/v/superfine.svg?label=&color=0080FF)](https://github.com/jorgebucaran/superfine/releases/latest)
 
 Superfine is a minimal view layer for building web interfaces. Think React without the framework—no flux, hooks, or components—just the bare minimum to survive. Mix it with your favorite state management solution, or use it standalone for maximum flexibility.
 
