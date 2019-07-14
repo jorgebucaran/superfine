@@ -20,7 +20,7 @@ Fear the build step? Import Superfine in a `<script>` tag as a module. Don't wor
 
 ```html
 <script type="module">
-  import { h, app } from "https://unpkg.com/superfine"
+  import { h, patch } from "https://unpkg.com/superfine"
 </script>
 ```
 
