@@ -6,3 +6,5 @@ yarn.lock
 .vscode
 coverage
 .nyc_output
+dist
+
