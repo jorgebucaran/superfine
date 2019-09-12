@@ -262,13 +262,17 @@ var recycleNode = function(node) {
 export var patch = function(node, vdom) {
   return (
     ((node = patchNode(
-      node.parentNode,
       node,
-      node.vdom || recycleNode(node),
+      node.children[0],
+      node.vdom,
       vdom
     )).vdom = vdom),
     node
   )
+}
+
+export var recycle = function(container) {
+  return recycleNode(container.children[0])
 }
 
 export var h = function(name, props) {
