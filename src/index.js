@@ -1,5 +1,6 @@
 var RECYCLED_NODE = 1
 var TEXT_NODE = 3
+var DOCUMENT_FRAGMENT_NODE = 11
 var EMPTY_OBJ = {}
 var EMPTY_ARR = []
 var map = EMPTY_ARR.map
@@ -261,7 +262,12 @@ var recycleNode = function(node) {
 
 export var patch = function(node, vdom) {
   return (
-    ((node = patchNode(
+    ((node = node.nodeType === DOCUMENT_FRAGMENT_NODE ? patchNode(
+      node,
+      node.children[0],
+      node.vdom,
+      vdom
+    ) : patchNode(
       node.parentNode,
       node,
       node.vdom || recycleNode(node),
