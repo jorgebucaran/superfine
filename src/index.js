@@ -1,8 +1,6 @@
 var RECYCLED_NODE = 1
 var TEXT_NODE = 3
-var EMPTY_OBJ = {}
-var EMPTY_ARR = []
-var map = EMPTY_ARR.map
+var map = [].map
 var isArray = Array.isArray
 
 var merge = function(a, b) {
@@ -243,7 +241,7 @@ var createVNode = function(name, props, children, node, key, type) {
 }
 
 var createTextVNode = function(value, node) {
-  return createVNode(value, EMPTY_OBJ, EMPTY_ARR, node, null, TEXT_NODE)
+  return createVNode(value, {}, [], node, null, TEXT_NODE)
 }
 
 var recycleNode = function(node) {
@@ -251,7 +249,7 @@ var recycleNode = function(node) {
     ? createTextVNode(node.nodeValue, node)
     : createVNode(
         node.nodeName.toLowerCase(),
-        EMPTY_OBJ,
+        {},
         map.call(node.childNodes, recycleNode),
         node,
         null,
@@ -287,7 +285,7 @@ export var h = function(name, props) {
     }
   }
 
-  props = props || EMPTY_OBJ
+  props = props || {}
 
   return typeof name === "function"
     ? name(props, children)
