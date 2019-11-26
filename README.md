@@ -147,6 +147,51 @@ export const ImageGallery = images =>
   )
 ```
 
+## Lifecycle Events
+
+Superfine doesn't concern itself with lifecycle events &ndash; instead you can use the `MutationObserver` to provide `oncreate` and `ondestroy` events using the following approach:
+
+```javascript
+import { h, patch } from "https://unpkg.com/superfine";
+
+const node = document.getElementById("app");
+
+// Setup the MutationObserver to detect DOM additions and removals.
+const observer = new MutationObserver((mutationsList, observer) => {
+  mutationsList.forEach(mutation => {
+    mutation.addedNodes.forEach(node => {
+      const event = new CustomEvent("create");
+      node.dispatchEvent(event);
+    });
+
+    mutation.removedNodes.forEach(node => {
+      const event = new CustomEvent("destroy");
+      node.dispatchEvent(event);
+    });
+  });
+});
+
+observer.observe(node, { childList: true, subtree: true });
+
+const setState = state => {
+  patch(
+    node,
+    h("div", {}, [
+      h(
+        "h1",
+        {
+          oncreate: ({ target }) => console.log(target),
+          ondestroy: ({ target }) => console.log(target)
+        },
+        `Hello ${state}!`
+      )
+    ])
+  );
+};
+
+setState("Superfine");
+```
+
 ## API
 
 ### `h(name, props, children)`
