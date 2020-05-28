@@ -1,6 +1,8 @@
 # Superfine [![npm](https://img.shields.io/npm/v/superfine.svg?label=&color=0080FF)](https://github.com/jorgebucaran/superfine/releases/latest)
 
-Superfine is a minimal view layer for building web interfaces. Think React without the framework—no flux, hooks, or components—just the bare minimum to survive. Mix it with your favorite state management solution, or use it standalone for maximum flexibility.
+Superfine is a minimal view layer for building web interfaces. Think Hyperapp without the framework—no state management, effects, or subscriptions—just the absolute bare minimum. Mix it with your own custom-flavored state management solution, or use it standalone for maximum flexibility.
+
+Is anything wrong, unclear, missing? Help us [improve this page](https://github.com/jorgebucaran/hyperapp/fork)!
 
 ## Quickstart
 
@@ -13,14 +15,14 @@ npm i superfine
 Then with a module bundler like [Parcel](https://parceljs.org) or [Webpack](https://webpack.js.org), import what you need and start using it in your project.
 
 ```js
-import { h, patch } from "superfine"
+import { h, text, patch } from "superfine"
 ```
 
-Fear the build step? Import Superfine in a `<script>` tag as a module. Don't worry; modules are supported in all evergreen, self-updating desktop, and mobile browsers.
+Fear the build step? Import it in a `<script>` tag as a module. Don't worry; modules are supported in all evergreen, self-updating desktop, and mobile browsers.
 
 ```html
 <script type="module">
-  import { h, patch } from "https://unpkg.com/superfine"
+  import { h, text, patch } from "https://unpkg.com/superfine"
 </script>
 ```
 
@@ -31,53 +33,53 @@ How about we start with something simple: let's create a counter that can go up 
 <html lang="en">
   <head>
     <script type="module">
-      import { h, patch } from "https://unpkg.com/superfine"
+      import { h, text, patch } from "https://unpkg.com/superfine"
 
       const node = document.getElementById("app")
 
-      const setState = state => {
+      const update = (state) => {
         patch(
           node,
-          h("div", {}, [
-            h("h1", {}, state),
-            h("button", { onclick: () => setState(state - 1) }, "-"),
-            h("button", { onclick: () => setState(state + 1) }, "+")
+          h("main", {}, [
+            h("h1", {}, text(state)),
+            h("button", { onclick: () => update(state - 1) }, text("-")),
+            h("button", { onclick: () => update(state + 1) }, text("+")),
           ])
         )
       }
 
-      setState(0) // Start app with initial state.
+      update(0) // Here we go!
     </script>
   </head>
   <body>
-    <div id="app"></div>
+    <main id="app"></main>
   </body>
 </html>
 ```
 
-The hyperscript function `h` describes our view as a tree of nodes. The view isn't made out of real DOM nodes, but a virtual DOM: a representation of how the DOM should look using a plain object.
+We use the hyperscript function `h` to describe our view as a tree of nodes along with `text` for text nodes. The view isn't made out of real DOM nodes, but a virtual DOM: a representation of how the DOM should look using a plain object.
 
-The `patch` function updates the DOM to match our view. By comparing the old and new virtual DOM we can patch only the parts of the DOM that changed instead of rendering the entire document from scratch. Profit!
+To update the real DOM so it matches our view, we use the `patch` function. By comparing the old and specified new virtual DOM we can touch only the parts of the DOM that changed instead of rendering the entire document from scratch! 🙌
 
-The next example uses the same custom `setState` approach to show a heading syncronized to a text field ([try it here](https://cdpn.io/KoqxGW)).
+Here's a more interesting example. We're going to recycle our previous `setState` approach, but show you how to syncronize an element to a text field: [try it here](https://cdpn.io/KoqxGW).
 
 ```html
 <script type="module">
-  import { h, patch } from "https://unpkg.com/superfine"
+  import { h, text, patch } from "https://unpkg.com/superfine"
 
   const node = document.getElementById("app")
 
-  const setState = state => {
+  const setState = (state) => {
     patch(
       node,
-      h("div", {}, [
-        h("h1", {}, state),
+      h("main", {}, [
+        h("h1", {}, text(state)),
         h("input", {
           type: "text",
           value: state,
-          oninput: e => setState(e.target.value),
-          autofocus: true
-        })
+          oninput: (e) => setState(e.target.value),
+          autofocus: true,
+        }),
       ])
     )
   }
@@ -86,46 +88,43 @@ The next example uses the same custom `setState` approach to show a heading sync
 </script>
 ```
 
-Spend some time thinking about how the view reacts to changes in the state. Rather than anonymous state updates, how about dispatching messages to a central store a-la Elm/Redux? Let's work on that next (or [try it here](https://cdpn.io/vqRZmy)).
+Spend some time thinking about how the view reacts to changes in the state. But rather than anonymous state updates, how about sending messages to a central store a-la Elm/Redux? Let's work on that. As usual, you can [try it first here](https://cdpn.io/vqRZmy).
 
 ```html
 <script type="module">
-  import { h, patch } from "https://unpkg.com/superfine"
+  import { h, text, patch } from "https://unpkg.com/superfine"
 
-  const start = ({ init, view, update, node }, state) => {
-    const setState = newState => {
-      state = newState
-      node = patch(node, view(app))
+  const start = (
+    { init, view, update, node },
+    state,
+    send = (action) => next(update(state, action)),
+    next = (newState) => {
+      node = patch(node, view((state = newState), send))
     }
-    const app = {
-      dispatch: name => setState(update(state, name)),
-      getState: () => state
-    }
-    setState(init())
-  }
+  ) => next(init())
 
   start({
     init: () => 0,
-    view: app =>
-      h("div", {}, [
-        h("h1", {}, app.getState()),
-        h("button", { onclick: () => app.dispatch("DOWN") }, "-"),
-        h("button", { onclick: () => app.dispatch("UP") }, "+")
+    view: (state, send) =>
+      h("main", {}, [
+        h("h1", {}, text(state)),
+        h("button", { onclick: () => send("DOWN") }, text("-")),
+        h("button", { onclick: () => send("UP") }, text("+")),
       ]),
-    update: (state, msg) =>
-      msg === "DOWN" ? state - 1 : msg === "UP" ? state + 1 : 0,
-    node: document.getElementById("app")
+    update: (state, action) =>
+      action === "DOWN" ? state - 1 : action === "UP" ? state + 1 : 0,
+    node: document.getElementById("app"),
   })
 </script>
 ```
 
-Why `init` instead of `state`, or `update` rather than `actions` is not important. Moving `start` to a different module would be a good idea too, but having it all in the same file helps to see the big picture.
+Can you feel the Redux vibes? Exporting `start` from its own specialized module would be a good idea too, but having it all in the same file helps us see the big picture.
 
 Now it's your turn to take Superfine for a spin. If you get stuck and need help, please file an issue, and we'll try to help you out. In particular, the [Hyperapp Slack](https://hyperappjs.herokuapp.com) is a great way to get help quickly. Looking for more examples? [Here you go](https://codepen.io/search/pens?q=superfine&page=1&order=superviewularity&depth=everything&show_forks=false).
 
 ## Attributes
 
-Superfine nodes can use all your favorite [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute), [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events), and also [keys](#keys).
+Superfine nodes can use any [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute), [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events), and [keys](#keys).
 
 ### Keys
 
@@ -136,13 +135,13 @@ Keys help identify nodes whenever we update the DOM. By setting the `key` proper
 ```js
 import { h } from "superfine"
 
-export const ImageGallery = images =>
+export const ImageGallery = (images) =>
   images.map(({ hash, url, description }) =>
     h("li", { key: hash }, [
       h("img", {
         src: url,
-        alt: description
-      })
+        alt: description,
+      }),
     ])
   )
 ```
@@ -155,8 +154,16 @@ Create virtual DOM nodes. `h` takes three arguments: a string that specifies the
 
 ```js
 const link = h("div", { class: "container" }, [
-  h("a", { href: "#" }, "Click Me")
+  h("a", { href: "#" }, text("Click Me")),
 ])
+```
+
+### `text(text)`
+
+Create a virtual text node.
+
+```js
+const movieTitle = h("h1", {}, text("The Shining"))
 ```
 
 ### `patch(node, vdom)`
@@ -164,7 +171,10 @@ const link = h("div", { class: "container" }, [
 Render a virtual DOM. `patch` takes a DOM node, a virtual DOM, and returns the updated DOM node.
 
 ```js
-const main = patch(document.getElementById("main"), h("h1", {}, "Superfine!"))
+const main = patch(
+  document.getElementById("main"),
+  h("h1", {}, text("Superfine!"))
+)
 ```
 
 ## License

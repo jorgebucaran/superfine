@@ -1,19 +1,21 @@
-import { h, patch } from "../src/index.js"
-import { equal } from "testmatrix"
+import { h, text, patch } from "../src/index.js"
+import { t, equal } from "testmatrix"
 import { JSDOM } from "jsdom"
 
-const html = `<div id="app"></div>`
+global.document = new JSDOM(`<div id="app"></div>`).window.document
 
-global.document = new JSDOM(html).window.document
-
-export default {
-  superfine: [
-    {
-      name: "first test",
-      assert: equal,
-      actual: patch(document.getElementById("app"), h("div", {}, "hello"))
-        .outerHTML,
-      expected: `<div id="app">hello</div>`
-    }
-  ]
-}
+export default [
+  t("superfine", [
+    t("h", []),
+    t("text", []),
+    t("patch", [
+      t("first test", [
+        equal(
+          patch(document.getElementById("app"), h("div", {}, text("hello")))
+            .outerHTML,
+          `<div id="app">hello</div>`
+        ),
+      ]),
+    ]),
+  ]),
+]

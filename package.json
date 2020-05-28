@@ -2,17 +2,14 @@
   "name": "superfine",
   "description": "Minimal view layer for building web interfaces.",
   "version": "7.0.0",
-  "main": "dist/superfine.js",
-  "module": "src/index.js",
-  "unpkg": "src/index.js",
-  "browser": "src/index.js",
-  "typings": "superfine.d.ts",
+  "type": "module",
+  "main": "src/index.js",
+  "unpkg": "dist/index.js",
   "license": "MIT",
   "repository": "jorgebucaran/superfine",
   "files": [
     "src",
-    "dist",
-    "superfine.d.ts"
+    "dist"
   ],
   "author": "Jorge Bucaran",
   "keywords": [
@@ -22,18 +19,18 @@
     "vdom"
   ],
   "scripts": {
-    "test": "nyc -i esm -r lcov testmatrix test/*.test.js && nyc report",
-    "build": "export pkg=$npm_package_name; npm run bundle && npm run minify",
-    "bundle": "rollup -i src/index.js -o dist/$pkg.js --no-esModule -mf umd -n $pkg",
+    "test": "nyc -r lcov testmatrix test/test.js && nyc report",
+    "build": "export pkg=$npm_package_name; npm run bundle && npm run minify && npm run unpkg",
+    "unpkg": "terser $npm_package_main -o $npm_package_unpkg -mc --source-map includeSources,url=$npm_package_main.map --module",
+    "bundle": "rollup -i $npm_package_main -o dist/$pkg.js --no-strict -mf iife -n $pkg",
     "minify": "terser dist/$pkg.js -o dist/$pkg.js -mc --source-map includeSources,url=$pkg.js.map",
     "prepare": "npm run build",
     "release": "v=$npm_package_version; npm run build && git commit -am $v && git tag -s $v -m $v && git push && git push --tags && npm publish"
   },
   "devDependencies": {
-    "esm": "^3.2.25",
-    "nyc": "^14.1.1",
+    "nyc": "^15.0.1",
     "testmatrix": "^0.1.2",
-    "jsdom": "15.1.1",
+    "jsdom": "16.2.2",
     "rollup": "*",
     "terser": "*"
   }

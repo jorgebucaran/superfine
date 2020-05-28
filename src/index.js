@@ -1,80 +1,33 @@
-var RECYCLED_NODE = 1
-var TEXT_NODE = 3
+var IS_RECYCLED = 1
+var IS_TEXT = 3
 var EMPTY_OBJ = {}
 var EMPTY_ARR = []
-var map = EMPTY_ARR.map
-var isArray = Array.isArray
+var SVG_NS = "http://www.w3.org/2000/svg"
 
-var merge = function(a, b) {
-  var out = {}
-
-  for (var k in a) out[k] = a[k]
-  for (var k in b) out[k] = b[k]
-
-  return out
+var listener = function (event) {
+  this.tag[event.type](event)
 }
 
-var listener = function(event) {
-  this.handlers[event.type](event)
-}
+var getKey = (vdom) => (vdom == null ? null : vdom.key)
 
-var patchProperty = function(node, key, oldValue, newValue, isSvg) {
-  if (key === "key") {
-  } else if (key[0] === "o" && key[1] === "n") {
-    if (
-      !((node.handlers || (node.handlers = {}))[
-        (key = key.slice(2).toLowerCase())
-      ] = newValue)
-    ) {
-      node.removeEventListener(key, listener)
-    } else if (!oldValue) {
-      node.addEventListener(key, listener)
-    }
-  } else if (!isSvg && key !== "list" && key in node) {
-    node[key] = newValue == null ? "" : newValue
-  } else if (newValue == null || newValue === false) {
-    node.removeAttribute(key)
-  } else {
-    node.setAttribute(key, newValue)
-  }
-}
+var vdomify = (vdom) =>
+  vdom !== true && vdom !== false && vdom ? vdom : text("")
 
-var createNode = function(vnode, isSvg) {
-  var node =
-    vnode.type === TEXT_NODE
-      ? document.createTextNode(vnode.name)
-      : (isSvg = isSvg || vnode.name === "svg")
-      ? document.createElementNS("http://www.w3.org/2000/svg", vnode.name)
-      : document.createElement(vnode.name)
-  var props = vnode.props
-
-  for (var k in props) {
-    patchProperty(node, k, null, props[k], isSvg)
-  }
-
-  for (var i = 0, len = vnode.children.length; i < len; i++) {
-    node.appendChild(createNode(vnode.children[i], isSvg))
-  }
-
-  return (vnode.node = node)
-}
-
-var getKey = function(vnode) {
-  return vnode == null ? null : vnode.key
-}
-
-var patchNode = function(parent, node, oldVNode, newVNode, isSvg) {
-  if (oldVNode === newVNode) {
+var patchDom = (parent, dom, oldVdom, newVdom, isSvg) => {
+  if (oldVdom === newVdom) {
   } else if (
-    oldVNode != null &&
-    oldVNode.type === TEXT_NODE &&
-    newVNode.type === TEXT_NODE
+    oldVdom != null &&
+    oldVdom.tag === IS_TEXT &&
+    newVdom.tag === IS_TEXT
   ) {
-    if (oldVNode.name !== newVNode.name) node.nodeValue = newVNode.name
-  } else if (oldVNode == null || oldVNode.name !== newVNode.name) {
-    node = parent.insertBefore(createNode(newVNode, isSvg), node)
-    if (oldVNode != null) {
-      parent.removeChild(oldVNode.node)
+    if (oldVdom.type !== newVdom.type) dom.nodeValue = newVdom.type
+  } else if (oldVdom == null || oldVdom.type !== newVdom.type) {
+    dom = parent.insertBefore(
+      createNode((newVdom = vdomify(newVdom)), isSvg),
+      dom
+    )
+    if (oldVdom != null) {
+      parent.removeChild(oldVdom.dom)
     }
   } else {
     var tmpVKid
@@ -83,26 +36,26 @@ var patchNode = function(parent, node, oldVNode, newVNode, isSvg) {
     var oldKey
     var newKey
 
-    var oldVProps = oldVNode.props
-    var newVProps = newVNode.props
+    var oldProps = oldVdom.props
+    var newProps = newVdom.props
 
-    var oldVKids = oldVNode.children
-    var newVKids = newVNode.children
+    var oldVKids = oldVdom.children
+    var newVKids = newVdom.children
 
     var oldHead = 0
     var newHead = 0
     var oldTail = oldVKids.length - 1
     var newTail = newVKids.length - 1
 
-    isSvg = isSvg || newVNode.name === "svg"
+    isSvg = isSvg || newVdom.type === "svg"
 
-    for (var i in merge(oldVProps, newVProps)) {
+    for (var i in { ...oldProps, ...newProps }) {
       if (
         (i === "value" || i === "selected" || i === "checked"
-          ? node[i]
-          : oldVProps[i]) !== newVProps[i]
+          ? dom[i]
+          : oldProps[i]) !== newProps[i]
       ) {
-        patchProperty(node, i, oldVProps[i], newVProps[i], isSvg)
+        patchProp(dom, i, oldProps[i], newProps[i], isSvg)
       }
     }
 
@@ -114,11 +67,11 @@ var patchNode = function(parent, node, oldVNode, newVNode, isSvg) {
         break
       }
 
-      patchNode(
-        node,
-        oldVKids[oldHead].node,
+      patchDom(
+        dom,
+        oldVKids[oldHead].dom,
         oldVKids[oldHead++],
-        newVKids[newHead++],
+        (newVKids[newHead] = vdomify(newVKids[newHead++])),
         isSvg
       )
     }
@@ -131,28 +84,28 @@ var patchNode = function(parent, node, oldVNode, newVNode, isSvg) {
         break
       }
 
-      patchNode(
-        node,
-        oldVKids[oldTail].node,
+      patchDom(
+        dom,
+        oldVKids[oldTail].dom,
         oldVKids[oldTail--],
-        newVKids[newTail--],
+        (newVKids[newTail] = vdomify(newVKids[newTail--])),
         isSvg
       )
     }
 
     if (oldHead > oldTail) {
       while (newHead <= newTail) {
-        node.insertBefore(
-          createNode(newVKids[newHead++], isSvg),
-          (oldVKid = oldVKids[oldHead]) && oldVKid.node
+        dom.insertBefore(
+          createNode((newVKids[newHead] = vdomify(newVKids[newHead++])), isSvg),
+          (oldVKid = oldVKids[oldHead]) && oldVKid.dom
         )
       }
     } else if (newHead > newTail) {
       while (oldHead <= oldTail) {
-        node.removeChild(oldVKids[oldHead++].node)
+        dom.removeChild(oldVKids[oldHead++].dom)
       }
     } else {
-      for (var i = oldHead, keyed = {}, newKeyed = {}; i <= oldTail; i++) {
+      for (var keyed = {}, newKeyed = {}, i = oldHead; i <= oldTail; i++) {
         if ((oldKey = oldVKids[i].key) != null) {
           keyed[oldKey] = oldVKids[i]
         }
@@ -160,24 +113,24 @@ var patchNode = function(parent, node, oldVNode, newVNode, isSvg) {
 
       while (newHead <= newTail) {
         oldKey = getKey((oldVKid = oldVKids[oldHead]))
-        newKey = getKey(newVKids[newHead])
+        newKey = getKey((newVKids[newHead] = vdomify(newVKids[newHead])))
 
         if (
           newKeyed[oldKey] ||
           (newKey != null && newKey === getKey(oldVKids[oldHead + 1]))
         ) {
           if (oldKey == null) {
-            node.removeChild(oldVKid.node)
+            dom.removeChild(oldVKid.dom)
           }
           oldHead++
           continue
         }
 
-        if (newKey == null || oldVNode.type === RECYCLED_NODE) {
+        if (newKey == null || oldVdom.tag === IS_RECYCLED) {
           if (oldKey == null) {
-            patchNode(
-              node,
-              oldVKid && oldVKid.node,
+            patchDom(
+              dom,
+              oldVKid && oldVKid.dom,
               oldVKid,
               newVKids[newHead],
               isSvg
@@ -187,23 +140,23 @@ var patchNode = function(parent, node, oldVNode, newVNode, isSvg) {
           oldHead++
         } else {
           if (oldKey === newKey) {
-            patchNode(node, oldVKid.node, oldVKid, newVKids[newHead], isSvg)
+            patchDom(dom, oldVKid.dom, oldVKid, newVKids[newHead], isSvg)
             newKeyed[newKey] = true
             oldHead++
           } else {
             if ((tmpVKid = keyed[newKey]) != null) {
-              patchNode(
-                node,
-                node.insertBefore(tmpVKid.node, oldVKid && oldVKid.node),
+              patchDom(
+                dom,
+                dom.insertBefore(tmpVKid.dom, oldVKid && oldVKid.dom),
                 tmpVKid,
                 newVKids[newHead],
                 isSvg
               )
               newKeyed[newKey] = true
             } else {
-              patchNode(
-                node,
-                oldVKid && oldVKid.node,
+              patchDom(
+                dom,
+                oldVKid && oldVKid.dom,
                 null,
                 newVKids[newHead],
                 isSvg
@@ -216,80 +169,90 @@ var patchNode = function(parent, node, oldVNode, newVNode, isSvg) {
 
       while (oldHead <= oldTail) {
         if (getKey((oldVKid = oldVKids[oldHead++])) == null) {
-          node.removeChild(oldVKid.node)
+          dom.removeChild(oldVKid.dom)
         }
       }
 
       for (var i in keyed) {
         if (newKeyed[i] == null) {
-          node.removeChild(keyed[i].node)
+          dom.removeChild(keyed[i].dom)
         }
       }
     }
   }
 
-  return (newVNode.node = node)
+  return (newVdom.dom = dom)
 }
 
-var createVNode = function(name, props, children, node, key, type) {
-  return {
-    name: name,
-    props: props,
-    children: children,
-    node: node,
-    type: type,
-    key: key
-  }
-}
+var createNode = (vdom, isSvg) => {
+  var props = vdom.props
+  var dom =
+    vdom.tag === IS_TEXT
+      ? document.createTextNode(vdom.type)
+      : (isSvg = isSvg || vdom.type === "svg")
+      ? document.createElementNS(SVG_NS, vdom.type, { is: props.is })
+      : document.createElement(vdom.type, { is: props.is })
 
-var createTextVNode = function(value, node) {
-  return createVNode(value, EMPTY_OBJ, EMPTY_ARR, node, null, TEXT_NODE)
-}
+  for (var k in props) patchProp(dom, k, null, props[k], isSvg)
 
-var recycleNode = function(node) {
-  return node.nodeType === TEXT_NODE
-    ? createTextVNode(node.nodeValue, node)
-    : createVNode(
-        node.nodeName.toLowerCase(),
-        EMPTY_OBJ,
-        map.call(node.childNodes, recycleNode),
-        node,
-        null,
-        RECYCLED_NODE
-      )
-}
-
-export var patch = function(node, vdom) {
-  return (
-    ((node = patchNode(
-      node.parentNode,
-      node,
-      node.vdom || recycleNode(node),
-      vdom
-    )).vdom = vdom),
-    node
+  vdom.children.map((kid) =>
+    dom.appendChild(createNode((kid = vdomify(kid)), isSvg))
   )
+
+  return (vdom.dom = dom)
 }
 
-export var h = function(name, props) {
-  for (var vnode, rest = [], children = [], i = arguments.length; i-- > 2; ) {
-    rest.push(arguments[i])
-  }
-
-  while (rest.length > 0) {
-    if (isArray((vnode = rest.pop()))) {
-      for (var i = vnode.length; i-- > 0; ) {
-        rest.push(vnode[i])
-      }
-    } else if (vnode === false || vnode === true || vnode == null) {
-    } else {
-      children.push(typeof vnode === "object" ? vnode : createTextVNode(vnode))
+var patchProp = (dom, key, oldVal, newVal, isSvg) => {
+  if (key === "key") {
+  } else if (key[0] === "o" && key[1] === "n") {
+    if (!((dom.tag || (dom.tag = {}))[(key = key.slice(2))] = newVal)) {
+      dom.removeEventListener(key, listener)
+    } else if (!oldVal) {
+      dom.addEventListener(key, listener)
     }
+  } else if (!isSvg && key !== "list" && key !== "form" && key in dom) {
+    dom[key] = newVal == null ? "" : newVal
+  } else if (newVal == null || newVal === false) {
+    dom.removeAttribute(key)
+  } else {
+    dom.setAttribute(key, newVal)
   }
-
-  props = props || EMPTY_OBJ
-
-  return typeof name === "function"
-    ? name(props, children)
-    : createVNode(name, props, children, null, props.key)
 }
+
+var recycle = (dom) =>
+  dom.nodeType === IS_TEXT
+    ? text(dom.nodeValue, dom)
+    : newVdom(
+        dom.nodeName.toLowerCase(),
+        EMPTY_OBJ,
+        EMPTY_ARR.map.call(dom.childNodes, recycle),
+        dom,
+        null,
+        IS_RECYCLED
+      )
+
+var newVdom = (type, props, children, dom, key, tag) => ({
+  type,
+  props,
+  children,
+  dom,
+  tag,
+  key,
+})
+
+export var patch = (dom, vdom) => (
+  ((dom = patchDom(dom.parentNode, dom, dom.v || recycle(dom), vdom)).v = vdom),
+  dom
+)
+
+export var text = (value, dom) =>
+  newVdom(value, EMPTY_OBJ, EMPTY_ARR, dom, null, IS_TEXT)
+
+export var h = (type, props, ch) =>
+  newVdom(
+    type,
+    props,
+    Array.isArray(ch) ? ch : ch == null ? EMPTY_ARR : [ch],
+    null,
+    props.key
+  )
