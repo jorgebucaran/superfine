@@ -1,6 +1,6 @@
 # Superfine
 
-Superfine is a minimal view layer for building web interfaces. Think [Hyperapp](https://github.com/jorgebucaran/hyperapp) without the framework—no state machines, effects, or subscriptions—just the absolute bare minimum. Mix it with your own custom-flavored state management solution, or use it standalone for maximum flexibility.
+Superfine is a minimal view layer for building web interfaces. Think [Hyperapp](https://github.com/jorgebucaran/hyperapp) without the framework—no state machines, effects, or subscriptions—just the absolute bare minimum. Mix it with your own custom-flavor of state management, or use it standalone for maximum flexibility.
 
 Here's the first example to get you started. You can copy and paste the following code in a new HTML file and open it in a browser or [try it here](https://cdpn.io/LdLJXX)—no bundlers or compilers!
 
