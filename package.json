@@ -3,35 +3,34 @@
   "description": "Minimal view layer for building web interfaces.",
   "version": "7.0.0",
   "type": "module",
-  "main": "src/index.js",
-  "unpkg": "dist/index.js",
+  "main": "superfine.js",
   "license": "MIT",
   "repository": "jorgebucaran/superfine",
+  "homepage": "https://git.io/superfine",
   "files": [
-    "src",
-    "dist"
+    "*.js*"
   ],
   "author": "Jorge Bucaran",
+  "funding": "https://github.com/sponsors/jorgebucaran",
   "keywords": [
     "superfine",
     "frontend",
-    "virtual dom",
-    "vdom"
+    "library",
+    "vdom",
+    "web",
+    "app",
+    "ui"
   ],
   "scripts": {
-    "test": "nyc -r lcov testmatrix test/test.js && nyc report",
-    "build": "export pkg=$npm_package_name; npm run bundle && npm run minify && npm run unpkg",
-    "unpkg": "terser $npm_package_main -o $npm_package_unpkg -mc --source-map includeSources,url=$npm_package_main.map --module",
-    "bundle": "rollup -i $npm_package_main -o dist/$pkg.js --no-strict -mf iife -n $pkg",
-    "minify": "terser dist/$pkg.js -o dist/$pkg.js -mc --source-map includeSources,url=$pkg.js.map",
-    "prepare": "npm run build",
-    "release": "v=$npm_package_version; npm run build && git commit -am $v && git tag -s $v -m $v && git push && git push --tags && npm publish"
+    "test": "c8 twist test/*.js",
+    "minify": "terser index.js -o $npm_package_name.js -mc --source-map url=$npm_package_name.js.map --module",
+    "commit": "npm run build && git commit -am $msg && git tag -s $msg -m $msg && git push && git push --tags",
+    "release": "npm run minify && msg=$npm_package_version npm run commit && npm publish"
   },
   "devDependencies": {
-    "nyc": "^15.0.1",
-    "testmatrix": "^0.1.2",
-    "jsdom": "16.2.2",
-    "rollup": "*",
-    "terser": "*"
+    "c8": "*",
+    "twist": "*",
+    "terser": "*",
+    "jsdom": "*"
   }
 }
