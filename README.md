@@ -1,32 +1,8 @@
-# Superfine [![npm](https://img.shields.io/npm/v/superfine.svg?label=&color=0080FF)](https://github.com/jorgebucaran/superfine/releases/latest)
+# Superfine
 
-Superfine is a minimal view layer for building web interfaces. Think Hyperapp without the framework—no state management, effects, or subscriptions—just the absolute bare minimum. Mix it with your own custom-flavored state management solution, or use it standalone for maximum flexibility.
+Superfine is a minimal view layer for building web interfaces. Think [Hyperapp]() without the framework—no state machines, effects, or subscriptions—just the absolute bare minimum. Mix it with your own custom-flavored state management solution, or use it standalone for maximum flexibility.
 
-Is anything wrong, unclear, missing? Help us [improve this page](https://github.com/jorgebucaran/hyperapp/fork)!
-
-## Quickstart
-
-Install Superfine with npm or Yarn:
-
-```console
-npm i superfine
-```
-
-Then with a module bundler like [Parcel](https://parceljs.org) or [Webpack](https://webpack.js.org), import what you need and start using it in your project.
-
-```js
-import { h, text, patch } from "superfine"
-```
-
-Fear the build step? Import it in a `<script>` tag as a module. Don't worry; modules are supported in all evergreen, self-updating desktop, and mobile browsers.
-
-```html
-<script type="module">
-  import { h, text, patch } from "https://unpkg.com/superfine"
-</script>
-```
-
-How about we start with something simple: let's create a counter that can go up or down. You can copy and paste the following code in a new HTML file or go ahead and [try it here](https://cdpn.io/LdLJXX).
+Here's the first example to get you started. You can copy and paste the following code in a new HTML file and open it in a browser or [try it here](https://cdpn.io/LdLJXX)—no bundlers or compilers!
 
 ```html
 <!DOCTYPE html>
@@ -37,18 +13,18 @@ How about we start with something simple: let's create a counter that can go up 
 
       const node = document.getElementById("app")
 
-      const update = (state) => {
+      const setState = (state) => {
         patch(
           node,
           h("main", {}, [
             h("h1", {}, text(state)),
-            h("button", { onclick: () => update(state - 1) }, text("-")),
-            h("button", { onclick: () => update(state + 1) }, text("+")),
+            h("button", { onclick: () => setState(state - 1) }, text("-")),
+            h("button", { onclick: () => setState(state + 1) }, text("+")),
           ])
         )
       }
 
-      update(0) // Here we go!
+      setState(0)
     </script>
   </head>
   <body>
@@ -57,11 +33,9 @@ How about we start with something simple: let's create a counter that can go up 
 </html>
 ```
 
-We use the hyperscript function `h` to describe our view as a tree of nodes along with `text` for text nodes. The view isn't made out of real DOM nodes, but a virtual DOM: a representation of how the DOM should look using a plain object.
+We use the hyperscript function `h` and `text` to create the "virtual" DOM nodes that represent how our DOM should look. The view isn't made out of real DOM nodes, but a bunch of plain objects. Every time we want to change the state, we use `patch` under the hood to update the real DOM. By comparing the old and new virtual DOM, we're able to update only the parts of the DOM that actually changed instead of rendering the entire document from scratch! 🙌
 
-To update the real DOM so it matches our view, we use the `patch` function. By comparing the old and specified new virtual DOM we can touch only the parts of the DOM that changed instead of rendering the entire document from scratch! 🙌
-
-Here's a more interesting example. We're going to recycle our previous `setState` approach, but show you how to syncronize an element to a text field: [try it here](https://cdpn.io/KoqxGW).
+Here's another example that shows how to synchronize an element to a text field: [try it here](https://cdpn.io/KoqxGW).
 
 ```html
 <script type="module">
@@ -88,39 +62,39 @@ Here's a more interesting example. We're going to recycle our previous `setState
 </script>
 ```
 
-Spend some time thinking about how the view reacts to changes in the state. But rather than anonymous state updates, how about sending messages to a central store a-la Elm/Redux? Let's work on that. As usual, you can [try it first here](https://cdpn.io/vqRZmy).
+Now, rather than anonymous state updates, how about sending messages to a central store like in Elm or Redux? Let's work on that next. Here's a minimal implementation you can use or remix in your own projects. You can [try it here](https://cdpn.io/vqRZmy).
 
 ```html
 <script type="module">
   import { h, text, patch } from "https://unpkg.com/superfine"
 
-  const start = (
+  const run = (
     { init, view, update, node },
     state,
-    send = (action) => next(update(state, action)),
+    emit = (action) => next(update(state, action)),
     next = (newState) => {
-      node = patch(node, view((state = newState), send))
+      node = patch(node, view((state = newState), emit))
     }
   ) => next(init())
 
-  start({
+  run({
     init: () => 0,
-    view: (state, send) =>
+    view: (state, emit) =>
       h("main", {}, [
         h("h1", {}, text(state)),
-        h("button", { onclick: () => send("DOWN") }, text("-")),
-        h("button", { onclick: () => send("UP") }, text("+")),
+        h("button", { onclick: () => emit("Subtract") }, text("-")),
+        h("button", { onclick: () => emit("Add") }, text("+")),
       ]),
     update: (state, action) =>
-      action === "DOWN" ? state - 1 : action === "UP" ? state + 1 : 0,
+      action === "Subtract" ? state - 1 : action === "Add" ? state + 1 : 0,
     node: document.getElementById("app"),
   })
 </script>
 ```
 
-Can you feel the Redux vibes? Exporting `start` from its own specialized module would be a good idea too, but having it all in the same file helps us see the big picture.
+Can you feel the Redux vibes? Now it's your turn to take Superfine for a spin. If you get stuck and need help, please file an issue, and we'll try to help you out. In particular, the [Hyperapp Slack](https://hyperappjs.herokuapp.com) is a fine way to get help quickly.
 
-Now it's your turn to take Superfine for a spin. If you get stuck and need help, please file an issue, and we'll try to help you out. In particular, the [Hyperapp Slack](https://hyperappjs.herokuapp.com) is a great way to get help quickly. Looking for more examples? [Here you go](https://codepen.io/search/pens?q=superfine&page=1&order=superviewularity&depth=everything&show_forks=false).
+Looking for more examples? [Try this search](https://codepen.io/search/pens?q=superfine&page=1&order=superviewularity&depth=everything&show_forks=false).
 
 ## Attributes
 
