@@ -1,24 +1,56 @@
-var IS_RECYCLED = 1
-var IS_TEXT = 3
+var SSR_NODE = 1
+var TEXT_NODE = 3
 var EMPTY_OBJ = {}
 var EMPTY_ARR = []
 var SVG_NS = "http://www.w3.org/2000/svg"
+
+var getKey = (vdom) => (vdom == null ? vdom : vdom.key)
 
 var listener = function (event) {
   this.tag[event.type](event)
 }
 
-var getKey = (vdom) => (vdom == null ? null : vdom.key)
+var patchProp = (dom, key, oldVal, newVal, isSvg) => {
+  if (key === "key") {
+  } else if (key[0] === "o" && key[1] === "n") {
+    if (!((dom.tag || (dom.tag = {}))[(key = key.slice(2))] = newVal)) {
+      dom.removeEventListener(key, listener)
+    } else if (!oldVal) {
+      dom.addEventListener(key, listener)
+    }
+  } else if (!isSvg && key !== "list" && key !== "form" && key in dom) {
+    dom[key] = newVal == null ? "" : newVal
+  } else if (newVal == null || newVal === false) {
+    dom.removeAttribute(key)
+  } else {
+    dom.setAttribute(key, newVal)
+  }
+}
 
-var vdomify = (vdom) =>
-  vdom !== true && vdom !== false && vdom ? vdom : text("")
+var createNode = (vdom, isSvg) => {
+  var props = vdom.props
+  var dom =
+    vdom.tag === TEXT_NODE
+      ? document.createTextNode(vdom.type)
+      : (isSvg = isSvg || vdom.type === "svg")
+      ? document.createElementNS(SVG_NS, vdom.type, { is: props.is })
+      : document.createElement(vdom.type, { is: props.is })
+
+  for (var k in props) patchProp(dom, k, null, props[k], isSvg)
+
+  vdom.children.map((kid) =>
+    dom.appendChild(createNode((kid = vdomify(kid)), isSvg))
+  )
+
+  return (vdom.dom = dom)
+}
 
 var patchDom = (parent, dom, oldVdom, newVdom, isSvg) => {
   if (oldVdom === newVdom) {
   } else if (
     oldVdom != null &&
-    oldVdom.tag === IS_TEXT &&
-    newVdom.tag === IS_TEXT
+    oldVdom.tag === TEXT_NODE &&
+    newVdom.tag === TEXT_NODE
   ) {
     if (oldVdom.type !== newVdom.type) dom.nodeValue = newVdom.type
   } else if (oldVdom == null || oldVdom.type !== newVdom.type) {
@@ -30,22 +62,18 @@ var patchDom = (parent, dom, oldVdom, newVdom, isSvg) => {
       parent.removeChild(oldVdom.dom)
     }
   } else {
-    var tmpVKid
-    var oldVKid
-
-    var oldKey
-    var newKey
-
-    var oldProps = oldVdom.props
-    var newProps = newVdom.props
-
-    var oldVKids = oldVdom.children
-    var newVKids = newVdom.children
-
-    var oldHead = 0
-    var newHead = 0
-    var oldTail = oldVKids.length - 1
-    var newTail = newVKids.length - 1
+    var tmpVKid,
+      oldVKid,
+      oldKey,
+      newKey,
+      oldProps = oldVdom.props,
+      newProps = newVdom.props,
+      oldVKids = oldVdom.children,
+      newVKids = newVdom.children,
+      oldHead = 0,
+      newHead = 0,
+      oldTail = oldVKids.length - 1,
+      newTail = newVKids.length - 1
 
     isSvg = isSvg || newVdom.type === "svg"
 
@@ -126,7 +154,7 @@ var patchDom = (parent, dom, oldVdom, newVdom, isSvg) => {
           continue
         }
 
-        if (newKey == null || oldVdom.tag === IS_RECYCLED) {
+        if (newKey == null || oldVdom.tag === SSR_NODE) {
           if (oldKey == null) {
             patchDom(
               dom,
@@ -184,75 +212,48 @@ var patchDom = (parent, dom, oldVdom, newVdom, isSvg) => {
   return (newVdom.dom = dom)
 }
 
-var createNode = (vdom, isSvg) => {
-  var props = vdom.props
-  var dom =
-    vdom.tag === IS_TEXT
-      ? document.createTextNode(vdom.type)
-      : (isSvg = isSvg || vdom.type === "svg")
-      ? document.createElementNS(SVG_NS, vdom.type, { is: props.is })
-      : document.createElement(vdom.type, { is: props.is })
+var vdomify = (vdom) =>
+  vdom !== true && vdom !== false && vdom ? vdom : text("")
 
-  for (var k in props) patchProp(dom, k, null, props[k], isSvg)
-
-  vdom.children.map((kid) =>
-    dom.appendChild(createNode((kid = vdomify(kid)), isSvg))
-  )
-
-  return (vdom.dom = dom)
-}
-
-var patchProp = (dom, key, oldVal, newVal, isSvg) => {
-  if (key === "key") {
-  } else if (key[0] === "o" && key[1] === "n") {
-    if (!((dom.tag || (dom.tag = {}))[(key = key.slice(2))] = newVal)) {
-      dom.removeEventListener(key, listener)
-    } else if (!oldVal) {
-      dom.addEventListener(key, listener)
-    }
-  } else if (!isSvg && key !== "list" && key !== "form" && key in dom) {
-    dom[key] = newVal == null ? "" : newVal
-  } else if (newVal == null || newVal === false) {
-    dom.removeAttribute(key)
-  } else {
-    dom.setAttribute(key, newVal)
-  }
-}
-
-var recycle = (dom) =>
-  dom.nodeType === IS_TEXT
+var recycleNode = (dom) =>
+  dom.nodeType === TEXT_NODE
     ? text(dom.nodeValue, dom)
-    : newVdom(
+    : createVdom(
         dom.nodeName.toLowerCase(),
         EMPTY_OBJ,
-        EMPTY_ARR.map.call(dom.childNodes, recycle),
+        EMPTY_ARR.map.call(dom.childNodes, recycleNode),
         dom,
         null,
-        IS_RECYCLED
+        SSR_NODE
       )
 
-var newVdom = (type, props, children, dom, key, tag) => ({
+var createVdom = (type, props, children, dom, key, tag) => ({
   type,
   props,
   children,
   dom,
-  tag,
   key,
+  tag,
 })
 
-export var patch = (dom, vdom) => (
-  ((dom = patchDom(dom.parentNode, dom, dom.v || recycle(dom), vdom)).v = vdom),
-  dom
-)
-
 export var text = (value, dom) =>
-  newVdom(value, EMPTY_OBJ, EMPTY_ARR, dom, null, IS_TEXT)
+  createVdom(value, EMPTY_OBJ, EMPTY_ARR, dom, null, TEXT_NODE)
 
 export var h = (type, props, ch) =>
-  newVdom(
+  createVdom(
     type,
     props,
     Array.isArray(ch) ? ch : ch == null ? EMPTY_ARR : [ch],
     null,
     props.key
   )
+
+export var patch = (dom, vdom) => (
+  ((dom = patchDom(
+    dom.parentNode,
+    dom,
+    dom.v || recycleNode(dom),
+    vdom
+  )).v = vdom),
+  dom
+)
