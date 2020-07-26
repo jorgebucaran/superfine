@@ -1,6 +1,6 @@
 # Superfine
 
-Superfine is a minimal view layer for building web interfaces. Think [Hyperapp]() without the framework—no state machines, effects, or subscriptions—just the absolute bare minimum. Mix it with your own custom-flavored state management solution, or use it standalone for maximum flexibility.
+Superfine is a minimal view layer for building web interfaces. Think [Hyperapp](https://github.com/jorgebucaran/hyperapp) without the framework—no state machines, effects, or subscriptions—just the absolute bare minimum. Mix it with your own custom-flavored state management solution, or use it standalone for maximum flexibility.
 
 Here's the first example to get you started. You can copy and paste the following code in a new HTML file and open it in a browser or [try it here](https://cdpn.io/LdLJXX)—no bundlers or compilers!
 
@@ -58,7 +58,7 @@ Here's another example that shows how to synchronize an element to a text field:
 </script>
 ```
 
-Now, rather than anonymous state updates, how about sending messages to a central store like in Elm or Redux? No dependencies? Here's a minimal implementation you can use or remix in your own projects. [Try it here](https://cdpn.io/vqRZmy).
+Now, rather than anonymous state updates, how about sending messages to a central store like in Hyperapp? No problem. Here's a minimal implementation you can use or remix in your own projects. [Try it here](https://cdpn.io/vqRZmy).
 
 ```html
 <script type="module">
@@ -82,13 +82,14 @@ Now, rather than anonymous state updates, how about sending messages to a centra
         h("button", { onclick: () => emit("Add") }, text("+")),
       ]),
     update: (state, action) =>
-      action === "Subtract" ? state - 1 : action === "Add" ? state + 1 : 0,
+      action === "Subtract" ? state - 1 : 
+      action === "Add" ? state + 1 : 0,
     node: document.getElementById("app"),
   })
 </script>
 ```
 
-Can you feel the Redux vibes? Now it's your turn to take Superfine for a spin. If you get stuck and need help, please file an issue, and we'll try to help you out. You can also hop on the [Hyperapp Slack](https://hyperappjs.herokuapp.com) if you want to chat!
+Can you feel the Hyperapp vibes? Now it's your turn to take Superfine for a spin. If you get stuck or would like to ask a question, please [file an issue](https://github.com/jorgebucaran/superfine/issues/new), and we'll try to help you out.
 
 Looking for more examples? [Try this search](https://codepen.io/search/pens?q=superfine&page=1&order=superviewularity&depth=everything&show_forks=false).
 
