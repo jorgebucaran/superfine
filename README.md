@@ -2,7 +2,7 @@
 
 Superfine is a minimal view layer for building web interfaces. Think [Hyperapp](https://github.com/jorgebucaran/hyperapp) without the framework—no state machines, effects, or subscriptions—just the absolute bare minimum. Mix it with your own custom-flavor of state management, or use it standalone for maximum flexibility.
 
-Here's the first example to get you started. You can copy and paste the following code in a new HTML file and open it in a browser or [try it here](https://cdpn.io/LdLJXX)—no bundlers or compilers!
+Here's the first example to get you started. You can copy-paste the following code in a new HTML file and open it in a browser or [try it here](https://cdpn.io/LdLJXX)—it works without bundlers or compilers!
 
 ```html
 <!DOCTYPE html>
@@ -31,9 +31,9 @@ Here's the first example to get you started. You can copy and paste the followin
 </html>
 ```
 
-We use the `h` and `text` functions to create the "virtual" DOM nodes that represent how our DOM should look. The view isn't made out of real DOM nodes, but a bunch of plain objects. Whenever we change the state, we use `patch` under the hood to update the real DOM. By comparing the old and new virtual DOM, we're able to update only the parts of the DOM that actually changed instead of rendering everything from scratch! 🙌
+We use the `h` and `text` functions to create the "virtual" DOM nodes that represent how our DOM should look. The view isn't made out of real DOM nodes, but a bunch of plain objects. Whenever we change the state, we use `patch` under the hood to update the DOM. By comparing the old and new virtual DOM, we're able to update only the parts of the DOM that actually changed instead of rendering everything from scratch! 🙌
 
-Here's another example that shows how to synchronize an element to a text field: [try it here](https://cdpn.io/KoqxGW)—it'so easy!
+In the next example we show how to synchronize an text node and a text field: [try it here](https://cdpn.io/KoqxGW)—it'so easy!
 
 ```html
 <script type="module">
@@ -58,7 +58,7 @@ Here's another example that shows how to synchronize an element to a text field:
 </script>
 ```
 
-Now, rather than anonymous state updates, how about sending messages to a central store like in Hyperapp? No problem. Here's a minimal implementation you can use or remix in your own projects. [Try it here](https://cdpn.io/vqRZmy).
+Now, rather than anonymous state updates, how about dispatching messages to a central store like in Elm or Redux? No problem. Here's a minimal implementation you can use and remix in your own projects. [Try it here](https://cdpn.io/vqRZmy).
 
 ```html
 <script type="module">
@@ -83,13 +83,13 @@ Now, rather than anonymous state updates, how about sending messages to a centra
       ]),
     update: (state, action) =>
       action === "Subtract" ? state - 1 : 
-      action === "Add" ? state + 1 : 0,
+      action === "Add" ? state + 1 : state,
     node: document.getElementById("app"),
   })
 </script>
 ```
 
-Can you feel the Hyperapp vibes? Now it's your turn to take Superfine for a spin. If you get stuck or would like to ask a question, please [file an issue](https://github.com/jorgebucaran/superfine/issues/new), and we'll try to help you out.
+Feeling the Redux vibes? Now it's your turn to take Superfine for a spin. Experiment with the code a bit. Can you add a button that resets the counter back to zero? How about multiple counters? If you get stuck or would like to ask a question, please [file an issue](https://github.com/jorgebucaran/superfine/issues/new), and we'll try our best to help you out.
 
 Looking for more examples? [Try this search](https://codepen.io/search/pens?q=superfine&page=1&order=superviewularity&depth=everything&show_forks=false).
 
@@ -153,8 +153,6 @@ Superfine nodes can use any [HTML attributes](https://developer.mozilla.org/en-U
 ### Keys
 
 Keys help identify nodes whenever we update the DOM. By setting the `key` property on a virtual node, you declare that the node should correspond to a particular DOM element. This allows us to re-order the element into its new position, if the position changed, rather than risk destroying it. Keys must be unique among sibling nodes.
-
-> **Warning**: Keys are not registered on the top-level node of your view. If you are toggling the top-level view, and you must use keys, wrap them in an unchanging node.
 
 ```js
 import { h } from "superfine"
