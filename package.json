@@ -8,7 +8,8 @@
   "repository": "jorgebucaran/superfine",
   "homepage": "https://github.com/jorgebucaran/superfine",
   "files": [
-    "*.js*"
+    "*.js",
+    "*.js.map"
   ],
   "author": "Jorge Bucaran",
   "funding": "https://github.com/sponsors/jorgebucaran",
