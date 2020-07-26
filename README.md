@@ -11,11 +11,9 @@ Here's the first example to get you started. You can copy and paste the followin
     <script type="module">
       import { h, text, patch } from "https://unpkg.com/superfine"
 
-      const node = document.getElementById("app")
-
       const setState = (state) => {
         patch(
-          node,
+          document.getElementById("app"),
           h("main", {}, [
             h("h1", {}, text(state)),
             h("button", { onclick: () => setState(state - 1) }, text("-")),
@@ -33,19 +31,17 @@ Here's the first example to get you started. You can copy and paste the followin
 </html>
 ```
 
-We use the hyperscript function `h` and `text` to create the "virtual" DOM nodes that represent how our DOM should look. The view isn't made out of real DOM nodes, but a bunch of plain objects. Every time we want to change the state, we use `patch` under the hood to update the real DOM. By comparing the old and new virtual DOM, we're able to update only the parts of the DOM that actually changed instead of rendering the entire document from scratch! 🙌
+We use the `h` and `text` functions to create the "virtual" DOM nodes that represent how our DOM should look. The view isn't made out of real DOM nodes, but a bunch of plain objects. Whenever we change the state, we use `patch` under the hood to update the real DOM. By comparing the old and new virtual DOM, we're able to update only the parts of the DOM that actually changed instead of rendering everything from scratch! 🙌
 
-Here's another example that shows how to synchronize an element to a text field: [try it here](https://cdpn.io/KoqxGW).
+Here's another example that shows how to synchronize an element to a text field: [try it here](https://cdpn.io/KoqxGW)—it'so easy!
 
 ```html
 <script type="module">
   import { h, text, patch } from "https://unpkg.com/superfine"
 
-  const node = document.getElementById("app")
-
   const setState = (state) => {
     patch(
-      node,
+      document.getElementById("app"),
       h("main", {}, [
         h("h1", {}, text(state)),
         h("input", {
@@ -62,7 +58,7 @@ Here's another example that shows how to synchronize an element to a text field:
 </script>
 ```
 
-Now, rather than anonymous state updates, how about sending messages to a central store like in Elm or Redux? Let's work on that next. Here's a minimal implementation you can use or remix in your own projects. You can [try it here](https://cdpn.io/vqRZmy).
+Now, rather than anonymous state updates, how about sending messages to a central store like in Elm or Redux? No dependencies? Here's a minimal implementation you can use or remix in your own projects. [Try it here](https://cdpn.io/vqRZmy).
 
 ```html
 <script type="module">
@@ -92,32 +88,30 @@ Now, rather than anonymous state updates, how about sending messages to a centra
 </script>
 ```
 
-Can you feel the Redux vibes? Now it's your turn to take Superfine for a spin. If you get stuck and need help, please file an issue, and we'll try to help you out. In particular, the [Hyperapp Slack](https://hyperappjs.herokuapp.com) is a fine way to get help quickly.
+Can you feel the Redux vibes? Now it's your turn to take Superfine for a spin. If you get stuck and need help, please file an issue, and we'll try to help you out. You can also hop on the [Hyperapp Slack](https://hyperappjs.herokuapp.com) if you want to chat!
 
 Looking for more examples? [Try this search](https://codepen.io/search/pens?q=superfine&page=1&order=superviewularity&depth=everything&show_forks=false).
 
-## Attributes
+## Installation
 
-Superfine nodes can use any [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute), [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events), and [keys](#keys).
+Install Superfine with npm or Yarn:
 
-### Keys
+```console
+npm i superfine
+```
 
-Keys help identify nodes whenever we update the DOM. By setting the `key` property on a virtual node, you declare that the node should correspond to a particular DOM element. This allows us to re-order the element into its new position, if the position changed, rather than risk destroying it. Keys must be unique among sibling nodes.
-
-> **Warning**: Keys are not registered on the top-level node of your view. If you are toggling the top-level view, and you must use keys, wrap them in an unchanging node.
+Then with a module bundler like [Rollup](https://rollupjs.org) or [Webpack](https://webpack.js.org) import it in your application and get right down to business.
 
 ```js
-import { h } from "superfine"
+import { h, text, patch } from "superfine"
+```
 
-export const ImageGallery = (images) =>
-  images.map(({ hash, url, description }) =>
-    h("li", { key: hash }, [
-      h("img", {
-        src: url,
-        alt: description,
-      }),
-    ])
-  )
+Don't want to set up a build step? Import Superfine in a `<script>` tag as a module—it works on all evergreen, self-updating desktop, and mobile browsers.
+
+```html
+<script type="module">
+  import { h, text, app } from "https://unpkg.com/superfine"
+</script>
 ```
 
 ## API
@@ -149,6 +143,30 @@ const main = patch(
   document.getElementById("main"),
   h("h1", {}, text("Superfine!"))
 )
+```
+
+## Special Attributes
+
+Superfine nodes can use any [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute), [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events), and [keys](#keys).
+
+### Keys
+
+Keys help identify nodes whenever we update the DOM. By setting the `key` property on a virtual node, you declare that the node should correspond to a particular DOM element. This allows us to re-order the element into its new position, if the position changed, rather than risk destroying it. Keys must be unique among sibling nodes.
+
+> **Warning**: Keys are not registered on the top-level node of your view. If you are toggling the top-level view, and you must use keys, wrap them in an unchanging node.
+
+```js
+import { h } from "superfine"
+
+export const ImageGallery = (images) =>
+  images.map(({ hash, url, description }) =>
+    h("li", { key: hash }, [
+      h("img", {
+        src: url,
+        alt: description,
+      }),
+    ])
+  )
 ```
 
 ## License
