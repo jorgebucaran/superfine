@@ -58,7 +58,7 @@ In the next example we show how to synchronize an text node and a text field: [t
 </script>
 ```
 
-Let's take it up a notch. Rather than anonymous state updates, how about encapsulating the state-update logic inside little helper functions? You can think of them as "actions" if you want. Here's a minimal todo list app that demonstrates the idea. Go ahead and play with the code [here](https://cdpn.io/vqRZmy).
+Let's take it up a notch. Rather than anonymous state updates, how about encapsulating the state-update logic inside little helper functions? You can think of them as "actions" if you want. Here's a minimal todo list app that demonstrates the idea. Go ahead and [play with the code here](https://cdpn.io/MWKdOBj).
 
 ```html
 <script type="module">
@@ -93,7 +93,7 @@ Let's take it up a notch. Rather than anonymous state updates, how about encapsu
 </script>
 ```
 
-Now it's your turn to take Superfine for a spin. Experiment with the code a bit. Can you add a button to clear all todos? How about marking todos as done? If you get stuck or would like to ask a question, please [file an issue](https://github.com/jorgebucaran/superfine/issues/new), and we'll try our best to help you out.
+Now it's your turn to take Superfine for a spin. Experiment with the code a bit. Can you add a button to clear all todos? How about marking todos as done? Have fun, and if you get stuck or would like to ask a question, please [file an issue](https://github.com/jorgebucaran/superfine/issues/new), and we'll try our best to help you out.
 
 Looking for more examples? [Try this search](https://codepen.io/search/pens?q=superfine&page=1&order=superviewularity&depth=everything&show_forks=false).
 
