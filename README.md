@@ -2,7 +2,7 @@
 
 Superfine is a minimal view layer for building web interfaces. Think [Hyperapp](https://github.com/jorgebucaran/hyperapp) without the framework—no state machines, effects, or subscriptions—just the absolute bare minimum. Mix it with your own custom-flavor of state management, or use it standalone for maximum flexibility.
 
-Here's the first example to get you started. You can copy-paste the following code in a new HTML file and open it in a browser or [try it here](https://cdpn.io/LdLJXX)—it works without bundlers or compilers!
+Here's the first example to get you started. You can copy-paste this code in a new HTML file and open it in a browser or [try it here](https://cdpn.io/LdLJXX)—it works without bundlers or compilers!
 
 ```html
 <!DOCTYPE html>
@@ -33,7 +33,7 @@ Here's the first example to get you started. You can copy-paste the following co
 
 We use the `h` and `text` functions to create the "virtual" DOM nodes that represent how our DOM should look. The view isn't made out of real DOM nodes, but a bunch of plain objects. Whenever we change the state, we use `patch` under the hood to update the DOM. By comparing the old and new virtual DOM, we're able to update only the parts of the DOM that actually changed instead of rendering everything from scratch! 🙌
 
-In the next example we show how to synchronize an text node and a text field: [try it here](https://cdpn.io/KoqxGW)—it'so easy!
+In the next example we show how to synchronize an text node and a text field: [try it here](https://cdpn.io/KoqxGW)—it'so easy you can probably guess what's going on without much theory.
 
 ```html
 <script type="module">
@@ -47,7 +47,7 @@ In the next example we show how to synchronize an text node and a text field: [t
         h("input", {
           type: "text",
           value: state,
-          oninput: (e) => setState(e.target.value),
+          oninput: (event) => setState(event.target.value),
           autofocus: true,
         }),
       ])
@@ -58,38 +58,42 @@ In the next example we show how to synchronize an text node and a text field: [t
 </script>
 ```
 
-Now, rather than anonymous state updates, how about dispatching messages to a central store like in Elm or Redux? No problem. Here's a minimal implementation you can use and remix in your own projects. [Try it here](https://cdpn.io/vqRZmy).
+Let's take it up a notch. Rather than anonymous state updates, how about encapsulating the state-update logic inside little helper functions? You can think of them as "actions" if you want. Here's a minimal todo list app that demonstrates the idea. Go ahead and play with the code [here](https://cdpn.io/vqRZmy).
 
 ```html
 <script type="module">
   import { h, text, patch } from "https://unpkg.com/superfine"
 
-  const run = (
-    { init, view, update, node },
-    state,
-    emit = (action) => next(update(state, action)),
-    next = (newState) => {
-      node = patch(node, view((state = newState), emit))
-    }
-  ) => next(init())
+  const updateValue = (state, value) => ({ ...state, value })
 
-  run({
-    init: () => 0,
-    view: (state, emit) =>
-      h("main", {}, [
-        h("h1", {}, text(state)),
-        h("button", { onclick: () => emit("Subtract") }, text("-")),
-        h("button", { onclick: () => emit("Add") }, text("+")),
-      ]),
-    update: (state, action) =>
-      action === "Subtract" ? state - 1 : 
-      action === "Add" ? state + 1 : state,
-    node: document.getElementById("app"),
+  const addTodo = (state) => ({
+    ...state,
+    value: "",
+    todos: state.todos.concat(state.value),
   })
+
+  const setState = (state) => {
+    patch(
+      document.getElementById("app"),
+      h("main", {}, [
+        h("input", {
+          type: "text",
+          oninput: (event) => setState(updateValue(state, event.target.value)),
+          value: state.value,
+        }),
+        h("button", { onclick: () => setState(addTodo(state)) }, text("Add")),
+        h("ul", {},
+          state.todos.map((todo) => h("li", {}, text(todo)))
+        ),
+      ])
+    )
+  }
+
+  setState({ todos: [], value: "" })
 </script>
 ```
 
-Feeling the Redux vibes? Now it's your turn to take Superfine for a spin. Experiment with the code a bit. Can you add a button that resets the counter back to zero? How about multiple counters? If you get stuck or would like to ask a question, please [file an issue](https://github.com/jorgebucaran/superfine/issues/new), and we'll try our best to help you out.
+Now it's your turn to take Superfine for a spin. Experiment with the code a bit. Can you add a button to clear all todos? How about marking todos as done? If you get stuck or would like to ask a question, please [file an issue](https://github.com/jorgebucaran/superfine/issues/new), and we'll try our best to help you out.
 
 Looking for more examples? [Try this search](https://codepen.io/search/pens?q=superfine&page=1&order=superviewularity&depth=everything&show_forks=false).
 
