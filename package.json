@@ -1,7 +1,7 @@
 {
   "name": "superfine",
   "description": "Minimal view layer for building web interfaces.",
-  "version": "8.0.4",
+  "version": "8.0.5",
   "type": "module",
   "main": "superfine.js",
   "license": "MIT",
