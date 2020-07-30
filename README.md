@@ -1,8 +1,8 @@
 # Superfine
 
-Superfine is a minimal view layer for building web interfaces. Think [Hyperapp](https://github.com/jorgebucaran/hyperapp) without the framework—no state machines, effects, or subscriptions—just the absolute bare minimum. Mix it with your own custom-flavor of state management, or use it standalone for maximum flexibility.
+Superfine is a minimal view layer for building web interfaces. Think [Hyperapp](https://github.com/jorgebucaran/hyperapp) without the framework—no state machines, effects, or subscriptions—just the absolute bare minimum. Mix it with your favorite state management library or use it standalone for maximum flexibility.
 
-Here's the first example to get you started. You can copy-paste this code in a new HTML file and open it in a browser or [try it here](https://cdpn.io/LdLJXX)—it works without bundlers or compilers!
+Here's the first example to get you started. You can copy-paste this code in a new HTML file and open it in a browser, or [try it here](https://cdpn.io/LdLJXX)—it works without bundlers or compilers!
 
 ```html
 <!DOCTYPE html>
@@ -11,7 +11,7 @@ Here's the first example to get you started. You can copy-paste this code in a n
     <script type="module">
       import { h, text, patch } from "https://unpkg.com/superfine"
 
-      const setState = (state) => {
+      const setState = (state) =>
         patch(
           document.getElementById("app"),
           h("main", {}, [
@@ -20,7 +20,6 @@ Here's the first example to get you started. You can copy-paste this code in a n
             h("button", { onclick: () => setState(state + 1) }, text("+")),
           ])
         )
-      }
 
       setState(0)
     </script>
@@ -31,15 +30,21 @@ Here's the first example to get you started. You can copy-paste this code in a n
 </html>
 ```
 
-We use the `h` and `text` functions to create the "virtual" DOM nodes that represent how our DOM should look. The view isn't made out of real DOM nodes, but a bunch of plain objects. Whenever we change the state, we use `patch` under the hood to update the DOM. By comparing the old and new virtual DOM, we're able to update only the parts of the DOM that actually changed instead of rendering everything from scratch! 🙌
+Let's go through the code and talk about it. If you're new to JavaScript modules, you can [catch up here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules). We'll be using modules for all the examples in this documentation, so make sure you are not getting stuck on that.
 
-In the next example we show how to synchronize an text node and a text field: [try it here](https://cdpn.io/KoqxGW)—it'so easy you can probably guess what's going on without much theory.
+```js
+import { h, text, patch } from "https://unpkg.com/superfine"
+```
+
+Using the `h` and `text` functions we create "virtual" DOM (and text) nodes that represent how the DOM should look. Our view isn't made out of real DOM nodes, but a bunch of plain objects. Whenever we set the state, we use `patch` under the hood to update the DOM. By comparing the old and new virtual DOM, we're able to update only the parts of the DOM that actually changed instead of rendering everything from scratch! 🙌
+
+In the next example we show how to synchronize a text node with a text field: [try it here](https://cdpn.io/KoqxGW)—it'so easy you can probably skip the theory and figure out what's happening by poking around the code a bit.
 
 ```html
 <script type="module">
   import { h, text, patch } from "https://unpkg.com/superfine"
 
-  const setState = (state) => {
+  const setState = (state) =>
     patch(
       document.getElementById("app"),
       h("main", {}, [
@@ -52,13 +57,12 @@ In the next example we show how to synchronize an text node and a text field: [t
         }),
       ])
     )
-  }
 
   setState("Hello!")
 </script>
 ```
 
-Let's take it up a notch. Rather than anonymous state updates, how about encapsulating the state-update logic inside little helper functions? You can think of them as "actions" if you want. Here's a minimal todo list app that demonstrates the idea. Go ahead and [play with the code here](https://cdpn.io/MWKdOBj).
+Now let's take it up a notch. Rather than anonymous state updates, how about encapsulating the state-update logic inside little helper functions? If it helps, you can think of them as "actions". Here's a minimal todo list app that demonstrates the idea. Go ahead and [play with the code here](https://cdpn.io/MWKdOBj).
 
 ```html
 <script type="module">
@@ -72,7 +76,7 @@ Let's take it up a notch. Rather than anonymous state updates, how about encapsu
     todos: state.todos.concat(state.value),
   })
 
-  const setState = (state) => {
+  const setState = (state) =>
     patch(
       document.getElementById("app"),
       h("main", {}, [
@@ -87,15 +91,14 @@ Let's take it up a notch. Rather than anonymous state updates, how about encapsu
         ),
       ])
     )
-  }
 
   setState({ todos: [], value: "" })
 </script>
 ```
 
-Now it's your turn to take Superfine for a spin. Experiment with the code a bit. Can you add a button to clear all todos? How about marking todos as done? Have fun, and if you get stuck or would like to ask a question, please [file an issue](https://github.com/jorgebucaran/superfine/issues/new), and we'll try our best to help you out.
+Now it's your turn to take Superfine for a spin. Experiment with the code a bit. Can you add a button to clear a todo? How about bull-marking as done? There's no end to what you can do. If you get stuck or would like to ask a question, just [file an issue](https://github.com/jorgebucaran/superfine/issues/new) and we'll try our best to help you out—good luck!
 
-Looking for more examples? [Try this search](https://codepen.io/search/pens?q=superfine&page=1&order=superviewularity&depth=everything&show_forks=false).
+Looking for more examples? [Browse this collection](https://codepen.io/collection/nVVmyg).
 
 ## Installation
 
@@ -121,14 +124,12 @@ Don't want to set up a build step? Import Superfine in a `<script>` tag as a mod
 
 ## API
 
-### `h(name, props, children)`
+### `h(name, props, [children])`
 
-Create virtual DOM nodes. `h` takes three arguments: a string that specifies the name of the node; an object of HTML or SVG properties, and array of child nodes (or a string for text nodes).
+Create virtual DOM nodes. `h` takes three arguments: a string of the node type: `a`, `input`, `form`, etc; an object of HTML or SVG properties, and an array of child nodes (or just one child node).
 
 ```js
-const link = h("div", { class: "container" }, [
-  h("a", { href: "#" }, text("Click Me")),
-])
+h("section", { class: "container" }, [h("a", { href: "#" }, text("Click Me"))]) //=> <section class=container><a href=#>Click Me</a></section>
 ```
 
 ### `text(text)`
@@ -136,7 +137,7 @@ const link = h("div", { class: "container" }, [
 Create a virtual text node.
 
 ```js
-const movieTitle = h("h1", {}, text("The Shining"))
+h("h1", {}, text("Super 8")) //=> "Super 8"
 ```
 
 ### `patch(node, vdom)`
@@ -144,15 +145,46 @@ const movieTitle = h("h1", {}, text("The Shining"))
 Render a virtual DOM. `patch` takes a DOM node, a virtual DOM, and returns the updated DOM node.
 
 ```js
-const main = patch(
+patch(
   document.getElementById("main"),
-  h("h1", {}, text("Superfine!"))
+  h("h1", {}, text("Supercalifragilisticexpialidocious!"))
 )
 ```
 
 ## Special Attributes
 
 Superfine nodes can use any [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute), [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events), and [keys](#keys).
+
+### Styles
+
+Use the [`style`](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/style) attribute to apply arbitrary CSS rules to your DOM nodes. The `style` attribute expects a string.
+
+```js
+const alertView = h("h1", { style: "color:red" }, text("Red Alert!"))
+```
+
+Using an object instead of a string can be handy when applying several styles. Here's a handy function you can use in cases like that. Each declaration consists of a style name property written in camelCase and a value.
+
+```js
+import { h } from "superfine"
+
+export const toCSS = (style) =>
+  Object.entries(style)
+    .map(([k, v]) => `${k.replace(/([A-Z])/g, "-$1").toLowerCase()}:${v}`)
+    .join(";")
+
+const red = h(
+  "p",
+  {
+    style: toCSS({
+      color: "white",
+      backgroundColor: "red",
+      fontSize: "50px",
+    }),
+  },
+  text("Red Alert!")
+)
+```
 
 ### Keys
 
@@ -161,7 +193,7 @@ Keys help identify nodes whenever we update the DOM. By setting the `key` proper
 ```js
 import { h } from "superfine"
 
-export const ImageGallery = (images) =>
+export const imageGalleryView = (images) =>
   images.map(({ hash, url, description }) =>
     h("li", { key: hash }, [
       h("img", {
@@ -170,6 +202,47 @@ export const ImageGallery = (images) =>
       }),
     ])
   )
+```
+
+## JSX
+
+JSX is a language syntax extension that lets you write HTML tags interspersed with JavaScript. To compile JSX to JavaScript, install the [JSX transform plugin](https://babeljs.io/docs/en/babel-plugin-transform-react-jsx), and create a `.babelrc` file in the root of your project like this one.
+
+```json
+{
+  "plugins": [
+    [
+      "transform-react-jsx",
+      {
+        "pragma": "h"
+      }
+    ]
+  ]
+}
+```
+
+Superfine doesn't support JSX out of the box, but you can add it to your project easily. All we need to do is wrap our `h` and `text` functions and handle function components, variable arguments and nested arrays like this.
+
+```js
+import { h, text } from "superfine"
+
+export default (type, props, ...children) =>
+  typeof type === "function"
+    ? type(props, children)
+    : h(type,
+        props || {},
+        [].concat(...children)
+          .map((any) =>
+            typeof any === "string" || typeof any === "number" ? text(any) : any
+          )
+      )
+```
+
+Now import it everywhere you're using JSX and you're good to go. [Here's an example](https://cdpn.io/wXEBYO).
+
+```js
+import jsx from "./jsx.js"
+import { patch } from "superfine"
 ```
 
 ## License
