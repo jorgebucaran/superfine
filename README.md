@@ -155,37 +155,6 @@ patch(
 
 Superfine nodes can use any [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute), [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events), and [keys](#keys).
 
-### Styles
-
-Use the [`style`](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/style) attribute to apply arbitrary CSS rules to your DOM nodes. The `style` attribute expects a string.
-
-```js
-const alertView = h("h1", { style: "color:red" }, text("Red Alert!"))
-```
-
-Using an object instead of a string can be handy when applying several styles. Here's a handy function you can use in cases like that. Each declaration consists of a style name property written in camelCase and a value.
-
-```js
-import { h } from "superfine"
-
-export const toCSS = (style) =>
-  Object.entries(style)
-    .map(([k, v]) => `${k.replace(/([A-Z])/g, "-$1").toLowerCase()}:${v}`)
-    .join(";")
-
-const red = h(
-  "p",
-  {
-    style: toCSS({
-      color: "white",
-      backgroundColor: "red",
-      fontSize: "50px",
-    }),
-  },
-  text("Red Alert!")
-)
-```
-
 ### Keys
 
 Keys help identify nodes whenever we update the DOM. By setting the `key` property on a virtual node, you declare that the node should correspond to a particular DOM element. This allows us to re-order the element into its new position, if the position changed, rather than risk destroying it. Keys must be unique among sibling nodes.
