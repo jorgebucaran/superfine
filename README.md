@@ -2,7 +2,7 @@
 
 Superfine is a minimal view layer for building web interfaces. Think [Hyperapp](https://github.com/jorgebucaran/hyperapp) without the framework—no state machines, effects, or subscriptions—just the absolute bare minimum. Mix it with your favorite state management library or use it standalone for maximum flexibility.
 
-Here's the first example to get you started. You can copy-paste this code in a new HTML file and open it in a browser, or [try it here](https://cdpn.io/LdLJXX)—it works without bundlers or compilers!
+Here's the first example to get you started. You can copy-paste this code in a new HTML file and open it in a browser, or [try it here](https://cdpn.io/e/LdLJXX?editors=0010)—it works without bundlers or compilers!
 
 ```html
 <!DOCTYPE html>
@@ -30,7 +30,7 @@ Here's the first example to get you started. You can copy-paste this code in a n
 </html>
 ```
 
-Let's go through the code and talk about it. If you're new to JavaScript modules, you can [catch up here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules). We'll be using modules for all the examples in this documentation, so make sure you are not getting stuck on that.
+Let's go through the code and talk about it. If you're new to JavaScript modules, you can [catch up here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules) first. We'll be using modules for all the examples in this documentation, so make sure you are not getting stuck on that.
 
 ```js
 import { h, text, patch } from "https://unpkg.com/superfine"
@@ -38,7 +38,7 @@ import { h, text, patch } from "https://unpkg.com/superfine"
 
 Using the `h` and `text` functions we create "virtual" DOM (and text) nodes that represent how the DOM should look. Our view isn't made out of real DOM nodes, but a bunch of plain objects. Whenever we set the state, we use `patch` under the hood to update the DOM. By comparing the old and new virtual DOM, we're able to update only the parts of the DOM that actually changed instead of rendering everything from scratch! 🙌
 
-In the next example we show how to synchronize a text node with a text field: [try it here](https://cdpn.io/KoqxGW)—it'so easy you can probably skip the theory and figure out what's happening by poking around the code a bit.
+In the next example we show how to synchronize a text node with a text field: [try it here](https://cdpn.io/e/KoqxGW?editors=0010)—it's so easy maybe you can skip the theory and figure out what's happening by poking around the code a bit.
 
 ```html
 <script type="module">
@@ -62,7 +62,7 @@ In the next example we show how to synchronize a text node with a text field: [t
 </script>
 ```
 
-Now let's take it up a notch. Rather than anonymous state updates, how about encapsulating the update logic inside little helper functions? If it helps, you can think of them as "actions". Here's a minimal todo list app that demonstrates the idea. Go ahead and [play with the code here](https://cdpn.io/MWKdOBj).
+Now let's take it up a notch. Rather than anonymous state updates, how about encapsulating the update logic inside little helper functions? If it helps, you can think of them as "actions". Here's a minimal todo list app that demonstrates the idea. Go ahead and [play with the code](https://cdpn.io/e/MWKdOBj?editors=0010).
 
 ```html
 <script type="module">
@@ -98,7 +98,7 @@ Now let's take it up a notch. Rather than anonymous state updates, how about enc
 
 Now it's your turn to take Superfine for a spin. Experiment with the code a bit. Can you add a button to clear todos? How about bull-marking as done? Surprise me. If you get stuck or would like to ask a question, just [file an issue](https://github.com/jorgebucaran/superfine/issues/new) and we'll try our best to help you out—good luck!
 
-Looking for more examples? [Browse this collection](https://codepen.io/collection/nVVmyg).
+Looking for more examples? [Browse the collection](https://codepen.io/collection/nVVmyg).
 
 ## Installation
 
@@ -124,15 +124,17 @@ Don't want to set up a build step? Import Superfine in a `<script>` tag as a mod
 
 ## API
 
-### `h(name, props, [children])`
+### `h(name, props, [children]) : vdom`
 
-Create virtual DOM nodes. `h` takes three arguments: a string of the node type: `a`, `input`, `form`, etc; an object of HTML or SVG properties, and an array of child nodes (or just one child node).
+Create virtual DOM nodes. `h` takes three arguments: the node type as a string: `a`, `input`, `form`, etc; an object of HTML or SVG properties, and an array of child nodes (or just one child node).
 
 ```js
-h("section", { class: "container" }, [h("a", { href: "#" }, text("Click Me"))]) //=> <section class=container><a href=#>Click Me</a></section>
+h("section", { class: "container" }, [
+  h("a", { href: "#" }, text("Click Me"))
+]) //=> <section class=container><a href=#>Click Me</a></section>
 ```
 
-### `text(text)`
+### `text(text) : vdom`
 
 Create a virtual text node.
 
@@ -140,12 +142,12 @@ Create a virtual text node.
 h("h1", {}, text("Super 8")) //=> "Super 8"
 ```
 
-### `patch(node, vdom)`
+### `patch(node, vdom) : node`
 
 Render a virtual DOM. `patch` takes a DOM node, a virtual DOM, and returns the updated DOM node.
 
 ```js
-patch(
+const main = patch(
   document.getElementById("main"),
   h("h1", {}, text("Supercalifragilisticexpialidocious!"))
 )
@@ -190,7 +192,7 @@ JSX is a language syntax extension that lets you write HTML tags interspersed wi
 }
 ```
 
-Superfine doesn't support JSX out of the box, but you can add it to your project easily. All we need to do is wrap our `h` and `text` functions and handle function components, variable arguments and nested arrays like this.
+Superfine doesn't support JSX out of the box, but you can add it to your project easily. All we need to do is wrap our `h` and `text` functions and handle function components, variable arguments and nested arrays like.
 
 ```js
 import { h, text } from "superfine"
@@ -207,7 +209,7 @@ export default (type, props, ...children) =>
       )
 ```
 
-Now import it everywhere you're using JSX and you're good to go. [Here's an example](https://cdpn.io/wXEBYO).
+Now import it everywhere you're using JSX and you'll be good to go. [Here's an example](https://cdpn.io/e/wXEBYO?editors=0010).
 
 ```js
 import jsx from "./jsx.js"
