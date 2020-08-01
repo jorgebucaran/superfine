@@ -122,19 +122,19 @@ Don't want to set up a build step? Import Superfine in a `<script>` tag as a mod
 </script>
 ```
 
-## API
+## Top-Level API
 
-### `h(name, props, [children]) : vdom`
+### `h(type, props, [children])`
 
-Create virtual DOM nodes. `h` takes three arguments: the node type as a string: `a`, `input`, `form`, etc; an object of HTML or SVG properties, and an array of child nodes (or just one child node).
+Create virtual DOM nodes. `h` takes three arguments: the node type as a string: `a`, `input`, `form`, etc; an object of [HTML or SVG attributes](#attribute-api), and an array of child nodes (or just one child node).
 
 ```js
 h("section", { class: "container" }, [
-  h("a", { href: "#" }, text("Click Me"))
+  h("a", { href: "#" }, text("Click Here")),
 ]) //=> <section class=container><a href=#>Click Me</a></section>
 ```
 
-### `text(text) : vdom`
+### `text(string)`
 
 Create a virtual text node.
 
@@ -142,9 +142,9 @@ Create a virtual text node.
 h("h1", {}, text("Super 8")) //=> "Super 8"
 ```
 
-### `patch(node, vdom) : node`
+### `patch(node, vdom)`
 
-Render a virtual DOM. `patch` takes a DOM node, a virtual DOM, and returns the updated DOM node.
+Render a virtual DOM. `patch` takes a DOM node to patch, a virtual DOM, and returns the updated DOM node.
 
 ```js
 const main = patch(
@@ -153,11 +153,31 @@ const main = patch(
 )
 ```
 
-## Special Attributes
+## Attribute API
 
-Superfine nodes can use any [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute), [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events), and [keys](#keys).
+Superfine nodes can use any of the [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute), [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events), and [keys](#keys).
 
-### Keys
+### `class`
+
+To specify one or more CSS classes, use the `class` attribute. This applies to all regular DOM and SVG elements alike. The `class` attribute expects a string.
+
+```js
+const mainView = h("main", { class: "container main" }, [
+  // ...
+])
+```
+
+### `style`
+
+Use the `style` attribute to apply arbitrary CSS rules to your DOM nodes. The `style` attribute expects a string.
+
+> We do not recommend using the `style` attribute as the primary means of styling elements. In most cases, `class` should be used to reference classes defined in an external CSS stylesheet.
+
+```js
+const alertView = h("h1", { style: "color:red" }, text("Alert!"))
+```
+
+### `key`
 
 Keys help identify nodes whenever we update the DOM. By setting the `key` property on a virtual node, you declare that the node should correspond to a particular DOM element. This allows us to re-order the element into its new position, if the position changed, rather than risk destroying it. Keys must be unique among sibling nodes.
 
@@ -192,7 +212,7 @@ JSX is a language syntax extension that lets you write HTML tags interspersed wi
 }
 ```
 
-Superfine doesn't support JSX out of the box, but you can add it to your project easily. All we need to do is wrap our `h` and `text` functions and handle function components, variable arguments and nested arrays like.
+Superfine doesn't support JSX out of the box, but you can add it to your project easily. All we need to do is handle function types and nested arrays through our `h` and `text` functions.
 
 ```js
 import { h, text } from "superfine"
@@ -200,7 +220,8 @@ import { h, text } from "superfine"
 export default (type, props, ...children) =>
   typeof type === "function"
     ? type(props, children)
-    : h(type,
+    : h(
+        type,
         props || {},
         [].concat(...children)
           .map((any) =>
@@ -209,7 +230,7 @@ export default (type, props, ...children) =>
       )
 ```
 
-Now import it everywhere you're using JSX and you'll be good to go. [Here's an example](https://cdpn.io/e/wXEBYO?editors=0010).
+Import that everywhere you're using JSX and you'll be good to go. [Here's an example](https://cdpn.io/e/wXEBYO?editors=0010).
 
 ```js
 import jsx from "./jsx.js"
