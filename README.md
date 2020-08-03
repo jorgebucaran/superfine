@@ -86,9 +86,7 @@ Now let's take it up a notch. Rather than anonymous state updates, how about enc
           value: state.value,
         }),
         h("button", { onclick: () => setState(addTodo(state)) }, text("Add")),
-        h(
-          "ul",
-          {},
+        h("ul", {},
           state.todos.map((todo) => h("li", {}, text(todo)))
         ),
       ])
