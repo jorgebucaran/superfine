@@ -1,15 +1,10 @@
-.idea/
-.vscode/
-
-*.gz
-*.br
 *.map
-superfine*
-*.log*
-*.xml
-index.html
-node_modules
-package-lock.json
-coverage
+*.br
+*.gz
 
-.DS_STORE
+package-lock.json
+node_modules
+coverage
+private
+
+index.html
