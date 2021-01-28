@@ -2,7 +2,7 @@
 
 Superfine is a minimal view layer for building web interfaces. Think [Hyperapp](https://github.com/jorgebucaran/hyperapp) without the framework—no state machines, effects, or subscriptions—just the absolute bare minimum. Mix it with your favorite state management library or use it standalone for maximum flexibility.
 
-Here's the first example to get you started. You can copy-paste this code in a new HTML file and open it in a browser, or [try it here](https://cdpn.io/e/LdLJXX?editors=0010)—it works without bundlers or compilers!
+Here's the first example to get you started. You can [try it here](https://cdpn.io/e/LdLJXX?editors=0010)—it works without bundlers or compilers!
 
 ```html
 <!DOCTYPE html>
@@ -30,15 +30,9 @@ Here's the first example to get you started. You can copy-paste this code in a n
 </html>
 ```
 
-Let's go through the code and talk about it. If you're new to JavaScript modules, you can [catch up here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules) first. We'll be using modules for all the examples in this documentation, so make sure you are not getting stuck on that.
+Let's go through the code and talk about it. First, `h` and `text` functions are what we use to create the "virtual" DOM nodes that describe how our DOM should look. Our view isn't made out of real DOM nodes, but a bunch of plain objects. Whenever we call `patch`, Superfine updates the real DOM by comparing the old and new virtual DOM. This way we can touch only the parts of the DOM that actually changed instead of rendering everything from scratch! 🙌
 
-```js
-import { h, text, patch } from "https://unpkg.com/superfine"
-```
-
-Using the `h` and `text` functions we create "virtual" DOM (and text) nodes that represent how the DOM should look. Our view isn't made out of real DOM nodes, but a bunch of plain objects. Whenever we set the state, we use `patch` under the hood to update the DOM. By comparing the old and new virtual DOM, we can update only the parts of the DOM that actually changed instead of rendering everything from scratch! 🙌
-
-In the next example we show how to synchronize a text node with a text field: [here you go](https://cdpn.io/e/KoqxGW?editors=0010). Try to figure out what's happening just by poking around the code a bit.
+In the next example we synchronize a text node with a text field: [play with it here](https://cdpn.io/e/KoqxGW?editors=0010). Try to figure out what's happening just by poking around the code a bit.
 
 ```html
 <script type="module">
@@ -62,7 +56,7 @@ In the next example we show how to synchronize a text node with a text field: [h
 </script>
 ```
 
-Now let's take it up a notch. Rather than anonymous state updates, how about encapsulating the update logic inside little helper functions? If it helps, you can think of them as "actions". Here's a minimal todo list app that demonstrates the idea. You can [play with the code here](https://cdpn.io/e/MWKdOBj?editors=0010).
+Now, rather than anonymous state updates, how about encapsulating the update logic inside little helper functions? If it helps, you can think of them as "actions". Here's a minimal todo list app that demonstrates the idea. You can [try it here](https://cdpn.io/e/MWKdOBj?editors=0010).
 
 ```html
 <script type="module">
@@ -86,7 +80,9 @@ Now let's take it up a notch. Rather than anonymous state updates, how about enc
           value: state.value,
         }),
         h("button", { onclick: () => setState(addTodo(state)) }, text("Add")),
-        h("ul", {},
+        h(
+          "ul",
+          {},
           state.todos.map((todo) => h("li", {}, text(todo)))
         ),
       ])
@@ -96,16 +92,14 @@ Now let's take it up a notch. Rather than anonymous state updates, how about enc
 </script>
 ```
 
-Now it's your turn to take Superfine for a spin. Experiment with the code. Can you add a button to clear todos? How about bull-marking as done? Surprise me. If you get stuck or would like to ask a question, just [file an issue](https://github.com/jorgebucaran/superfine/issues/new) and we'll try our best to help you out—good luck!
-
-Looking for more examples? [Browse the collection](https://codepen.io/collection/nVVmyg).
+Now it's your turn to take Superfine for a spin. Experiment! Can you add a button to clear todos? How about bull-marking as done? Surprise me. If you get stuck or would like to ask a question, just [file an issue](https://github.com/jorgebucaran/superfine/issues/new) and I'll try my best to help you out—good luck!
 
 ## Installation
 
 Install Superfine with npm or Yarn:
 
 ```console
-npm i superfine
+npm install superfine
 ```
 
 Then with a module bundler like [Rollup](https://rollupjs.org) or [Webpack](https://webpack.js.org) import it in your application and get right down to business.
@@ -114,7 +108,7 @@ Then with a module bundler like [Rollup](https://rollupjs.org) or [Webpack](http
 import { h, text, patch } from "superfine"
 ```
 
-Don't want to set up a build step? Import Superfine in a `<script>` tag as a module—it works on all evergreen, self-updating desktop, and mobile browsers.
+Not using a build step? Import it right in your browser—it works on all evergreen, self-updating browsers.
 
 ```html
 <script type="module">
@@ -197,7 +191,7 @@ export const imageGalleryView = (images) =>
 
 ## Recycling
 
-Superfine will patch over your server-side rendered HTML, recycling existing content instead of creating new elements. This enables SEO optimizations and improves your sites time-to-interactive effortlessly. 
+Superfine will patch over your server-side rendered HTML, recycling existing content instead of creating new elements. This enables SEO optimizations and improves your sites time-to-interactive effortlessly.
 
 Take another look at our humble counter app. Notice all the HTML is already there.
 
