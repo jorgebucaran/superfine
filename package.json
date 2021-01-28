@@ -1,17 +1,16 @@
 {
   "name": "superfine",
-  "description": "Minimal view layer for building web interfaces.",
   "version": "8.0.10",
   "type": "module",
-  "main": "superfine.js",
-  "license": "MIT",
+  "main": "index.js",
+  "description": "Minimal view layer for building web interfaces.",
   "repository": "jorgebucaran/superfine",
   "homepage": "https://github.com/jorgebucaran/superfine",
+  "license": "MIT",
   "files": [
     "*.js*(.map)"
   ],
   "author": "Jorge Bucaran",
-  "funding": "https://github.com/sponsors/jorgebucaran",
   "keywords": [
     "superfine",
     "frontend",
@@ -22,14 +21,12 @@
   ],
   "scripts": {
     "test": "c8 twist test/*.js",
-    "minify": "terser index.js -o $npm_package_name.js -mc --source-map url=$npm_package_name.js.map --module",
-    "commit": "npm run minify && git commit -am $msg && git tag -s $msg -m $msg && git push && git push --tags",
-    "release": "msg=$npm_package_version npm run commit && npm publish"
+    "deploy": "npm test && git commit --all --message $tag && git tag --sign $tag --message $tag && git push && git push --tags",
+    "release": "tag=$npm_package_version npm run deploy && npm publish --access public"
   },
   "devDependencies": {
     "c8": "*",
-    "twist": "*",
-    "terser": "*",
-    "jsdom": "*"
+    "jsdom": "*",
+    "twist": "*"
   }
 }
