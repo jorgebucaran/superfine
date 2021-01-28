@@ -38,8 +38,8 @@ var createNode = (vdom, isSvg) => {
 
   for (var k in props) patchProp(dom, k, null, props[k], isSvg)
 
-  vdom.children.map((kid) =>
-    dom.appendChild(createNode((kid = vdomify(kid)), isSvg))
+  vdom.children.map((kid, i) =>
+    dom.appendChild(createNode((vdom.children[i] = vdomify(kid)), isSvg))
   )
 
   return (vdom.dom = dom)
