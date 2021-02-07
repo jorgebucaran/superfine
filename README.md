@@ -1,8 +1,8 @@
-# Superfine
+# _Superfine_
 
-Superfine is a minimal view layer for building web interfaces. Think [Hyperapp](https://github.com/jorgebucaran/hyperapp) without the framework—no state machines, effects, or subscriptions—just the absolute bare minimum. Mix it with your favorite state management library or use it standalone for maximum flexibility.
+Superfine is a minimal view layer for building web interfaces. Think [Hyperapp](https://github.com/jorgebucaran/hyperapp) without the framework—no state machines, effects, or subscriptions—just the absolute bare minimum (1 kB minified+gzipped). Mix it with your favorite state management library or use it standalone for maximum flexibility.
 
-Here's the first example to get you started. You can [try it here](https://cdpn.io/e/LdLJXX?editors=0010)—it works without bundlers or compilers!
+Here's the first example to get you started. [Try it here](https://codepen.io/jorgebucaran/pen/LdLJXX?editors=1000)—no build step required!
 
 ```html
 <!DOCTYPE html>
@@ -30,34 +30,13 @@ Here's the first example to get you started. You can [try it here](https://cdpn.
 </html>
 ```
 
-Let's go through the code and talk about it. First, `h` and `text` functions are what we use to create the "virtual" DOM nodes that describe how our DOM should look. Our view isn't made out of real DOM nodes, but a bunch of plain objects. Whenever we call `patch`, Superfine updates the real DOM by comparing the old and new virtual DOM. This way we can touch only the parts of the DOM that actually changed instead of rendering everything from scratch! 🙌
+When describing how a page looks in Superfine, we don't write markup. Instead, we use the `h()` and `text()` functions to create a lightweight representation of the DOM (or virtual DOM for short), and `patch()` to actually render the DOM.
 
-In the next example we synchronize a text node with a text field: [play with it here](https://cdpn.io/e/KoqxGW?editors=0010). Try to figure out what's happening just by poking around the code a bit.
+Superfine won't re-create the entire DOM every time we use `patch()`. By comparing the old and new virtual DOM we are able to change only the parts of the DOM that need to change instead of rendering everything from scratch.
 
-```html
-<script type="module">
-  import { h, text, patch } from "https://unpkg.com/superfine"
+Next up, let's take a look at a simple todo app. You can only add or cross off todos with it. Can you figure out what's happening just by poking around the code a bit? [Have a go here](https://codepen.io/jorgebucaran/pen/KoqxGW).
 
-  const setState = (state) =>
-    patch(
-      document.getElementById("app"),
-      h("main", {}, [
-        h("h1", {}, text(state)),
-        h("input", {
-          type: "text",
-          value: state,
-          oninput: (event) => setState(event.target.value),
-          autofocus: true,
-        }),
-      ])
-    )
-
-  setState("Hello!")
-</script>
-```
-
-Now, rather than anonymous state updates, how about encapsulating the update logic inside little helper functions? If it helps, you can think of them as "actions". Here's a minimal todo list app that demonstrates the idea. You can [try it here](https://cdpn.io/e/MWKdOBj?editors=0010).
-
+<!-- prettier-ignore -->
 ```html
 <script type="module">
   import { h, text, patch } from "https://unpkg.com/superfine"
@@ -67,48 +46,61 @@ Now, rather than anonymous state updates, how about encapsulating the update log
   const addTodo = (state) => ({
     ...state,
     value: "",
-    todos: state.todos.concat(state.value),
+    todos: state.todos.concat(state.value).filter(any => any),
   })
 
-  const setState = (state) =>
+  const setState = (state) => {
     patch(
       document.getElementById("app"),
       h("main", {}, [
-        h("input", {
-          type: "text",
-          oninput: (event) => setState(updateValue(state, event.target.value)),
-          value: state.value,
-        }),
-        h("button", { onclick: () => setState(addTodo(state)) }, text("Add")),
-        h(
-          "ul",
-          {},
-          state.todos.map((todo) => h("li", {}, text(todo)))
+        h("h2", {}, text("To do list")),
+        h("section", {}, [
+          h("input", {
+            type: "text",
+            value: state.value,
+            oninput: ({ target }) =>
+              setState(updateValue(state, target.value)),
+          }),
+          h("button",
+            { onclick: () => setState(addTodo(state)) },
+            text("Add todo")
+          ),
+        ]),
+        h("ul", {},
+          state.todos.map((todo) =>
+            h("li", {}, [
+              h("label", {}, [
+                h("input", { type: "checkbox" }),
+                h("span", {}, text(todo))
+              ]),
+            ])
+          )
         ),
       ])
     )
+  }
 
-  setState({ todos: [], value: "" })
+  setState({ todos: ["Buy a DeLorean"], value: "" })
 </script>
 ```
 
-Now it's your turn to take Superfine for a spin. Experiment! Can you add a button to clear todos? How about bull-marking as done? Surprise me. If you get stuck or would like to ask a question, just [file an issue](https://github.com/jorgebucaran/superfine/issues/new) and I'll try my best to help you out—good luck!
+[Find more examples here](https://codepen.io/collection/nVVmyg?grid_type=grid)
+
+Now it's your turn to take Superfine for a spin. Can you add a button to clear all todos? How about bulk-marking as done? If you get stuck or would like to ask a question, just [file an issue](https://github.com/jorgebucaran/superfine/issues/new) and I'll try to help you out—have fun! ✨
 
 ## Installation
-
-Install Superfine with npm or Yarn:
 
 ```console
 npm install superfine
 ```
 
-Then with a module bundler like [Rollup](https://rollupjs.org) or [Webpack](https://webpack.js.org) import it in your application and get right down to business.
+Then with a module bundler import like you would anything else.
 
 ```js
 import { h, text, patch } from "superfine"
 ```
 
-Not using a build step? Import it right in your browser—it works on all evergreen, self-updating browsers.
+Or right in your browser without a build step.
 
 ```html
 <script type="module">
@@ -120,60 +112,69 @@ Not using a build step? Import it right in your browser—it works on all evergr
 
 ### `h(type, props, [children])`
 
-Create them virtual DOM nodes! `h` takes three arguments: the node type as a string: `a`, `input`, `form`, etc; an object of [HTML or SVG attributes](#attributes-api), and an array of child nodes (or just one child node).
+Create them virtual DOM nodes! `h()` takes the node type; an object of [HTML or SVG attributes](#attributes-api), and an array of child nodes (or just one child node).
 
 ```js
-h("section", { class: "container" }, [
-  h("a", { href: "#" }, text("Click Here")),
-]) //=> <section class=container><a href=#>Click Me</a></section>
+h("main", { class: "relative" }, [
+  h("label", { for: "outatime" }, text("Destination time:")),
+  h("input", { id: "outatime", type: "date", value: "2015-10-21" }),
+])
 ```
+
+---
 
 ### `text(string)`
 
-Create a virtual text node. `text` expects a string.
+Create a virtual DOM text node.
 
 ```js
-h("h1", {}, text("Super 8")) //=> "Super 8"
+h("h1", {}, text("1.21 Gigawatts!?!"))
 ```
+
+---
 
 ### `patch(node, vdom)`
 
-Render a virtual DOM on the DOM. `patch` takes an existing DOM node, a virtual DOM, and returns the patched DOM node.
+Render a virtual DOM on the DOM efficiently. `patch()` takes an existing DOM node, a virtual DOM, and returns the freshly patched DOM.
 
 ```js
-const main = patch(
-  document.getElementById("main"),
-  h("h1", {}, text("Supercalifragilisticexpialidocious!"))
+const node = patch(
+  document.getElementById("app"),
+  h("main", {}, [
+    // ...
+  ])
 )
 ```
 
 ## Attributes API
 
-Superfine nodes can use any of the [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute), [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events), and [keys](#keys).
+Superfine nodes can use any of the [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes), [SVG attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute), [DOM events](https://developer.mozilla.org/en-US/docs/Web/Events), and also [keys](#keys).
 
-### `class`
+### `class:`
 
 To specify one or more CSS classes, use the `class` attribute. This applies to all regular DOM and SVG elements alike. The `class` attribute expects a string.
 
 ```js
-const mainView = h("main", { class: "container main" }, [
+const mainView = h("main", { class: "relative flux" }, [
   // ...
 ])
 ```
 
-### `style`
+### `style:`
 
 Use the `style` attribute to apply arbitrary CSS rules to your DOM nodes. The `style` attribute expects a string.
 
-> We do not recommend using the `style` attribute as the primary means of styling elements. In most cases, `class` should be used to reference classes defined in an external CSS stylesheet.
+> **Important**: We don't recommend using the `style` attribute as the primary means of styling elements. In most cases, `class` should be used to reference classes defined in an external CSS stylesheet.
 
 ```js
-const alertView = h("h1", { style: "color:red" }, text("Alert!"))
+const alertView = h("h1", { style: "color:red" }, text("Great Scott!"))
 ```
 
-### `key`
+### `key:`
 
-Keys help identify nodes whenever we update the DOM. By setting the `key` property on a virtual node, you declare that the node should correspond to a particular DOM element. This allows us to re-order the element into its new position, if the position changed, rather than risk destroying it. Keys must be unique among sibling nodes.
+Keys help identify nodes whenever we update the DOM. By setting the `key` property on a virtual DOM node, you declare that the node should correspond to a particular DOM element. This allows us to re-order the element into its new position, if the position changed, rather than risk destroying it.
+
+> **Important**: Keys must be unique among sibling nodes.
 
 ```js
 import { h } from "superfine"
@@ -191,9 +192,7 @@ export const imageGalleryView = (images) =>
 
 ## Recycling
 
-Superfine will patch over your server-side rendered HTML, recycling existing content instead of creating new elements. This enables SEO optimizations and improves your sites time-to-interactive effortlessly.
-
-Take another look at our humble counter app. Notice all the HTML is already there.
+Superfine will patch over server-side rendered HTML, recycling existing content instead of creating new elements. This technique enables better SEO, as search engine crawlers will see the fully rendered page more easily. And on slow internet or slow devices, users will enjoy faster time-to-content as HTML renders before your JavaScript is downloaded and executed.
 
 <!-- prettier-ignore -->
 ```html
@@ -217,31 +216,26 @@ Take another look at our humble counter app. Notice all the HTML is already ther
     </script>
   </head>
   <body>
-    <main id="app"><h1></h1><button>-</button><button>+</button></main>
+    <main id="app"><h1>0</h1><button>-</button><button>+</button></main>
   </body>
 </html>
 ```
 
-This simple technique gives you improved SEO, as search engine crawlers will be able to see the fully rendered page easily. And on slow internet or slow devices, users will enjoy faster time-to-content as HTML renders before your JavaScript is downloaded and executed. Not bad at all!
+> Notice that all the necessary HTML is already served with the document.
+
+Superfine expects the markup to be identical between the server and the client. Treat mismatches as bugs and fix them! Now you just need a way to send content to browsers.
 
 ## JSX
 
-JSX is a language syntax extension that lets you write HTML tags interspersed with JavaScript. To compile JSX to JavaScript, install the [JSX transform plugin](https://babeljs.io/docs/en/babel-plugin-transform-react-jsx), and create a `.babelrc` file in the root of your project like this one.
+JSX is a language syntax extension that lets you write HTML tags interspersed with JavaScript. To compile JSX to JavaScript, install the [JSX transform plugin](https://babeljs.io/docs/en/babel-plugin-transform-react-jsx), and create a `.babelrc` file in the root of your project like this:
 
 ```json
 {
-  "plugins": [
-    [
-      "transform-react-jsx",
-      {
-        "pragma": "h"
-      }
-    ]
-  ]
+  "plugins": [["transform-react-jsx", { "pragma": "h" }]]
 }
 ```
 
-Superfine doesn't support JSX out of the box, but adding it to your project is easy. All we need to do is handle function types and nested arrays through our `h` and `text` functions.
+Superfine doesn't support JSX out of the box, but adding it to your project is easy.
 
 ```js
 import { h, text } from "superfine"
