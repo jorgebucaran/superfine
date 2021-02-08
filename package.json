@@ -7,9 +7,6 @@
   "repository": "jorgebucaran/superfine",
   "homepage": "https://github.com/jorgebucaran/superfine",
   "license": "MIT",
-  "files": [
-    "*.js*(.map)"
-  ],
   "author": "Jorge Bucaran",
   "keywords": [
     "superfine",
