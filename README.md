@@ -80,7 +80,7 @@ Next up, let's take a look at a simple todo app. You can only add or cross off t
     )
   }
 
-  setState({ todos: ["Buy a DeLorean"], value: "" })
+  setState({ todos: [], value: "" })
 </script>
 ```
 
