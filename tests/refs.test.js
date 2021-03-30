@@ -89,7 +89,7 @@ export default [
       }),
     ]),
     t("test behavior of refs", [
-      t("ref objects and ref callback should work properly", function* () {
+      t("ref objects and ref callbacks should work properly", function* () {
         const container = new JSDOM('<div id="root"><span><span></div>')
           .window.document.getElementById('root')
         
