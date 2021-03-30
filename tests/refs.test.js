@@ -96,8 +96,6 @@ export default [
         const render = (vnode) => patch(container.firstChild, vnode)
         const refObject = createRefObject()
         const refCallback = createRefCallback()
-        
-        container.appendChild(document.createElement("span"))
 
         render(h("div", { ref: refObject }))
         yield equal(refObject.current?.tagName, "DIV")
