@@ -94,20 +94,6 @@ Now it's your turn to take Superfine for a spin. Can you add a button to clear a
 npm install superfine
 ```
 
-Then with a module bundler import like you would anything else.
-
-```js
-import { h, text, patch } from "superfine"
-```
-
-Or right in your browser without a build step.
-
-```html
-<script type="module">
-  import { h, text, app } from "https://unpkg.com/superfine"
-</script>
-```
-
 ## Top-Level API
 
 ### `h(type, props, [children])`
