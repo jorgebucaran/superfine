@@ -53,7 +53,7 @@ Next up, let's take a look at a simple todo app. You can only add or cross off t
     patch(
       document.getElementById("app"),
       h("main", {}, [
-        h("h2", {}, text("To do list")),
+        h("h2", {}, text("To-do list")),
         h("ul", {},
           state.todos.map((todo) =>
             h("li", {}, [
@@ -80,7 +80,7 @@ Next up, let's take a look at a simple todo app. You can only add or cross off t
     )
   }
 
-  setState({ todos: [], value: "" })
+  setState({ todos: ["Learn Quantum Physics"], value: "" })
 </script>
 ```
 
