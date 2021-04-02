@@ -54,6 +54,16 @@ Next up, let's take a look at a simple todo app. You can only add or cross off t
       document.getElementById("app"),
       h("main", {}, [
         h("h2", {}, text("To do list")),
+        h("ul", {},
+          state.todos.map((todo) =>
+            h("li", {}, [
+              h("label", {}, [
+                h("input", { type: "checkbox" }),
+                h("span", {}, text(todo))
+              ]),
+            ])
+          )
+        ),
         h("section", {}, [
           h("input", {
             type: "text",
@@ -66,16 +76,6 @@ Next up, let's take a look at a simple todo app. You can only add or cross off t
             text("Add todo")
           ),
         ]),
-        h("ul", {},
-          state.todos.map((todo) =>
-            h("li", {}, [
-              h("label", {}, [
-                h("input", { type: "checkbox" }),
-                h("span", {}, text(todo))
-              ]),
-            ])
-          )
-        ),
       ])
     )
   }
