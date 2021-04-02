@@ -84,7 +84,7 @@ Next up, let's take a look at a simple todo app. You can only add or cross off t
 </script>
 ```
 
-[Find more examples here](https://codepen.io/collection/nVVmyg?grid_type=grid)
+[Check out more examples](https://codepen.io/collection/nVVmyg?grid_type=grid)
 
 Now it's your turn to take Superfine for a spin. Can you add a button to clear all todos? How about bulk-marking as done? If you get stuck or would like to ask a question, just [file an issue](https://github.com/jorgebucaran/superfine/issues/new) and I'll try to help you out—have fun! ✨
 
