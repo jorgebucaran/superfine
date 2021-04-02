@@ -226,18 +226,13 @@ Superfine doesn't support JSX out of the box, but adding it to your project is e
 ```js
 import { h, text } from "superfine"
 
-export default (type, props, ...children) =>
+const jsx = (type, props, ...children) =>
   typeof type === "function"
     ? type(props, children)
-    : h(
-        type,
-        props || {},
-        []
-          .concat(...children)
-          .map((any) =>
-            typeof any === "string" || typeof any === "number" ? text(any) : any
-          )
+    : h(type, props || {}, children.flatMap((any) =>
+        typeof any === "string" || typeof any === "number" ? text(any) : any
       )
+    )
 ```
 
 Import that everywhere you're using JSX and you'll be good to go. [Here's a working example](https://cdpn.io/e/wXEBYO?editors=0010).
