@@ -20,6 +20,11 @@ var patchProperty = (node, key, oldValue, newValue, isSvg) => {
     } else if (!oldValue) {
       node.addEventListener(key, listener)
     }
+  } else if (key === "ref") {
+    if (newValue !== oldValue) {
+      oldValue && passToRef(oldValue, null)
+      newValue && passToRef(newValue, node)
+    }
   } else if (!isSvg && key !== "list" && key !== "form" && key in node) {
     node[key] = newValue == null ? "" : newValue
   } else if (newValue == null || newValue === false) {
@@ -60,13 +65,14 @@ var patchNode = (parent, node, oldVNode, newVNode, isSvg) => {
   ) {
     if (oldVNode.tag !== newVNode.tag) node.nodeValue = newVNode.tag
   } else if (oldVNode == null || oldVNode.tag !== newVNode.tag) {
+    oldVNode && dismissVNode(oldVNode)
+
     node = parent.insertBefore(
       createNode((newVNode = vdomify(newVNode)), isSvg),
       node
     )
-    if (oldVNode != null) {
-      parent.removeChild(oldVNode.node)
-    }
+
+    oldVNode && parent.removeChild(oldVNode.node)
   } else {
     var tmpVKid,
       oldVKid,
@@ -136,6 +142,7 @@ var patchNode = (parent, node, oldVNode, newVNode, isSvg) => {
       }
     } else if (newHead > newTail) {
       while (oldHead <= oldTail) {
+        dismissVNode(oldVKids[oldHead])
         node.removeChild(oldVKids[oldHead++].node)
       }
     } else {
@@ -154,6 +161,7 @@ var patchNode = (parent, node, oldVNode, newVNode, isSvg) => {
           (newKey != null && newKey === getKey(oldVKids[oldHead + 1]))
         ) {
           if (oldKey == null) {
+            dismissVNode(oldVKid)
             node.removeChild(oldVKid.node)
           }
           oldHead++
@@ -203,12 +211,14 @@ var patchNode = (parent, node, oldVNode, newVNode, isSvg) => {
 
       while (oldHead <= oldTail) {
         if (getKey((oldVKid = oldVKids[oldHead++])) == null) {
+          dismissVNode(oldVKid)
           node.removeChild(oldVKid.node)
         }
       }
 
       for (var i in keyed) {
         if (newKeyed[i] == null) {
+          dismissVNode(keyed[i])
           node.removeChild(keyed[i].node)
         }
       }
@@ -220,6 +230,12 @@ var patchNode = (parent, node, oldVNode, newVNode, isSvg) => {
 
 var vdomify = (newVNode) =>
   newVNode !== true && newVNode !== false && newVNode ? newVNode : text("")
+
+var passToRef = (ref, value) =>
+  ref && (typeof ref === 'function' ? ref(value) : (ref.current = value))
+
+var dismissVNode = (vnode) =>
+  vnode && vnode.props && vnode.props.ref && passToRef(vnode.props.ref, null)
 
 var recycleNode = (node) =>
   node.nodeType === TEXT_NODE
