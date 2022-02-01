@@ -12,7 +12,7 @@ var getKey = (vdom) => (vdom == null ? vdom : vdom.key)
 
 var patchProperty = (node, key, oldValue, newValue, isSvg) => {
   if (key === "key") {
-  } else if (key ==="shadow-root") {
+  } else if (key === "shadow-root") {
   } else if (key[0] === "o" && key[1] === "n") {
     if (
       !((node.events || (node.events = {}))[(key = key.slice(2))] = newValue)
