@@ -87,14 +87,13 @@ var patchNode = (parent, node, oldVNode, newVNode, isSvg) => {
     }
   } else {
     if (parent.shadowRoot) {
-      patchNode(
+      return patchNode(
         parent.shadowRoot,
         parent.shadowRoot.firstChild,
         oldVNode,
         newVNode,
         isSvg
       )
-      return // idk
     }
 
     var tmpVKid,
