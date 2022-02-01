@@ -12,6 +12,7 @@ var getKey = (vdom) => (vdom == null ? vdom : vdom.key)
 
 var patchProperty = (node, key, oldValue, newValue, isSvg) => {
   if (key === "key") {
+  } if (key ==="shadow-root") {
   } else if (key[0] === "o" && key[1] === "n") {
     if (
       !((node.events || (node.events = {}))[(key = key.slice(2))] = newValue)
@@ -39,14 +40,12 @@ var createNode = (vdom, isSvg) => {
         : document.createElement(vdom.tag, { is: props.is }),
     attach = node,
     children = vdom.children,
-    mode = props['shadow-root']
 
-  if (mode) {
+  if (vdom.shadow) {
     const rootVNode = vdom.children[0]
     const root = document.createElement(rootVNode.tag)
 
-    node.attachShadow({ mode }).appendChild(root)
-    props['shadow-root'] = null
+    node.attachShadow({ mode: vdom.shadow }).appendChild(root)
 
     attach = root
     children = rootVNode.children
@@ -250,6 +249,7 @@ var createVNode = (tag, props, children, type, node) => ({
   tag,
   props,
   key: props.key,
+  shadow: props['shadow-root'],
   children,
   type,
   node,
