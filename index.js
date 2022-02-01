@@ -12,7 +12,7 @@ var getKey = (vdom) => (vdom == null ? vdom : vdom.key)
 
 var patchProperty = (node, key, oldValue, newValue, isSvg) => {
   if (key === "key") {
-  } if (key ==="shadow-root") {
+  } else if (key ==="shadow-root") {
   } else if (key[0] === "o" && key[1] === "n") {
     if (
       !((node.events || (node.events = {}))[(key = key.slice(2))] = newValue)
@@ -39,7 +39,7 @@ var createNode = (vdom, isSvg) => {
         ? document.createElementNS(SVG_NS, vdom.tag, { is: props.is })
         : document.createElement(vdom.tag, { is: props.is }),
     attach = node,
-    children = vdom.children,
+    children = vdom.children
 
   if (vdom.shadow) {
     const rootVNode = vdom.children[0]
