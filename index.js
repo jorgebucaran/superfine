@@ -36,14 +36,23 @@ var createNode = (vdom, isSvg) => {
         ? document.createTextNode(vdom.tag)
         : (isSvg = isSvg || vdom.tag === "svg")
         ? document.createElementNS(SVG_NS, vdom.tag, { is: props.is })
-        : document.createElement(vdom.tag, { is: props.is })
+        : document.createElement(vdom.tag, { is: props.is }),
+    slot = node,
+    mode = props['shadow-root']
+
+  if (mode) {
+    const root = document.createElement('div')
+    node.attachShadow({ mode }).appendChild(root)
+    props['shadow-root'] = null
+    slot = root
+  }
 
   for (var k in props) {
     patchProperty(node, k, null, props[k], isSvg)
   }
 
   for (var i = 0; i < vdom.children.length; i++) {
-    node.appendChild(
+    slot.appendChild(
       createNode((vdom.children[i] = vdomify(vdom.children[i])), isSvg)
     )
   }
