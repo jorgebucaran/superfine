@@ -43,12 +43,7 @@ var createNode = (vdom, isSvg) => {
 
   if (vdom.shadow) {
     var rootVNode = vdom.children[0],
-      rootProps = rootVNode.props,
       root = document.createElement(rootVNode.tag)
-
-    for (var k in rootProps) {
-      patchProperty(root, k, null, rootProps[k], isSvg)
-    }
 
     node.attachShadow({ mode: vdom.shadow }).appendChild(root)
 
@@ -57,7 +52,7 @@ var createNode = (vdom, isSvg) => {
   }
 
   for (var k in props) {
-    patchProperty(node, k, null, props[k], isSvg)
+    patchProperty(attach, k, null, props[k], isSvg)
   }
 
   for (var i = 0; i < children.length; i++) {
