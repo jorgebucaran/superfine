@@ -86,6 +86,17 @@ var patchNode = (parent, node, oldVNode, newVNode, isSvg) => {
       parent.removeChild(oldVNode.node)
     }
   } else {
+    if (parent.shadowRoot) {
+      patchNode(
+        parent.shadowRoot,
+        parent.shadowRoot.firstChild,
+        oldVNode,
+        newVNode,
+        isSvg
+      )
+      return // idk
+    }
+
     var tmpVKid,
       oldVKid,
       oldKey,
