@@ -77,6 +77,14 @@ var patchNode = (parent, node, oldVNode, newVNode, isSvg) => {
     newVNode.type === TEXT_NODE
   ) {
     if (oldVNode.tag !== newVNode.tag) node.nodeValue = newVNode.tag
+  } else if (parent && parent.shadowRoot) {
+    return patchNode(
+      null,
+      parent.shadowRoot.firstChild,
+      oldVNode,
+      newVNode,
+      isSvg
+    )
   } else if (oldVNode == null || oldVNode.tag !== newVNode.tag) {
     node = parent.insertBefore(
       createNode((newVNode = vdomify(newVNode)), isSvg),
@@ -86,16 +94,6 @@ var patchNode = (parent, node, oldVNode, newVNode, isSvg) => {
       parent.removeChild(oldVNode.node)
     }
   } else {
-    if (parent.shadowRoot) {
-      return patchNode(
-        parent.shadowRoot,
-        parent.shadowRoot.firstChild,
-        oldVNode,
-        newVNode,
-        isSvg
-      )
-    }
-
     var tmpVKid,
       oldVKid,
       oldKey,
