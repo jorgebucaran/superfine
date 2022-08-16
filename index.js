@@ -12,7 +12,6 @@ var getKey = (vdom) => (vdom == null ? vdom : vdom.key)
 
 var patchProperty = (node, key, oldValue, newValue, isSvg) => {
   if (key === "key") {
-  } else if (key === "shadow-root") {
   } else if (key[0] === "o" && key[1] === "n") {
     if (
       !((node.events || (node.events = {}))[(key = key.slice(2))] = newValue)
@@ -30,34 +29,34 @@ var patchProperty = (node, key, oldValue, newValue, isSvg) => {
   }
 }
 
-var createNode = (vdom, isSvg) => {
+var createNode = (vdom, isSvg, shadowRoot) => {
   var props = vdom.props,
     node =
       vdom.type === TEXT_NODE
         ? document.createTextNode(vdom.tag)
         : (isSvg = isSvg || vdom.tag === "svg")
         ? document.createElementNS(SVG_NS, vdom.tag, { is: props.is })
-        : document.createElement(vdom.tag, { is: props.is }),
-    attach = node,
-    children = vdom.children
+        : document.createElement(vdom.tag, { is: props.is })
 
-  if (vdom.shadow) {
-    var rootVNode = vdom.children[0],
-      root = document.createElement(rootVNode.tag)
-
-    node.attachShadow({ mode: vdom.shadow }).appendChild(root)
-
-    attach = root
-    children = rootVNode.children
+  if (shadowRoot) {
+    node = node.attachShadow({ mode: shadowRoot })
   }
 
   for (var k in props) {
-    patchProperty(attach, k, null, props[k], isSvg)
+    patchProperty(node, k, null, props[k], isSvg)
   }
 
-  for (var i = 0; i < children.length; i++) {
-    attach.appendChild(
-      createNode((children[i] = vdomify(children[i])), isSvg)
+  for (var i = 0; i < vdom.children.length; i++) {
+    var child = vdom.children[i],
+      shadowRoot = child.props.shadowroot
+
+    if (child.tag === "template" && shadowRoot) {
+      vdom.children = child.children
+      return createNode(vdom, isSvg, shadowRoot)
+    }
+
+    node.appendChild(
+      createNode((vdom.children[i] = vdomify(vdom.children[i])), isSvg)
     )
   }
 
@@ -72,10 +71,10 @@ var patchNode = (parent, node, oldVNode, newVNode, isSvg) => {
     newVNode.type === TEXT_NODE
   ) {
     if (oldVNode.tag !== newVNode.tag) node.nodeValue = newVNode.tag
-  } else if (parent && parent.shadowRoot) {
+  } else if (node.shadowRoot) {
     return patchNode(
       null,
-      parent.shadowRoot.firstChild,
+      node.shadowRoot,
       oldVNode,
       newVNode,
       isSvg
@@ -257,7 +256,6 @@ var createVNode = (tag, props, children, type, node) => ({
   tag,
   props,
   key: props.key,
-  shadow: props['shadow-root'],
   children,
   type,
   node,
