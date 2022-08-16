@@ -29,7 +29,7 @@ var patchProperty = (node, key, oldValue, newValue, isSvg) => {
   }
 }
 
-var createNode = (vdom, isSvg) => {
+var createNode = (vdom, isSvg, shadowRoot) => {
   var props = vdom.props,
     node =
       vdom.type === TEXT_NODE
@@ -38,11 +38,23 @@ var createNode = (vdom, isSvg) => {
         ? document.createElementNS(SVG_NS, vdom.tag, { is: props.is })
         : document.createElement(vdom.tag, { is: props.is })
 
+  if (shadowRoot) {
+    node = node.attachShadow({ mode: shadowRoot })
+  }
+
   for (var k in props) {
     patchProperty(node, k, null, props[k], isSvg)
   }
 
   for (var i = 0; i < vdom.children.length; i++) {
+    var child = vdom.children[i],
+      shadowRoot = child.props.shadowroot
+
+    if (child.tag === "template" && shadowRoot) {
+      vdom.children = child.children
+      return createNode(vdom, isSvg, shadowRoot)
+    }
+
     node.appendChild(
       createNode((vdom.children[i] = vdomify(vdom.children[i])), isSvg)
     )
@@ -59,6 +71,14 @@ var patchNode = (parent, node, oldVNode, newVNode, isSvg) => {
     newVNode.type === TEXT_NODE
   ) {
     if (oldVNode.tag !== newVNode.tag) node.nodeValue = newVNode.tag
+  } else if (node.shadowRoot) {
+    return patchNode(
+      null,
+      node.shadowRoot,
+      oldVNode,
+      newVNode,
+      isSvg
+    )
   } else if (oldVNode == null || oldVNode.tag !== newVNode.tag) {
     node = parent.insertBefore(
       createNode((newVNode = vdomify(newVNode)), isSvg),
